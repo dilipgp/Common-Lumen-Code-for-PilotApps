@@ -28,9 +28,9 @@ jobs:
     environment: dev
     runs-on: ubuntu-latest
     env:
-      TF_VAR_CLIENT: ${{ secrets.ARM_CLIENT_ID }}
-      TF_VAR_SUB_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      TF_VAR_TENANT: ${{ secrets.ARM_TENANT_ID }}
+      TF_VAR_CLIENT: ${{ secrets.AZURE_CLIENT_ID }}
+      TF_VAR_SUB_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_TENANT: ${{ secrets.AZURE_TENANT_ID }}
 
     steps:
       - name: Checkout the code
@@ -43,16 +43,16 @@ jobs:
 
       -  name: Echo Secrets (for troubleshooting only)
          run: |
-          echo "Client ID: ${{ secrets.ARM_CLIENT_ID }}"
-          echo "Tenant ID: ${{ secrets.ARM_TENANT_ID }}"
-          echo "${{ secrets.ARM_SUBSCRIPTION_ID }}"
+          echo "Client ID: ${{ secrets.AZURE_CLIENT_ID }}"
+          echo "Tenant ID: ${{ secrets.AZURE_TENANT_ID }}"
+          echo "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
 
       - name: Log in with Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.ARM_CLIENT_ID }}
-          tenant-id: ${{ secrets.ARM_TENANT_ID }}
-          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Setup terraform
         uses: hashicorp/setup-terraform@v2
