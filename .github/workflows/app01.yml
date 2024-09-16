@@ -28,9 +28,12 @@ jobs:
     environment: dev
     runs-on: ubuntu-latest
     env:
-      TF_VAR_CLIENT: ${{ secrets.AZURE_CLIENT_ID }}
-      TF_VAR_SUB_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      TF_VAR_TENANT: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TF_VAR_STORAGE_ACCOUNT: 'devopslumen'
+      TF_VAR_STORAGE_CONTAINER: 'tfstatefile'
+      ARM_ACCESS_KEY: ${{ secrets.AZURE_ACCESS_KEY }}
 
     steps:
       - name: Checkout the code
@@ -61,6 +64,7 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
+
     
       - name: Terraform plan
         id: plan
