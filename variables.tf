@@ -7,13 +7,76 @@ For more information see <https://aka.ms/avm/telemetryinfo>.
 If it is set to false, then no telemetry will be collected.
 DESCRIPTION
 }
-
-# This is required for most resource modules
 variable "resource_group_name" {
   type        = string
   description = "The resource group where the resources will be deployed."
   nullable    = false
 }
+variable "virtual_network" {
+  description = "Name of the virtual network"
+  default     = "example-vnet"
+}
+
+variable "vnet_address_space" {
+  description = "The address space for the virtual network"
+  type        = list(string)
+  default     = ["10.0.0.0/16"]
+}
+
+variable "subnet1_name" {
+  description = "Name of subnet 1"
+  default     = "subnet-1"
+}
+
+variable "subnet1_address_prefixes" {
+  description = "Address prefix for subnet 1"
+  type        = list(string)
+  default     = ["10.0.1.0/24"]
+}
+
+variable "subnet2_name" {
+  description = "Name of subnet 2"
+  default     = "subnet-2"
+}
+
+variable "subnet2_address_prefixes" {
+  description = "Address prefix for subnet 2"
+  type        = list(string)
+  default     = ["10.0.2.0/24"]
+}
+
+variable "subnet3_name" {
+  description = "Name of subnet 3"
+  default     = "subnet-3"
+}
+
+variable "subnet3_address_prefixes" {
+  description = "Address prefix for subnet 3"
+  type        = list(string)
+  default     = ["10.0.3.0/24"]
+}
+
+variable "subnet4_name" {
+  description = "Name of subnet 4"
+  default     = "subnet-4"
+}
+
+variable "subnet4_address_prefixes" {
+  description = "Address prefix for subnet 4"
+  type        = list(string)
+  default     = ["10.0.4.0/24"]
+}
+
+variable "nsg_name" {
+  description = "The name of the Network Security Group"
+  type        = string
+}
+
+variable "tags" {
+  description = "Tags to apply to the Network Security Group"
+  type        = map(string)
+}
+
 
 variable "keyvault_name" {
   type        = string
@@ -95,9 +158,31 @@ EOT
   nullable    = false
 }
 
+variable "custom_rdp_properties" {
+  type        = string
+  default     = null
+  description = "(Optional) A valid custom RDP properties string for the Virtual Desktop Host Pool, available properties can be [found in this article](https://docs.microsoft.com/windows-server/remote/remote-desktop-services/clients/rdp-files)."
+}
+variable "environment" {
+  type = string
+}
+
+variable "friendly_name" {
+  type = string
+}
+
+
+
+
+
+
+
+
+
+
 variable "virtual_desktop_application_group_name" {
   type        = string
-  default     = "vdag-avd-001"
+  #default     = "vdag-avd-001"
   description = "The name of the AVD Application Group."
 
   validation {
@@ -108,19 +193,19 @@ variable "virtual_desktop_application_group_name" {
 
 variable "virtual_desktop_application_group_type" {
   type        = string
-  default     = "Desktop"
+  #default     = "Desktop"
   description = "The type of the AVD Application Group. Valid values are 'Desktop' and 'RemoteApp'."
 }
 
 variable "virtual_desktop_host_pool_friendly_name" {
   type        = string
-  default     = "AVD Host Pool"
+  #default     = "AVD Host Pool"
   description = "(Optional) A friendly name for the Virtual Desktop Host Pool."
 }
 
 variable "virtual_desktop_host_pool_load_balancer_type" {
   type        = string
-  default     = "BreadthFirst"
+  #default     = "BreadthFirst"
   description = "`BreadthFirst` load balancing distributes new user sessions across all available session hosts in the host pool. Possible values are `BreadthFirst`, `DepthFirst` and `Persistent`. `DepthFirst` load balancing distributes new user sessions to an available session host with the highest number of connections but has not reached its maximum session limit threshold. `Persistent` should be used if the host pool type is `Personal`"
 }
 
@@ -132,7 +217,7 @@ variable "virtual_desktop_host_pool_maximum_sessions_allowed" {
 
 variable "virtual_desktop_host_pool_name" {
   type        = string
-  default     = "vdpool-avd-001"
+  #default     = "vdpool-avd-001"
   description = "The name of the AVD Host Pool"
 }
 
@@ -170,8 +255,3 @@ variable "storage_accont_name" {
   description = "The name of the storage account"
   type        = string
 }
-
-
-
-
-
