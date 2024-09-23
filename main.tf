@@ -82,8 +82,8 @@ module "avm-res-desktopvirtualization-workspace" {
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
 }
 
-module "avm-res-operationalinsights-workspace_example_default" {
-  source  = "Azure/avm-res-operationalinsights-workspace/azurerm//examples/default"
+module "avm-res-operationalinsights-workspace" {
+  source  = "Azure/avm-res-operationalinsights-workspace/azurerm"
   version = "0.4.1"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
