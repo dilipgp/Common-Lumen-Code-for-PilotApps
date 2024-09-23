@@ -131,4 +131,3 @@ module "avm-res-operationalinsights-workspace" {
   resource_group_name = azurerm_resource_group.this.name
   name                = var.operationalinsights_workspace_name
 }
-#test
