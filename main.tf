@@ -51,13 +51,14 @@ module "avm-res-keyvault-vault_example_default" {
   tenant_id           = var.tenant_id
 }
 
-# module "avm-res-keyvault-vault_secret" {
-#   source  = "Azure/avm-res-keyvault-vault/azurerm//modules/secret"
-#   version = "0.9.1"
-#   key_vault_resource_id = module.avm-res-keyvault-vault_example_default.resource_id
-#   name   = "mySecret"
-#   value  = "mySecretValue"
-# }
+
+module "avm-res-storage-storageaccount" {
+  source  = "Azure/avm-res-storage-storageaccount/azurerm"
+  version = "0.2.7"
+  location = var.location
+  name = var.storage_accont_name
+  resource_group_name = azurerm_resource_group.this.name
+}
 
 module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
