@@ -62,6 +62,19 @@ module "avm-res-desktopvirtualization-hostpool" {
     }
     osDisktype = "PremiumLRS"
   }
+  diagnostic_settings = {
+    setting1 = {
+      name                                = "example-setting-1"
+      log_groups                          = ["allLogs"]
+      metric_categories                   = ["AllMetrics"]
+      log_analytics_destination_type      = "Dedicated"
+      workspace_resource_id               = module.avm-res-operationalinsights-workspace.resource.id
+      storage_account_resource_id         = null
+      event_hub_authorization_rule_resource_id = null
+      event_hub_name                      = null
+      marketplace_partner_resource_id     = null
+    },
+  }
 }
 
 module "avm-res-desktopvirtualization-applicationgroup" {
@@ -96,6 +109,19 @@ module "avm-res-desktopvirtualization-workspace" {
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = var.virtual_desktop_workspace_name
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+  diagnostic_settings = {
+    setting1 = {
+      name                                = "example-setting-1"
+      log_groups                          = ["allLogs"]
+      metric_categories                   = ["AllMetrics"]
+      log_analytics_destination_type      = "Dedicated"
+      workspace_resource_id               = module.avm-res-operationalinsights-workspace.resource.id
+      storage_account_resource_id         = null
+      event_hub_authorization_rule_resource_id = null
+      event_hub_name                      = null
+      marketplace_partner_resource_id     = null
+    },
+  }
 }
 
 module "avm-res-operationalinsights-workspace" {
