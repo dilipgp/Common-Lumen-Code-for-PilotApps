@@ -75,7 +75,6 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   diagnostic_settings = {
     setting1 = {
       name                                = "example-setting-1"
-      log_categories                      = ["Administrative", "Security"]
       log_groups                          = ["allLogs"]
       metric_categories                   = ["AllMetrics"]
       log_analytics_destination_type      = "Dedicated"
