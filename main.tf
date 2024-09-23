@@ -73,19 +73,15 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = var.virtual_desktop_application_group_type
   diagnostic_settings = {
-    log_analytics_workspace_id = module.avm-res-operationalinsights-workspace.resource.id
-    log = {
-      retention_policy = {
-        days    = 30
-        enabled = true
-      }
-    },
-    metric = {
-      retention_policy = {
-        days    = 30
-        enabled = true
-      }
-    },
+    name                                = "example-diagnostic-settings"
+    log_groups                          = ["allLogs"]
+    metric_categories                   = ["AllMetrics"]
+    log_analytics_destination_type      = "Dedicated"
+    workspace_resource_id               = module.avm-res-operationalinsights-workspace.resource.id
+    storage_account_resource_id         = null
+    event_hub_authorization_rule_resource_id = null
+    event_hub_name                      = null
+    marketplace_partner_resource_id     = null
   }
 }
 
