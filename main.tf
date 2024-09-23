@@ -41,15 +41,15 @@ module "naming" {
 #   contacts            = var.contacts
 # }
 
-module "avm-res-keyvault-vault_example_default" {
-  source              = "Azure/avm-res-keyvault-vault/azurerm"
-  version             = "0.9.1"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.this.name
-  name                = var.keyvault_name
-  enable_telemetry    = var.enable_telemetry
-  tenant_id           = var.tenant_id
-}
+# module "avm-res-keyvault-vault_example_default" {
+#   source              = "Azure/avm-res-keyvault-vault/azurerm"
+#   version             = "0.9.1"
+#   location            = var.location
+#   resource_group_name = azurerm_resource_group.this.name
+#   name                = var.keyvault_name
+#   enable_telemetry    = var.enable_telemetry
+#   tenant_id           = var.tenant_id
+# }
 
 
 module "avm-res-storage-storageaccount" {
@@ -58,14 +58,6 @@ module "avm-res-storage-storageaccount" {
   location = var.location
   name = var.storage_accont_name
   resource_group_name = azurerm_resource_group.this.name
-}
-
-module "avm-res-storage-storageaccount" {
-  source              = "Azure/avm-res-storage-storageaccount/azurerm"
-  name                = var.storage_accont_name
-  resource_group_name = azurerm_resource_group.this.name
-  location            = var.location
-  version             = "0.2.6"
 }
 
 # module "avm-res-desktopvirtualization-hostpool" {
