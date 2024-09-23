@@ -85,7 +85,7 @@ module "avm-res-desktopvirtualization-hostpool" {
   virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
   virtual_desktop_host_pool_location = var.location
   virtual_desktop_host_pool_name = var.virtual_desktop_host_pool_name
-  virtual_desktop_host_pool_resource_group_name = var.resource_group_name
+  virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
   virtual_desktop_host_pool_type = var.virtual_desktop_host_pool_type
   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
@@ -107,7 +107,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool.resource.id
   virtual_desktop_application_group_location            = var.location
   virtual_desktop_application_group_name                = var.virtual_desktop_application_group_name
-  virtual_desktop_application_group_resource_group_name = var.resource_group_name
+  virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = var.virtual_desktop_application_group_type
 }
 module "avm-res-desktopvirtualization-workspace" {
@@ -116,7 +116,7 @@ module "avm-res-desktopvirtualization-workspace" {
   resource_group_name                           = var.resource_group_name
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = var.virtual_desktop_workspace_name
-  virtual_desktop_workspace_resource_group_name = var.resource_group_name
+  virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
 }
 
 
