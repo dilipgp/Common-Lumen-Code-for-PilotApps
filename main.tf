@@ -22,23 +22,6 @@ data "virtual_network" "this" {
   #address_space = var.vnet_address_space
   #resource_group_name = var.resource_group_name
 #}
-resource "azurerm_subnet" "subnets" {
-  for_each             = var.subnets
-  name                 = each.value.name
-  resource_group_name  = data.azurerm_resource_group.existing_rg.name
-  virtual_network_name = data.azurerm_virtual_network.existing_vnet.name
-  address_prefixes     = [each.value.address_prefix]
-}
-
-
-module "avm-res-network-networksecuritygroup_example_default" {
-  source  = "Azure/avm-res-network-networksecuritygroup/azurerm//examples/default"
-  version = "0.2.0"
-  resource_group_name = var.resource_group_name
-  location = var.location
-  name = var.nsg_name
-}
-
 
 module "avm-res-keyvault-vault_example_default" {
   source              = "Azure/avm-res-keyvault-vault/azurerm"
