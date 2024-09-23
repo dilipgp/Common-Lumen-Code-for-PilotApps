@@ -171,7 +171,10 @@ variable "storage_accont_name" {
   type        = string
 }
 
-
+variable "operationalinsights_workspace_name" {
+  description = "value of the operational insights workspace"
+    type        = string
+}
 
 
 
