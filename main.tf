@@ -72,7 +72,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_name                = var.virtual_desktop_application_group_name
   virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = var.virtual_desktop_application_group_type
-  diagnostic_settings = {
+  diagnostic_settings = [{
     name                                = "example-diagnostic-settings"
     log_groups                          = ["allLogs"]
     metric_categories                   = ["AllMetrics"]
@@ -82,7 +82,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
     event_hub_authorization_rule_resource_id = null
     event_hub_name                      = null
     marketplace_partner_resource_id     = null
-  }
+  }]
 }
 
 
