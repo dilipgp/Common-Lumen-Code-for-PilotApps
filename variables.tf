@@ -10,11 +10,11 @@ DESCRIPTION
 variable "resource_group_name" {
   type        = string
   description = "The resource group where the resources will be deployed."
-  nullable    = false
 }
+
 variable "virtual_network" {
   description = "Name of the virtual network"
-  default     = "example-vnet"
+  default     = "vnet"
 }
 
 variable "vnet_address_space" {
@@ -23,50 +23,77 @@ variable "vnet_address_space" {
   default     = ["10.0.0.0/16"]
 }
 
-variable "subnet1_name" {
-  description = "Name of subnet 1"
-  default     = "subnet-1"
+variable "subnets" {
+  description = "Map of subnets with name and CIDR blocks"
+  type = map(object({
+    name            = string
+    address_prefix  = string
+  }))
+
+  default = {
+    subnet1 = { name = "subnet-1", address_prefix = "10.0.1.0/24" }
+    subnet2 = { name = "subnet-2", address_prefix = "10.0.2.0/24" }
+    subnet3 = { name = "subnet-3", address_prefix = "10.0.3.0/24" }
+    subnet4 = { name = "subnet-4", address_prefix = "10.0.4.0/24" }
+  }
 }
 
-variable "subnet1_address_prefixes" {
-  description = "Address prefix for subnet 1"
-  type        = list(string)
-  default     = ["10.0.1.0/24"]
+variable "virtual_desktop_host_pool_load_balancer_type" {
+  type        = string
+  default     = "BreadthFirst"
+  description = "`BreadthFirst` load balancing distributes new user sessions across all available session hosts in the host pool. Possible values are `BreadthFirst`, `DepthFirst` and `Persistent`. `DepthFirst` load balancing distributes new user sessions to an available session host with the highest number of connections but has not reached its maximum session limit threshold. `Persistent` should be used if the host pool type is `Personal`"
 }
 
-variable "subnet2_name" {
-  description = "Name of subnet 2"
-  default     = "subnet-2"
+variable "virtual_desktop_host_pool_location" {
+  type = string
+  default = "East US"
+  description = ""
+
+}
+variable "virtual_desktop_host_pool_name" {
+  type        = string
+  #default     = "AVD-Host01"
+  description = "The name of the AVD Host Pool"
 }
 
-variable "subnet2_address_prefixes" {
-  description = "Address prefix for subnet 2"
-  type        = list(string)
-  default     = ["10.0.2.0/24"]
+variable "virtual_desktop_host_pool_resource_group_name" {
+  type = string
+  default = "AVD"
 }
 
-variable "subnet3_name" {
-  description = "Name of subnet 3"
-  default     = "subnet-3"
+variable "virtual_desktop_host_pool_type" {
+  type        = string
+  default     = "Pooled"
+  description = "The type of the AVD Host Pool. Valid values are 'Pooled' and 'Personal'"
 }
 
-variable "subnet3_address_prefixes" {
-  description = "Address prefix for subnet 3"
-  type        = list(string)
-  default     = ["10.0.3.0/24"]
+variable "virtual_desktop_application_group_name" {
+  type        = string
+  #default     = "vdag-avd-001"
+  description = "The name of the AVD Application Group."
+
+  validation {
+    condition     = can(regex("^[a-z0-9-]{3,24}$", var.virtual_desktop_application_group_name))
+    error_message = "The name must be between 3 and 24 characters long and can only contain lowercase letters, numbers and dashes."
+  }
+}
+variable "virtual_desktop_host_pool_custom_rdp_properties" {
+  type        = string
+  default     = "drivestoredirect:s:*;audiomode:i:0;videoplaybackmode:i:1;redirectclipboard:i:1;redirectprinters:i:1;devicestoredirect:s:*;redirectcomports:i:1;redirectsmartcards:i:1;usbdevicestoredirect:s:*;enablecredsspsupport:i:1;redirectwebauthn:i:1;use multimon:i:1"
+  description = "(Optional) A valid custom RDP properties string for the Virtual Desktop Host Pool, available properties can be [found in this article](https://docs.microsoft.com/windows-server/remote/remote-desktop-services/clients/rdp-files)."
 }
 
-variable "subnet4_name" {
-  description = "Name of subnet 4"
-  default     = "subnet-4"
+variable "virtual_desktop_host_pool_maximum_sessions_allowed" {
+  type        = number
+  default     = 5
+  description = "(Optional) A valid integer value from 0 to 999999 for the maximum number of users that have concurrent sessions on a session host. Should only be set if the `type` of your Virtual Desktop Host Pool is `Pooled`."
 }
 
-variable "subnet4_address_prefixes" {
-  description = "Address prefix for subnet 4"
-  type        = list(string)
-  default     = ["10.0.4.0/24"]
+variable "virtual_desktop_host_pool_start_vm_on_connect" {
+  type        = bool
+  default     = true
+  description = "(Optional) Enables or disables the Start VM on Connection Feature. Defaults to `false`."
 }
-
 variable "nsg_name" {
   description = "The name of the Network Security Group"
   type        = string
@@ -106,23 +133,9 @@ variable "name" {
   }
 }
 
-variable "kubernetes_version" {
-  type        = string
-  default     = null
-  description = "Specify which Kubernetes release to use. Specify only minor version, such as '1.28'."
-}
 
-variable "node_cidr" {
-  type        = string
-  default     = null
-  description = "(Optional) The CIDR to use for node IPs in the Kubernetes cluster. Changing this forces a new resource to be created."
-}
 
-variable "pod_cidr" {
-  type        = string
-  default     = null
-  description = "(Optional) The CIDR to use for pod IPs in the Kubernetes cluster. Changing this forces a new resource to be created."
-}
+
 
 variable "node_pools" {
   type = map(object({
@@ -158,37 +171,12 @@ EOT
   nullable    = false
 }
 
-variable "custom_rdp_properties" {
-  type        = string
-  default     = null
-  description = "(Optional) A valid custom RDP properties string for the Virtual Desktop Host Pool, available properties can be [found in this article](https://docs.microsoft.com/windows-server/remote/remote-desktop-services/clients/rdp-files)."
-}
 variable "environment" {
   type = string
 }
 
 variable "friendly_name" {
   type = string
-}
-
-
-
-
-
-
-
-
-
-
-variable "virtual_desktop_application_group_name" {
-  type        = string
-  #default     = "vdag-avd-001"
-  description = "The name of the AVD Application Group."
-
-  validation {
-    condition     = can(regex("^[a-z0-9-]{3,24}$", var.virtual_desktop_application_group_name))
-    error_message = "The name must be between 3 and 24 characters long and can only contain lowercase letters, numbers and dashes."
-  }
 }
 
 variable "virtual_desktop_application_group_type" {
@@ -203,35 +191,13 @@ variable "virtual_desktop_host_pool_friendly_name" {
   description = "(Optional) A friendly name for the Virtual Desktop Host Pool."
 }
 
-variable "virtual_desktop_host_pool_load_balancer_type" {
-  type        = string
-  #default     = "BreadthFirst"
-  description = "`BreadthFirst` load balancing distributes new user sessions across all available session hosts in the host pool. Possible values are `BreadthFirst`, `DepthFirst` and `Persistent`. `DepthFirst` load balancing distributes new user sessions to an available session host with the highest number of connections but has not reached its maximum session limit threshold. `Persistent` should be used if the host pool type is `Personal`"
-}
 
-variable "virtual_desktop_host_pool_maximum_sessions_allowed" {
-  type        = number
-  default     = 16
-  description = "(Optional) A valid integer value from 0 to 999999 for the maximum number of users that have concurrent sessions on a session host. Should only be set if the `type` of your Virtual Desktop Host Pool is `Pooled`."
-}
 
-variable "virtual_desktop_host_pool_name" {
-  type        = string
-  #default     = "vdpool-avd-001"
-  description = "The name of the AVD Host Pool"
-}
 
-variable "virtual_desktop_host_pool_start_vm_on_connect" {
-  type        = bool
-  default     = true
-  description = "(Optional) Enables or disables the Start VM on Connection Feature. Defaults to `false`."
-}
 
-variable "virtual_desktop_host_pool_type" {
-  type        = string
-  default     = "Pooled"
-  description = "The type of the AVD Host Pool. Valid values are 'Pooled' and 'Personal'."
-}
+
+
+
 
 variable "virtual_desktop_scaling_plan_name" {
   type        = string
