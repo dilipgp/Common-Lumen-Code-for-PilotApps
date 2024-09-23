@@ -14,13 +14,19 @@ terraform {
       version = "~> 3.5"
     }
   }
+  backend "azurerm" {
+    resource_group_name  = "Github"
+    storage_account_name = "devopslumen01"
+    container_name       = "tfstatefile"
+    key                  = "terraform.tfstate"
+
+  }
 }
-    
-  
-    # azapi = {
-    #   source  = "Azure/azapi"
-    #   version = ">= 1.4.0, < 2.0" #"~> 1.13"
-    # }
+
+# azapi = {
+#   source  = "Azure/azapi"
+#   version = ">= 1.4.0, < 2.0" #"~> 1.13"
+# }
 
 provider "azurerm" {
   features {
