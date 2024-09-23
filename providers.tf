@@ -5,10 +5,20 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 3.11.1, < 4.0.0"
     }
+    virtual = {
+      source = "hashicorp/virtual"
+      version = ">=0.0.0"
+    }
+
+    resource = {
+      source = "hashicorp/resource"
+      version = ">=0.0.0"
+    }
     random = {
       source  = "hashicorp/random"
       version = ">= 3.5.1, < 4.0.0"
     }
+    
   }
 }
     # azapi = {
