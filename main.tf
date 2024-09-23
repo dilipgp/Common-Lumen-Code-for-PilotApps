@@ -63,7 +63,7 @@ module "avm-res-storage-storageaccount" {
 module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
   name                = var.storage_accont_name
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.this.name
   location            = var.location
   version             = "0.2.6"
 }
