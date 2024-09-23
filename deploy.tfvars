@@ -1,6 +1,6 @@
 
 enable_telemetry    = true
-resource_group_name = "lumen-aks-rg-02"
+resource_group_name = "lumen-aks-rg-03"
 location            = "EastUS2"
 name                = "aks-02"
 kubernetes_version  = "1.28"
@@ -17,7 +17,7 @@ node_pools = {
     mode                 = "User"
   }
 }
-keyvault_name                                = "lumen-aks-kv-02"
+keyvault_name                                = "lumen-aks-kv-03"
 tenant_id                                    = "680f956b-1eaf-4bb1-a703-24b289ea568f"
 storage_accont_name                          = "lumenstorage12"
 virtual_desktop_host_pool_load_balancer_type = "DepthFirst"
