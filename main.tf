@@ -100,7 +100,7 @@ module "avm-res-desktopvirtualization-hostpool" {
 module "avm-res-desktopvirtualization-applicationgroup" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
   version                                               = "0.1.5"
-  virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool.resource.id
+  virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool.resource_id
   virtual_desktop_application_group_location            = var.location
   virtual_desktop_application_group_name                = var.virtual_desktop_application_group_name
   virtual_desktop_application_group_resource_group_name = var.resource_group_name
