@@ -72,6 +72,14 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_name                = var.virtual_desktop_application_group_name
   virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = var.virtual_desktop_application_group_type
+  diagnostic_settings = {
+    name                                     = "lumentest"
+    log_categories                           = []
+    log_groups                               = ["allLogs"]
+    metric_categories                        = ["AllMetrics"]
+    log_analytics_destination_type           = "Dedicated"
+    workspace_resource_id                    = module.avm-res-operationalinsights-workspace.resource.id
+  }
 }
 module "avm-res-desktopvirtualization-workspace" {
   source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
