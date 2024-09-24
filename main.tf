@@ -235,7 +235,7 @@ resource "azurerm_virtual_machine_extension" "vmext_dsc" {
   protected_settings = <<PROTECTED_SETTINGS
   {
     "properties": {
-      "registrationInfoToken": "${module.avm-res-desktopvirtualization-hostpool.resource.registration_info_token}"
+      "registrationInfoToken": "${module.avm-res-desktopvirtualization-hostpool.registrationinfo_token}"
     }
   }
   PROTECTED_SETTINGS
