@@ -144,3 +144,95 @@ module "avm-res-operationalinsights-workspace" {
     },
   }
 }
+
+
+resource "azurerm_virtual_network" "example" {
+  name                = "example-network"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+}
+
+resource "azurerm_subnet" "example" {
+  name                 = "internal"
+  resource_group_name  = azurerm_resource_group.this.name
+  virtual_network_name = azurerm_virtual_network.this.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+
+resource "azurerm_network_interface" "example" {
+  name                = "example-nic"
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.example.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+module "avm-res-compute-virtualmachine" {
+  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version = "0.16.0"
+
+  # Required variables
+  network_interfaces = [azurerm_network_interface.example.id]
+  zone = 1
+  name = "example-vm"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  admin_username      = "adminuser"
+  admin_password      = "Password1234!"
+
+
+  # Image configuration
+  source_image_reference = {
+    publisher = "MicrosoftWindowsDesktop"
+    offer     = "Windows-11"
+    sku       = "win11-21h2-avd"
+    version   = "latest"
+  }
+  # Optional variables (add as needed)
+  
+  os_disk = {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+  tags = {
+    environment = "production"
+  }
+}
+
+resource "azurerm_virtual_machine_extension" "vmext_dsc" {
+  count                      = 1
+  name                       = "avd_dsc"
+  virtual_machine_id         = module.avm-res-compute-virtualmachine.resource.id
+  publisher                  = "Microsoft.Powershell"
+  type                       = "DSC"
+  type_handler_version       = "2.73"
+  auto_upgrade_minor_version = true
+
+  settings = <<-SETTINGS
+    {
+      "modulesUrl": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_09-08-2022.zip",
+      "configurationFunction": "Configuration.ps1\\AddSessionHost",
+      "properties": {
+        "HostPoolName":"${var.virtual_desktop_host_pool_name}"
+      }
+    }
+  SETTINGS
+
+  protected_settings = <<PROTECTED_SETTINGS
+  {
+    "properties": {
+      "registrationInfoToken": "${module.avm-res-desktopvirtualization-hostpool.resource.registration_info_token}"
+    }
+  }
+  PROTECTED_SETTINGS
+
+  
+  depends_on = [
+    avm-res-compute-virtualmachine
+  ]
+}
