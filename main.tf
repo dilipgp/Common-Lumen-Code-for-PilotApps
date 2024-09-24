@@ -177,7 +177,16 @@ module "avm-res-compute-virtualmachine" {
   version = "0.16.0"
 
   # Required variables
-  network_interfaces = [azurerm_network_interface.example.id]
+  network_interfaces = {
+    example_nic = {
+      name = "example-nic"
+      ip_configurations = {
+        ipconfig1 = {
+          name = "internal"
+        }
+      }
+    }
+  }
   zone = 1
   name = "example-vm"
   location            = var.location
