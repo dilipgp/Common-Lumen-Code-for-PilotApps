@@ -187,9 +187,6 @@ module "avm-res-compute-virtualmachine" {
   tags = {
     environment = "production"
   }
-  depends_on = [
-    azurerm_network_interface.example
-  ]
 }
 
 resource "azurerm_virtual_machine_extension" "vmext_dsc" {
