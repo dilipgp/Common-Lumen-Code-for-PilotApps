@@ -242,6 +242,7 @@ resource "azurerm_virtual_machine_extension" "vmext_dsc" {
 
   
   depends_on = [
-    module.avm-res-compute-virtualmachine
+    module.avm-res-compute-virtualmachine,
+    module.avm-res-desktopvirtualization-hostpool
   ]
 }
