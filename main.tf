@@ -147,40 +147,24 @@ module "avm-res-operationalinsights-workspace" {
 
 
 module "storage_account" {
-  source = "Azure/storage/azurerm_storage_account"
+  source  = "Azure/avm-res-storage-storageaccount/azurerm"
+  version = "0.2.7"
 
   name                = "my-storage-account"
   location           = "eastus"
-  resource_group_name = azurerm_resource_group.example.name
-  account_type       = "Standard_LRS"
-  kind               = "StorageV2"
-  diagnostic_settings = {
-    setting1 = {
-      name                                = "example-setting-1"
-      log_groups                          = ["allLogs"]
-      metric_categories                   = ["AllMetrics"]
-      log_analytics_destination_type      = "Dedicated"
-      workspace_resource_id               = module.avm-res-operationalinsights-workspace.resource.id
-      storage_account_resource_id         = null
-      event_hub_authorization_rule_resource_id = null
-      event_hub_name                      = null
-      marketplace_partner_resource_id     = null
-    },
+  resource_group_name = azurerm_resource_group.this.name
+  shares = {
+    share1 = {
+      name = "share1"
+      quota = 1024
+    }
   }
-}
 
-module "container" {
-  source = "Azure/storage/azurerm_storage_container"
-
-  name                = "my-container"
-  storage_account_name = module.storage_account.name
-  container_access_type = "private"
-}
-
-module "file_share" {
-  source = "Azure/storage/azurerm_storage_share"
-
-  name                = "my-share"
-  storage_account_name = module.storage_account.name
-  quota               = 1024 // 1 GB
+  containers = {
+    container1 = {
+      name = "container1"
+      public_access = "Container"
+    }
+  }
+  
 }
