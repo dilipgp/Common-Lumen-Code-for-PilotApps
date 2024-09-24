@@ -182,7 +182,8 @@ module "avm-res-compute-virtualmachine" {
       name = "example-nic"
       ip_configurations = {
         ipconfig1 = {
-          name = "internal"
+          name     = "internal"
+          subnet_id = azurerm_subnet.example.id
         }
       }
     }
