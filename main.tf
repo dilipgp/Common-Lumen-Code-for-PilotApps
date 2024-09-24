@@ -64,7 +64,7 @@ module "avm-res-desktopvirtualization-hostpool" {
   }
   diagnostic_settings = {
     setting1 = {
-      name                                = "example-setting-1"
+      name                                = "example-setting-2"
       log_groups                          = ["allLogs"]
       metric_categories                   = ["AllMetrics"]
       log_analytics_destination_type      = "Dedicated"
@@ -87,7 +87,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_type                = var.virtual_desktop_application_group_type
   diagnostic_settings = {
     setting1 = {
-      name                                = "example-setting-1"
+      name                                = "example-setting-2"
       log_groups                          = ["allLogs"]
       metric_categories                   = ["AllMetrics"]
       log_analytics_destination_type      = "Dedicated"
@@ -111,7 +111,7 @@ module "avm-res-desktopvirtualization-workspace" {
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
   diagnostic_settings = {
     setting1 = {
-      name                                = "example-setting-1"
+      name                                = "example-setting-2"
       log_groups                          = ["allLogs"]
       metric_categories                   = ["AllMetrics"]
       log_analytics_destination_type      = "Dedicated"
@@ -158,7 +158,7 @@ module "avm-res-compute-virtualmachine" {
       ip_configurations = {
         ipconfig1 = {
           name     = "internal"
-          subnet_id = azurerm_subnet.example.id
+          private_ip_subnet_resource_id = azurerm_subnet.example.id
         }
       }
     }
