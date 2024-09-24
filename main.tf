@@ -130,19 +130,6 @@ module "avm-res-operationalinsights-workspace" {
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   name                = var.operationalinsights_workspace_name
-  diagnostic_settings = {
-    setting1 = {
-      name                                = "example-setting-1"
-      log_groups                          = ["allLogs"]
-      metric_categories                   = ["AllMetrics"]
-      log_analytics_destination_type      = "Dedicated"
-      workspace_resource_id               = module.avm-res-operationalinsights-workspace.resource.id
-      storage_account_resource_id         = null
-      event_hub_authorization_rule_resource_id = null
-      event_hub_name                      = null
-      marketplace_partner_resource_id     = null
-    },
-  }
 }
 
 
@@ -158,18 +145,6 @@ resource "azurerm_subnet" "example" {
   resource_group_name  = azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.example.name
   address_prefixes     = ["10.0.2.0/24"]
-}
-
-resource "azurerm_network_interface" "example" {
-  name                = "example-nic"
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = azurerm_subnet.example.id
-    private_ip_address_allocation = "Dynamic"
-  }
 }
 
 module "avm-res-compute-virtualmachine" {
@@ -212,6 +187,9 @@ module "avm-res-compute-virtualmachine" {
   tags = {
     environment = "production"
   }
+  depends_on = [
+    azurerm_network_interface.example
+  ]
 }
 
 resource "azurerm_virtual_machine_extension" "vmext_dsc" {
