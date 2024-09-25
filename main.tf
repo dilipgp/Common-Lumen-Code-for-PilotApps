@@ -27,6 +27,7 @@ module "avm-res-storage-storageaccount" {
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   name                = "salumentestmsft"
+  shared_access_key_enabled = true
 }
 
 resource "azurerm_storage_share" "fileshare" {
