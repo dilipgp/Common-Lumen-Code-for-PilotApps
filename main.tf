@@ -1,23 +1,4 @@
 
-## Section to provide a random Azure region for the resource group
-# This allows us to randomize the region for the resource group.
-# module "regions" {
-#   source  = "Azure/regions/azurerm"
-#   version = ">= 0.3.0"
-# }
-
-# This allows us to randomize the region for the resource group.
-# resource "random_integer" "region_index" {
-#   max = length(module.regions.regions) - 1
-#   min = 0
-# }
-## End of section to provide a random Azure region for the resource group
-
-# # This ensures we have unique CAF compliant names for our resources.
-# module "naming" {
-#   source  = "Azure/naming/azurerm"
-#   version = ">= 0.3.0"
-# }
 
 # This is required for resource modules
 resource "azurerm_resource_group" "this" {
@@ -157,15 +138,15 @@ module "avm-res-desktopvirtualization-applicationgroup4" {
   virtual_desktop_application_group_type                = "Desktop"
 }
 
-module "avm-res-desktopvirtualization-applicationgroup5" {
-  source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
-  version                                               = "0.1.5"
-  virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool3.resource.id
-  virtual_desktop_application_group_location            = var.location
-  virtual_desktop_application_group_name                = "applicationgroup-3"
-  virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_application_group_type                = "RemoteApp"
-}
+# module "avm-res-desktopvirtualization-applicationgroup5" {
+#   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
+#   version                                               = "0.1.5"
+#   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool3.resource.id
+#   virtual_desktop_application_group_location            = var.location
+#   virtual_desktop_application_group_name                = "applicationgroup-3"
+#   virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
+#   virtual_desktop_application_group_type                = "RemoteApp"
+# }
 
 module "avm-res-desktopvirtualization-applicationgroup6" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
@@ -177,15 +158,15 @@ module "avm-res-desktopvirtualization-applicationgroup6" {
   virtual_desktop_application_group_type                = "Desktop"
 }
 
-module "avm-res-desktopvirtualization-applicationgroup7" {
-  source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
-  version                                               = "0.1.5"
-  virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool4.resource.id
-  virtual_desktop_application_group_location            = var.location
-  virtual_desktop_application_group_name                = "applicationgroup-4"
-  virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_application_group_type                = "RemoteApp"
-}
+# module "avm-res-desktopvirtualization-applicationgroup7" {
+#   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
+#   version                                               = "0.1.5"
+#   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool4.resource.id
+#   virtual_desktop_application_group_location            = var.location
+#   virtual_desktop_application_group_name                = "applicationgroup-4"
+#   virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
+#   virtual_desktop_application_group_type                = "RemoteApp"
+# }
 
 module "avm-res-desktopvirtualization-applicationgroup8" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
