@@ -37,6 +37,9 @@ module "avm-res-storage-storageaccount" {
   # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
   shared_access_key_enabled               = true
   # enable_telemetry                        = var.enable_telemetry
+  identity {
+    type = "SystemAssigned"
+  }
   shares                                  = {
   share0 = {
     name        = "fileshare-1"
@@ -102,6 +105,11 @@ module "avm-res-storage-storageaccount" {
  
 }
 
+resource "azurerm_role_assignment" "storage_blob_data_contributor" {
+  principal_id         = module.avm-res-storage-storageaccount.identity.principal_id
+  role_definition_name = "Storage Blob Data Contributor"
+  scope                = module.avm-res-storage-storageaccount.id
+}
 
 module "avm-res-desktopvirtualization-hostpool" {
   source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
