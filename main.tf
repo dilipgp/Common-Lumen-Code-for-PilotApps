@@ -107,12 +107,6 @@ module "avm-res-storage-storageaccount" {
  
 }
 
-resource "azurerm_role_assignment" "storage_blob_data_contributor" {
-  principal_id         = module.avm-res-storage-storageaccount.resource.principal_id
-  role_definition_name = "Storage Blob Data Contributor"
-  scope                = module.avm-res-storage-storageaccount.resource_id
-}
-
 module "avm-res-desktopvirtualization-hostpool" {
   source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
   version = "0.2.1"
