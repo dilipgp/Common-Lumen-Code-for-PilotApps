@@ -37,8 +37,10 @@ module "avm-res-storage-storageaccount" {
   # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
   shared_access_key_enabled               = true
   # enable_telemetry                        = var.enable_telemetry
-  identity {
-    type = "SystemAssigned"
+  managed_identities = {
+    identity = {
+      system_assigned = true
+    }
   }
   shares                                  = {
   share0 = {
