@@ -21,6 +21,20 @@ module "naming" {
 #   tenant_id           = var.tenant_id
 # }
 
+module "avm-res-storage-storageaccount" {
+  source  = "Azure/avm-res-storage-storageaccount/azurerm"
+  version = "0.2.7"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.this.name
+  name                = "salumentestmsft"
+}
+
+resource "azurerm_storage_share" "fileshare" {
+  name                 = "fs-fslx-01"
+  storage_account_name = azurerm_storage_account.storage[count.index].name
+  quota                = 300
+}
+
 
 module "avm-res-desktopvirtualization-hostpool" {
   source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
@@ -138,16 +152,6 @@ module "avm-res-desktopvirtualization-applicationgroup4" {
   virtual_desktop_application_group_type                = "Desktop"
 }
 
-# module "avm-res-desktopvirtualization-applicationgroup5" {
-#   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
-#   version                                               = "0.1.5"
-#   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool3.resource.id
-#   virtual_desktop_application_group_location            = var.location
-#   virtual_desktop_application_group_name                = "applicationgroup-3"
-#   virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
-#   virtual_desktop_application_group_type                = "RemoteApp"
-# }
-
 module "avm-res-desktopvirtualization-applicationgroup6" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
   version                                               = "0.1.5"
@@ -157,16 +161,6 @@ module "avm-res-desktopvirtualization-applicationgroup6" {
   virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = "Desktop"
 }
-
-# module "avm-res-desktopvirtualization-applicationgroup7" {
-#   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
-#   version                                               = "0.1.5"
-#   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool4.resource.id
-#   virtual_desktop_application_group_location            = var.location
-#   virtual_desktop_application_group_name                = "applicationgroup-4"
-#   virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
-#   virtual_desktop_application_group_type                = "RemoteApp"
-# }
 
 module "avm-res-desktopvirtualization-applicationgroup8" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
