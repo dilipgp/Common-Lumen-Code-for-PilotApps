@@ -117,7 +117,7 @@ module "avm-res-desktopvirtualization-4" {
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
 }
 
-module "avm-res-desktopvirtualization-applicationgroup" {
+module "avm-res-desktopvirtualization-applicationgroup1" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
   version                                               = "0.1.5"
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool.resource.id
@@ -127,7 +127,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_type                = "RemoteApp"
 }
 
-module "avm-res-desktopvirtualization-applicationgroup" {
+module "avm-res-desktopvirtualization-applicationgroup2" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
   version                                               = "0.1.5"
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool.resource.id
@@ -137,7 +137,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_type                = "Desktop"
 }
 
-module "avm-res-desktopvirtualization-applicationgroup" {
+module "avm-res-desktopvirtualization-applicationgroup3" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
   version                                               = "0.1.5"
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool2.resource.id
@@ -147,7 +147,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_type                = "RemoteApp"
 }
 
-module "avm-res-desktopvirtualization-applicationgroup" {
+module "avm-res-desktopvirtualization-applicationgroup4" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
   version                                               = "0.1.5"
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool2.resource.id
@@ -157,7 +157,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_type                = "Desktop"
 }
 
-module "avm-res-desktopvirtualization-applicationgroup" {
+module "avm-res-desktopvirtualization-applicationgroup5" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
   version                                               = "0.1.5"
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool3.resource.id
@@ -167,7 +167,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_type                = "RemoteApp"
 }
 
-module "avm-res-desktopvirtualization-applicationgroup" {
+module "avm-res-desktopvirtualization-applicationgroup6" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
   version                                               = "0.1.5"
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool3.resource.id
@@ -177,7 +177,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_type                = "Desktop"
 }
 
-module "avm-res-desktopvirtualization-applicationgroup" {
+module "avm-res-desktopvirtualization-applicationgroup7" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
   version                                               = "0.1.5"
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool4.resource.id
@@ -187,7 +187,7 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_type                = "RemoteApp"
 }
 
-module "avm-res-desktopvirtualization-applicationgroup" {
+module "avm-res-desktopvirtualization-applicationgroup8" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
   version                                               = "0.1.5"
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool4.resource.id
@@ -208,7 +208,7 @@ module "avm-res-desktopvirtualization-workspace" {
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
 }
 
-module "avm-res-desktopvirtualization-workspace" {
+module "avm-res-desktopvirtualization-workspace2" {
   source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
   version                                       = "0.1.5"
   resource_group_name                           = var.resource_group_name
@@ -217,7 +217,7 @@ module "avm-res-desktopvirtualization-workspace" {
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
 }
 
-module "avm-res-desktopvirtualization-workspace" {
+module "avm-res-desktopvirtualization-workspace3" {
   source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
   version                                       = "0.1.5"
   resource_group_name                           = var.resource_group_name
@@ -226,7 +226,7 @@ module "avm-res-desktopvirtualization-workspace" {
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
 }
 
-module "avm-res-desktopvirtualization-workspace" {
+module "avm-res-desktopvirtualization-workspace4" {
   source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
   version                                       = "0.1.5"
   resource_group_name                           = var.resource_group_name
