@@ -31,7 +31,7 @@ module "avm-res-storage-storageaccount" {
 
 resource "azurerm_storage_share" "fileshare" {
   name                 = "fs-fslx-01"
-  storage_account_name = azurerm_storage_account.storage[count.index].name
+  storage_account_name = module.avm-res-storage-storageaccount.name
   quota                = 300
 }
 
