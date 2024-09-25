@@ -42,27 +42,27 @@ module "avm-res-storage-storageaccount" {
       system_assigned = true
     }
   }
-  shares                                  = {
-  share0 = {
-    name        = "fileshare-1"
-    quota       = 10
-    access_tier = "Hot"
-    metadata = {
-      key1 = "value1"
-      key2 = "value2"
-    }
-    signed_identifiers = [
-      {
-        id = "1"
-        access_policy = {
-          expiry_time = "2025-01-01T00:00:00Z"
-          permission  = "r"
-          start_time  = "2024-01-01T00:00:00Z"
-        }
-      }
-    ]
-  }
-}
+#   shares                                  = {
+#   share0 = {
+#     name        = "fileshare-1"
+#     quota       = 10
+#     access_tier = "Hot"
+#     metadata = {
+#       key1 = "value1"
+#       key2 = "value2"
+#     }
+#     signed_identifiers = [
+#       {
+#         id = "1"
+#         access_policy = {
+#           expiry_time = "2025-01-01T00:00:00Z"
+#           permission  = "r"
+#           start_time  = "2024-01-01T00:00:00Z"
+#         }
+#       }
+#     ]
+#   }
+# }
   # tables                                  = var.tables
   # queues                                  = var.queues
   # containers                              = var.containers
@@ -105,6 +105,22 @@ module "avm-res-storage-storageaccount" {
   # static_website                          = var.static_website
   # timeouts                                = var.timeouts
  
+}
+
+resource "azurerm_storage_share" "example" {
+  name                 = "sharename"
+  storage_account_name = module.avm-res-storage-storageaccount.name
+  quota                = 50
+
+  acl {
+    id = "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI"
+
+    access_policy {
+      permissions = "rwdl"
+      start       = "2019-07-02T09:38:21.0000000Z"
+      expiry      = "2019-07-02T10:38:21.0000000Z"
+    }
+  }
 }
 
 module "avm-res-desktopvirtualization-hostpool" {
