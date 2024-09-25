@@ -31,62 +31,25 @@ module "naming" {
 }
 
 # module "avm-res-keyvault-vault_example_default" {
-#   source  = "Azure/avm-res-keyvault-vault/azurerm"
-#   version = "0.9.1"
+#   source              = "Azure/avm-res-keyvault-vault/azurerm"
+#   version             = "0.9.1"
 #   location            = var.location
 #   resource_group_name = azurerm_resource_group.this.name
 #   name                = var.keyvault_name
 #   enable_telemetry    = var.enable_telemetry
 #   tenant_id           = var.tenant_id
-#   contacts            = var.contacts
 # }
 
-module "avm-res-keyvault-vault_example_default" {
-  source              = "Azure/avm-res-keyvault-vault/azurerm"
-  version             = "0.9.1"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.this.name
-  name                = var.keyvault_name
-  enable_telemetry    = var.enable_telemetry
-  tenant_id           = var.tenant_id
-}
-
-# module "avm-res-keyvault-vault_secret" {
-#   source  = "Azure/avm-res-keyvault-vault/azurerm//modules/secret"
-#   version = "0.9.1"
-#   key_vault_resource_id = module.avm-res-keyvault-vault_example_default.resource_id
-#   name   = "mySecret"
-#   value  = "mySecretValue"
-# }
-
-module "avm-res-storage-storageaccount" {
-  source              = "Azure/avm-res-storage-storageaccount/azurerm"
-  name                = var.storage_accont_name
-  resource_group_name = azurerm_resource_group.this.name
-  location            = var.location
-  version             = "0.2.6"
-}
-
-# module "avm-res-desktopvirtualization-hostpool" {
-#   source                                        = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-#   version                                       = "0.2.1"
-#   resource_group_name                           = var.resource_group_name
-#   virtual_desktop_host_pool_load_balancer_type  = var.virtual_desktop_host_pool_load_balancer_type
-#   virtual_desktop_host_pool_location            = var.location
-#   virtual_desktop_host_pool_name                = var.virtual_desktop_host_pool_name
-#   virtual_desktop_host_pool_resource_group_name = var.resource_group_name
-#   virtual_desktop_host_pool_type                = var.virtual_desktop_host_pool_type
-# }
 
 module "avm-res-desktopvirtualization-hostpool" {
-  source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version = "0.2.1"
-  resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location = var.location
-  virtual_desktop_host_pool_name = var.virtual_desktop_host_pool_name
-  virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type = var.virtual_desktop_host_pool_type
+  source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
+  version                                            = "0.2.1"
+  resource_group_name                                = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
+  virtual_desktop_host_pool_location                 = var.location
+  virtual_desktop_host_pool_name                     = var.virtual_desktop_host_pool_name
+  virtual_desktop_host_pool_resource_group_name      = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_type                     = var.virtual_desktop_host_pool_type
   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
   virtual_desktop_host_pool_vm_template = {
@@ -99,6 +62,19 @@ module "avm-res-desktopvirtualization-hostpool" {
     }
     osDisktype = "PremiumLRS"
   }
+  diagnostic_settings = {
+    setting1 = {
+      name                                     = "example-setting-1"
+      log_groups                               = ["allLogs"]
+      metric_categories                        = ["AllMetrics"]
+      log_analytics_destination_type           = "Dedicated"
+      workspace_resource_id                    = module.avm-res-operationalinsights-workspace.resource.id
+      storage_account_resource_id              = null
+      event_hub_authorization_rule_resource_id = null
+      event_hub_name                           = null
+      marketplace_partner_resource_id          = null
+    },
+  }
 }
 
 module "avm-res-desktopvirtualization-applicationgroup" {
@@ -109,7 +85,23 @@ module "avm-res-desktopvirtualization-applicationgroup" {
   virtual_desktop_application_group_name                = var.virtual_desktop_application_group_name
   virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = var.virtual_desktop_application_group_type
+  diagnostic_settings = {
+    setting1 = {
+      name                                     = "example-setting-1"
+      log_groups                               = ["allLogs"]
+      metric_categories                        = ["AllMetrics"]
+      log_analytics_destination_type           = "Dedicated"
+      workspace_resource_id                    = module.avm-res-operationalinsights-workspace.resource.id
+      storage_account_resource_id              = null
+      event_hub_authorization_rule_resource_id = null
+      event_hub_name                           = null
+      marketplace_partner_resource_id          = null
+    },
+  }
 }
+
+
+
 module "avm-res-desktopvirtualization-workspace" {
   source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
   version                                       = "0.1.5"
@@ -117,25 +109,25 @@ module "avm-res-desktopvirtualization-workspace" {
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = var.virtual_desktop_workspace_name
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+  diagnostic_settings = {
+    setting1 = {
+      name                                     = "example-setting-1"
+      log_groups                               = ["allLogs"]
+      metric_categories                        = ["AllMetrics"]
+      log_analytics_destination_type           = "Dedicated"
+      workspace_resource_id                    = module.avm-res-operationalinsights-workspace.resource.id
+      storage_account_resource_id              = null
+      event_hub_authorization_rule_resource_id = null
+      event_hub_name                           = null
+      marketplace_partner_resource_id          = null
+    },
+  }
 }
 
-
-# module "avd" {
-#   source = "./modules/avd"
-#   # source             = "Azure/avm-ptn-avd-lza-managementplane/azurerm"
-#   enable_telemetry                                   = var.enable_telemetry
-#   location                                           = azurerm_resource_group.this.location
-#   resource_group_name                                = azurerm_resource_group.this.name
-#   virtual_desktop_workspace_name                     = var.virtual_desktop_workspace_name
-#   virtual_desktop_scaling_plan_time_zone             = var.virtual_desktop_scaling_plan_time_zone
-#   virtual_desktop_scaling_plan_name                  = var.virtual_desktop_scaling_plan_name
-#   virtual_desktop_host_pool_type                     = var.virtual_desktop_host_pool_type
-#   virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
-#   virtual_desktop_host_pool_name                     = var.virtual_desktop_host_pool_name
-#   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
-#   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-#   virtual_desktop_application_group_type             = var.virtual_desktop_application_group_type
-#   virtual_desktop_application_group_name             = var.virtual_desktop_application_group_name
-#   virtual_desktop_host_pool_friendly_name            = var.virtual_desktop_host_pool_friendly_name
-#   log_analytics_workspace_name                       = module.naming.log_analytics_workspace.name_unique
-# }
+module "avm-res-operationalinsights-workspace" {
+  source              = "Azure/avm-res-operationalinsights-workspace/azurerm"
+  version             = "0.4.1"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.this.name
+  name                = var.operationalinsights_workspace_name
+}
