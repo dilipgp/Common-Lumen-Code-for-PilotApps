@@ -104,7 +104,7 @@ module "avm-res-desktopvirtualization-hostpool3" {
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
 }
 
-module "avm-res-desktopvirtualization-4" {
+module "avm-res-desktopvirtualization-hostpool4" {
   source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
   version = "0.2.1"
   resource_group_name = azurerm_resource_group.this.name
