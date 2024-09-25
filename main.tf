@@ -32,7 +32,7 @@ module "avm-res-storage-storageaccount" {
   # account_kind                            = var.account_kind
   # access_tier                             = var.access_tier
   # tags                                    = local.tags
-  # public_network_access_enabled           = var.public_network_access_enabled
+  public_network_access_enabled           = true
   # allow_nested_items_to_be_public         = var.sa_allow_nested_items_to_be_public
   # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
   shared_access_key_enabled               = true
