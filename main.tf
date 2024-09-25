@@ -35,7 +35,7 @@ module "avm-res-storage-storageaccount" {
   # public_network_access_enabled           = var.public_network_access_enabled
   # allow_nested_items_to_be_public         = var.sa_allow_nested_items_to_be_public
   # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
-  # shared_access_key_enabled               = var.shared_access_key_enabled
+  shared_access_key_enabled               = true
   # enable_telemetry                        = var.enable_telemetry
   shares                                  = {
   share0 = {
