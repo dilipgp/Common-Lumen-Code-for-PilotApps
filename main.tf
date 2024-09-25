@@ -92,9 +92,9 @@ module "avm-res-desktopvirtualization-hostpool" {
   virtual_desktop_host_pool_vm_template = {
     type = "Gallery"
     gallery_image_reference = {
-      offer     = "office-365"
+      offer     = "windows-11"
       publisher = "microsoftwindowsdesktop"
-      sku       = "22h2-evd-o365pp"
+      sku       = "win11-23h2-avd"
       version   = "latest"
     }
     osDisktype = "PremiumLRS"
