@@ -136,7 +136,7 @@ resource "azurerm_storage_share" "example" {
   }
 }
 # resource "azurerm_role_assignment" "storage_file_data_contributor" {
-#   scope                = azurerm_storage_account.example.id
+#    scope                = azurerm_storage_account.example.id
 #   role_definition_name = "Storage File Data SMB Share Contributor"
 #   principal_id         = azurerm_storage_account.example.identity.principal_id
 # }
