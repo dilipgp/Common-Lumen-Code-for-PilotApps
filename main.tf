@@ -45,7 +45,7 @@ module "avm-res-storage-storageaccount" {
       storagepe = {
         name = "storageprivate"
         subnet_resource_id = azurerm_subnet.example.id
-        subresource_name = "internal"
+        subresource_name = "file"
       }
   }
 #   shares                                  = {
