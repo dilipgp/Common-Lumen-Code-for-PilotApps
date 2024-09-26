@@ -19,6 +19,7 @@ module "naming" {
 #   tenant_id           = var.tenant_id
 # }
 
+
 module "avm-res-storage-storageaccount" {
   source                                  = "Azure/avm-res-storage-storageaccount/azurerm"
   version                                 = "0.2.7"
@@ -39,6 +40,13 @@ module "avm-res-storage-storageaccount" {
     identity = {
       system_assigned = true
     }
+  }
+  private_endpoints = {
+      storagepe = {
+        name = "storageprivate"
+        subnet_resource_id = azurerm_subnet.example.id
+        subresource_name = "internal"
+      }
   }
 #   shares                                  = {
 #   share0 = {
