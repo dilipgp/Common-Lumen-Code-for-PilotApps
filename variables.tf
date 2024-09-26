@@ -166,7 +166,7 @@ variable "virtual_desktop_workspace_name" {
   description = "The name of the AVD Workspace"
 }
 
-variable "storage_accont_name" {
+variable "storage_account_name" {
   description = "The name of the storage account"
   type        = string
 }
