@@ -135,6 +135,41 @@ resource "azurerm_storage_share" "example" {
     }
   }
 }
+provider "azurerm" {
+  features {}
+}
+
+# Define the resource group
+resource "azurerm_resource_group" "example" {
+  name     = "example-resources"
+  location = "East US"
+}
+
+# Create a Storage Account
+resource "azurerm_storage_account" "example" {
+  name                     = "examplestoracc"
+  resource_group_name       = azurerm_resource_group.example.name
+  location                  = azurerm_resource_group.example.location
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  identity {
+    type = "SystemAssigned"
+  }
+}
+
+# Create a Storage File Share (optional, if needed)
+resource "azurerm_storage_share" "example" {
+  name                 = "sharename"
+  storage_account_name = azurerm_storage_account.example.name
+  quota                = 50
+}
+
+# Assign role "Storage File Data SMB Share Contributor" to the Storage Account
+module "avm-res-authorization-roleassignment" {
+  source  = "Azure/avm-res-authorization-roleassignment/azurerm"
+  version = "0.1.0"
+}
+
 module "avm-res-desktopvirtualization-hostpool" {
   source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
   version = "0.2.1"
