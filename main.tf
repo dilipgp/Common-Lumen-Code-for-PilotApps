@@ -153,6 +153,16 @@ module "avm-res-desktopvirtualization-hostpool" {
   #   },
   # }
 }
+module "avm-res-desktopvirtualization-hostpool_example_private-endpoint" {
+  source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm//examples/private-endpoint"
+  version = "0.2.1"
+  virtual_desktop_host_pool_name = var.virtual_desktop_host_pool_name 
+  virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
+  virtual_desktop_host_pool_resource_group_name = var.virtual_desktop_host_pool_resource_group_name
+  virtual_desktop_host_pool_location = var.virtual_desktop_host_pool_location
+  virtual_desktop_host_pool_type = var.virtual_desktop_host_pool_type
+  resource_group_name = var.resource_group_name
+}
 
 
 module "avm-res-desktopvirtualization-hostpool2" {

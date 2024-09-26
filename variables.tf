@@ -176,5 +176,14 @@ variable "operationalinsights_workspace_name" {
     type        = string
 }
 
+variable "virtual_desktop_host_pool_resource_group_name" {
+  description = "name of the resource group"
+  type = string
+}
+
+variable "virtual_desktop_host_pool_location" {
+  description = "location of the host pool"
+  type = string
+}
 
 
