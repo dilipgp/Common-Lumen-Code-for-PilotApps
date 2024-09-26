@@ -19,6 +19,15 @@ module "naming" {
 #   tenant_id           = var.tenant_id
 # }
 
+module "avm-res-network-privatednszone" {
+  source  = "Azure/avm-res-network-privatednszone/azurerm"
+  version = "0.1.2"
+  domain_name = "privatelink.blob.core.windows.net"
+  resource_group_name = azurerm_resource_group.this.name 
+  # insert the 2 required variables here
+}
+
+
 module "avm-res-storage-storageaccount" {
   source                                  = "Azure/avm-res-storage-storageaccount/azurerm"
   version                                 = "0.2.7"
@@ -40,6 +49,14 @@ module "avm-res-storage-storageaccount" {
       system_assigned = true
     }
   }
+private_endpoints = {
+      storagepe = {
+        name = "storageprivate"
+        subnet_resource_id = azurerm_subnet.example.id
+        subresource_name = "file"
+      }
+  }
+
 #   shares                                  = {
 #   share0 = {
 #     name        = "fileshare-1"
