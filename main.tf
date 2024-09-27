@@ -180,8 +180,8 @@ module "avm-res-desktopvirtualization-hostpool" {
  # }
  private_endpoints = {
    primary = {
-    private_dns_zone_resource_ids = [azurerm_private_dns_zone.this.id]
-    subnet_resource_id = azurerm_subnet.this.id
+    domain_name = var.domain_name
+    subnet_resource_id = azurerm_subnet.example.id
    }
  }
 }
