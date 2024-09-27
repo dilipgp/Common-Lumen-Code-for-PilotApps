@@ -190,4 +190,8 @@ variable "domain_name" {
   description = "name of the domain"
   type = string
 }
+variable "private_dns_zone_resource_ids" {
+  description = "private dns zone resource id"
+  
+}
 

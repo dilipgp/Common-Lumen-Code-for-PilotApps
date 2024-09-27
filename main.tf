@@ -54,8 +54,8 @@ private_endpoints = {
         name = "storageprivate"
         subnet_resource_id = azurerm_subnet.example.id
         subresource_name = "file"
-        private_dns_zone_group_name = "test"
-        private_dns_zone_resource_ids = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/avd/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net"
+        domain_name = var.domain_name
+        resource_group_name = var.resource_group_name
 
       }
   }
