@@ -20,6 +20,7 @@ node_pools = {
 keyvault_name                                 = "lumen-aks-kv-03"
 tenant_id                                     = "680f956b-1eaf-4bb1-a703-24b289ea568f"
 storage_account_name                          = "lumenstorage1234"
+domain_name                                   = "privatelink.blob.core.windows.net"
 # scope                                         = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/lumen-aks-rg-03/providers/Microsoft.Storage/storageAccounts/satestlumenmsft"
 # principal_id                                  = ""
 virtual_desktop_host_pool_load_balancer_type  = "DepthFirst"

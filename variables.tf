@@ -186,4 +186,8 @@ variable "virtual_desktop_host_pool_location" {
   type = string
 }
 
+variable "domain_name" {
+  description = "name of the domain"
+  type = string
+}
 
