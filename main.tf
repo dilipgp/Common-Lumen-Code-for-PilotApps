@@ -146,6 +146,7 @@ module "avm-res-storage-storageaccount" {
 module "avm-res-desktopvirtualization-hostpool" {
   source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
   version = "0.2.1"
+  for_each = var.host_pools
   resource_group_name = azurerm_resource_group.this.name
   virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
   virtual_desktop_host_pool_location = var.location
@@ -188,62 +189,62 @@ module "avm-res-desktopvirtualization-hostpool" {
 
 
 
-module "avm-res-desktopvirtualization-hostpool2" {
-  source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version = "0.2.1"
-  resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location = var.location
-  virtual_desktop_host_pool_name = "avdhostpool-2"
-  virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type = "Pooled"
-  virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
-  virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-  private_endpoints = {
-   primary = {
-    domain_name = var.domain_name
-    subnet_resource_id = azurerm_subnet.example.id
-   }
- }
-}
+# module "avm-res-desktopvirtualization-hostpool2" {
+#   source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
+#   version = "0.2.1"
+#   resource_group_name = azurerm_resource_group.this.name
+#   virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
+#   virtual_desktop_host_pool_location = var.location
+#   virtual_desktop_host_pool_name = "avdhostpool-2"
+#   virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
+#   virtual_desktop_host_pool_type = "Pooled"
+#   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
+#   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
+#   private_endpoints = {
+#    primary = {
+#     domain_name = var.domain_name
+#     subnet_resource_id = azurerm_subnet.example.id
+#    }
+#  }
+# }
 
-module "avm-res-desktopvirtualization-hostpool3" {
-  source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version = "0.2.1"
-  resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location = var.location
-  virtual_desktop_host_pool_name = "avdhostpool-3"
-  virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type = "Personal"
-  virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
-  virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-  private_endpoints = {
-   primary = {
-    domain_name = var.domain_name
-    subnet_resource_id = azurerm_subnet.example.id
-   }
- }
-}
+# module "avm-res-desktopvirtualization-hostpool3" {
+#   source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
+#   version = "0.2.1"
+#   resource_group_name = azurerm_resource_group.this.name
+#   virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
+#   virtual_desktop_host_pool_location = var.location
+#   virtual_desktop_host_pool_name = "avdhostpool-3"
+#   virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
+#   virtual_desktop_host_pool_type = "Personal"
+#   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
+#   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
+#   private_endpoints = {
+#    primary = {
+#     domain_name = var.domain_name
+#     subnet_resource_id = azurerm_subnet.example.id
+#    }
+#  }
+# }
 
-module "avm-res-desktopvirtualization-hostpool4" {
-  source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version = "0.2.1"
-  resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location = var.location
-  virtual_desktop_host_pool_name = "avdhostpool-4"
-  virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type = "Personal"
-  virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
-  virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-  private_endpoints = {
-   primary = {
-    domain_name = var.domain_name
-    subnet_resource_id = azurerm_subnet.example.id
-   }
- }
-}
+# module "avm-res-desktopvirtualization-hostpool4" {
+#   source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
+#   version = "0.2.1"
+#   resource_group_name = azurerm_resource_group.this.name
+#   virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
+#   virtual_desktop_host_pool_location = var.location
+#   virtual_desktop_host_pool_name = "avdhostpool-4"
+#   virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
+#   virtual_desktop_host_pool_type = "Personal"
+#   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
+#   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
+#   private_endpoints = {
+#    primary = {
+#     domain_name = var.domain_name
+#     subnet_resource_id = azurerm_subnet.example.id
+#    }
+#  }
+# }
 
 module "avm-res-desktopvirtualization-applicationgroup1" {
   source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
