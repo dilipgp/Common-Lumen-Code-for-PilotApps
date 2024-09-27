@@ -194,3 +194,9 @@ variable "domain_name" {
 # variable "private_dns_zone" {
 #   type = 
 # }
+
+variable "kv_domain" {
+  default = "privatelink.vaultcore.azure.net"
+  type = string
+
+}

@@ -9,21 +9,32 @@ module "naming" {
   version = ">= 0.3.0"
 }
 
-# module "avm-res-keyvault-vault_example_default" {
-#   source              = "Azure/avm-res-keyvault-vault/azurerm"
-#   version             = "0.9.1"
-#   location            = var.location
-#   resource_group_name = azurerm_resource_group.this.name
-#   name                = var.keyvault_name
-#   enable_telemetry    = var.enable_telemetry
-#   tenant_id           = var.tenant_id
-#   private_endpoints = {
-#     primary = {
-#       domain_name        = var.domain_name
-#       subnet_resource_id = azurerm_subnet.example.id
-#     }
-#   }
-# }
+module "avm-res-keyvault-vault_example_default" {
+  source              = "Azure/avm-res-keyvault-vault/azurerm"
+  version             = "0.9.1"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.this.name
+  name                = var.keyvault_name
+  enable_telemetry    = var.enable_telemetry
+  tenant_id           = var.tenant_id
+  # legacy_access_policies_enabled = true
+  # legacy_access_policies = {
+  #   test = {
+  #     object_id          = data.azurerm_client_config.this.object_id
+  #     tenant_id          = data.azurerm_client_config.this.tenant_id
+  #     # secret_permissions = ["Get", "List", "Delete" , "Create"]
+  #     # key_permissions           = ["Create","Get","List","Delete"]
+  #     # certificate_permissions   = ["Get", "Import", "List"]
+  #     # storage_permissions       = ["Backup", "Get", "List", "Recover"]
+  #   }
+  
+  private_endpoints = {
+    primary = {
+      kv_domain        = var.kv_domain
+      subnet_resource_id = azurerm_subnet.example.id
+    }
+  }
+}
 
 module "avm-res-network-privatednszone" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
