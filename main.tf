@@ -17,76 +17,76 @@ module "avm-res-keyvault-vault_example_default" {
   name                = var.keyvault_name
   enable_telemetry    = var.enable_telemetry
   tenant_id           = var.tenant_id
-   private_endpoints = {
-   primary = {
-    domain_name = var.domain_name
-    subnet_resource_id = azurerm_subnet.example.id
-   }
- }
+  private_endpoints = {
+    primary = {
+      domain_name        = var.domain_name
+      subnet_resource_id = azurerm_subnet.example.id
+    }
+  }
 }
 
 module "avm-res-network-privatednszone" {
-  source  = "Azure/avm-res-network-privatednszone/azurerm"
-  version = "0.1.2"
-  domain_name = var.domain_name
-  resource_group_name = azurerm_resource_group.this.name 
+  source              = "Azure/avm-res-network-privatednszone/azurerm"
+  version             = "0.1.2"
+  domain_name         = var.domain_name
+  resource_group_name = azurerm_resource_group.this.name
   # insert the 2 required variables here
 }
 
 
 module "avm-res-storage-storageaccount" {
-  source                                  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version                                 = "0.2.7"
-  name                                    = "satestlumenmsft"
-  resource_group_name                     = azurerm_resource_group.this.name
-  location                                = var.location
+  source              = "Azure/avm-res-storage-storageaccount/azurerm"
+  version             = "0.2.7"
+  name                = "satestlumenmsft"
+  resource_group_name = azurerm_resource_group.this.name
+  location            = var.location
   # account_tier                            = var.account_tier
   # account_replication_type                = var.account_replication_type
   # account_kind                            = var.account_kind
   # access_tier                             = var.access_tier
   # tags                                    = local.tags
-  public_network_access_enabled             = true
+  public_network_access_enabled = true
   # allow_nested_items_to_be_public         = var.sa_allow_nested_items_to_be_public
   # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
-  shared_access_key_enabled               = true
+  shared_access_key_enabled = true
   # enable_telemetry                        = var.enable_telemetry
   managed_identities = {
     identity = {
       system_assigned = true
     }
   }
-# private_endpoints = {
-#       storagepe = {
-#         name = "storageprivate"
-#         subnet_resource_id = azurerm_subnet.example.id
-#         subresource_name = "file"
-#         domain_name = var.domain_name
-#         resource_group_name = var.resource_group_name
+  # private_endpoints = {
+  #       storagepe = {
+  #         name = "storageprivate"
+  #         subnet_resource_id = azurerm_subnet.example.id
+  #         subresource_name = "file"
+  #         domain_name = var.domain_name
+  #         resource_group_name = var.resource_group_name
 
-#       }
-#   }
+  #       }
+  #   }
 
-#   shares                                  = {
-#   share0 = {
-#     name        = "fileshare-1"
-#     quota       = 10
-#     access_tier = "Hot"
-#     metadata = {
-#       key1 = "value1"
-#       key2 = "value2"
-#     }
-#     signed_identifiers = [
-#       {
-#         id = "1"
-#         access_policy = {
-#           expiry_time = "2025-01-01T00:00:00Z"
-#           permission  = "r"
-#           start_time  = "2024-01-01T00:00:00Z"
-#         }
-#       }
-#     ]
-#   }
-# }
+  #   shares                                  = {
+  #   share0 = {
+  #     name        = "fileshare-1"
+  #     quota       = 10
+  #     access_tier = "Hot"
+  #     metadata = {
+  #       key1 = "value1"
+  #       key2 = "value2"
+  #     }
+  #     signed_identifiers = [
+  #       {
+  #         id = "1"
+  #         access_policy = {
+  #           expiry_time = "2025-01-01T00:00:00Z"
+  #           permission  = "r"
+  #           start_time  = "2024-01-01T00:00:00Z"
+  #         }
+  #       }
+  #     ]
+  #   }
+  # }
   # tables                                  = var.tables
   # queues                                  = var.queues
   # containers                              = var.containers
@@ -150,14 +150,14 @@ module "avm-res-storage-storageaccount" {
 #   principal_id         = azurerm_storage_account.example.identity.principal_id
 # }
 module "avm-res-desktopvirtualization-hostpool" {
-  source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version = "0.2.1"
-  resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location = var.location
-  virtual_desktop_host_pool_name = var.virtual_desktop_host_pool_name
-  virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type = var.virtual_desktop_host_pool_type
+  source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
+  version                                            = "0.2.1"
+  resource_group_name                                = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
+  virtual_desktop_host_pool_location                 = var.location
+  virtual_desktop_host_pool_name                     = var.virtual_desktop_host_pool_name
+  virtual_desktop_host_pool_resource_group_name      = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_type                     = var.virtual_desktop_host_pool_type
   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
   virtual_desktop_host_pool_vm_template = {
@@ -182,73 +182,73 @@ module "avm-res-desktopvirtualization-hostpool" {
   #     event_hub_name                      = null
   #     marketplace_partner_resource_id     = null
   #   },
- 
- # }
- private_endpoints = {
-   primary = {
-    domain_name = var.domain_name
-    subnet_resource_id = azurerm_subnet.example.id
-   }
- }
+
+  # }
+  private_endpoints = {
+    primary = {
+      domain_name        = var.domain_name
+      subnet_resource_id = azurerm_subnet.example.id
+    }
+  }
 }
 
 
 
 module "avm-res-desktopvirtualization-hostpool2" {
-  source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version = "0.2.1"
-  resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location = var.location
-  virtual_desktop_host_pool_name = "avdhostpool-2"
-  virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type = "Pooled"
+  source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
+  version                                            = "0.2.1"
+  resource_group_name                                = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
+  virtual_desktop_host_pool_location                 = var.location
+  virtual_desktop_host_pool_name                     = "avdhostpool-2"
+  virtual_desktop_host_pool_resource_group_name      = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_type                     = "Pooled"
   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-   private_endpoints = {
-   primary = {
-    domain_name = var.domain_name
-    subnet_resource_id = azurerm_subnet.example.id
-   }
- }
+  private_endpoints = {
+    primary = {
+      domain_name        = var.domain_name
+      subnet_resource_id = azurerm_subnet.example.id
+    }
+  }
 }
 
 module "avm-res-desktopvirtualization-hostpool3" {
-  source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version = "0.2.1"
-  resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location = var.location
-  virtual_desktop_host_pool_name = "avdhostpool-3"
-  virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type = "Personal"
+  source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
+  version                                            = "0.2.1"
+  resource_group_name                                = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
+  virtual_desktop_host_pool_location                 = var.location
+  virtual_desktop_host_pool_name                     = "avdhostpool-3"
+  virtual_desktop_host_pool_resource_group_name      = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_type                     = "Personal"
   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-   private_endpoints = {
-   primary = {
-    domain_name = var.domain_name
-    subnet_resource_id = azurerm_subnet.example.id
-   }
- }
+  private_endpoints = {
+    primary = {
+      domain_name        = var.domain_name
+      subnet_resource_id = azurerm_subnet.example.id
+    }
+  }
 }
 
 module "avm-res-desktopvirtualization-hostpool4" {
-  source  = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version = "0.2.1"
-  resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location = var.location
-  virtual_desktop_host_pool_name = "avdhostpool-4"
-  virtual_desktop_host_pool_resource_group_name = azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type = "Personal"
+  source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
+  version                                            = "0.2.1"
+  resource_group_name                                = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
+  virtual_desktop_host_pool_location                 = var.location
+  virtual_desktop_host_pool_name                     = "avdhostpool-4"
+  virtual_desktop_host_pool_resource_group_name      = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_type                     = "Personal"
   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-   private_endpoints = {
-   primary = {
-    domain_name = var.domain_name
-    subnet_resource_id = azurerm_subnet.example.id
-   }
- }
+  private_endpoints = {
+    primary = {
+      domain_name        = var.domain_name
+      subnet_resource_id = azurerm_subnet.example.id
+    }
+  }
 }
 
 module "avm-res-desktopvirtualization-applicationgroup1" {
@@ -320,12 +320,13 @@ module "avm-res-desktopvirtualization-workspace" {
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = var.virtual_desktop_workspace_name
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
-   private_endpoints = {
-   primary = {
-    domain_name = var.domain_name
-    subnet_resource_id = azurerm_subnet.example.id
-   }
- }
+  subresource_names                             = ["feed"]
+  private_endpoints = {
+    primary = {
+      private_dns_zone_resource_ids = module.avm-res-network-privatednszone.workspace.id
+      subnet_resource_id            = azurerm_subnet.eaxmple.id
+    }
+  }
 }
 
 # module "avm-res-desktopvirtualization-workspace2" {
@@ -356,8 +357,8 @@ module "avm-res-desktopvirtualization-workspace" {
 # }
 
 module "avm-res-operationalinsights-workspace" {
-  source  = "Azure/avm-res-operationalinsights-workspace/azurerm"
-  version = "0.4.1"
+  source              = "Azure/avm-res-operationalinsights-workspace/azurerm"
+  version             = "0.4.1"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   name                = var.operationalinsights_workspace_name
@@ -388,15 +389,15 @@ module "avm-res-compute-virtualmachine" {
       name = "example-nic"
       ip_configurations = {
         ipconfig1 = {
-          name     = "internal"
+          name                          = "internal"
           private_ip_subnet_resource_id = azurerm_subnet.example.id
         }
       }
     }
   }
 
-  zone = 1
-  name = "example-vm"
+  zone                = 1
+  name                = "example-vm"
   location            = var.location
   resource_group_name = var.resource_group_name
   admin_username      = "adminuser"
