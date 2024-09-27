@@ -18,6 +18,7 @@ node_pools = {
   }
 }
 keyvault_name                                 = "lumen-aks-kv-03"
+object_id                                     = "08afb591-fb58-46c1-b797-76688967a5cf"
 tenant_id                                     = "680f956b-1eaf-4bb1-a703-24b289ea568f"
 storage_account_name                          = "lumenstorage1234"
 domain_name                                   = "privatelink.wvd.microsoft.com"

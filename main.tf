@@ -21,8 +21,8 @@ module "avm-res-keyvault-vault" {
   legacy_access_policies_enabled = true
   legacy_access_policies = {
     test = {
-      object_id          = data.azurerm_client_config.this.object_id
-      tenant_id          = data.azurerm_client_config.this.tenant_id
+      object_id          = var.object_id
+      tenant_id          = var.tenant_id
       secret_permissions = ["Get", "List", "Delete" , "Create"]
       key_permissions           = ["Create","Get","List","Delete"]
       certificate_permissions   = ["Get", "Import", "List"]
@@ -36,7 +36,7 @@ module "avm-res-keyvault-vault" {
     }
   }
 }
-
+}
 module "avm-res-network-privatednszone" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
   version             = "0.1.2"

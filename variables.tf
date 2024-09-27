@@ -21,6 +21,12 @@ variable "keyvault_name" {
   nullable    = false
 }
 
+variable "object_id" {
+  type = string
+  description = "the object ID "
+  
+}
+
 variable "tenant_id" {
   type        = string
   description = "The tenant ID to use for the Key Vault."
