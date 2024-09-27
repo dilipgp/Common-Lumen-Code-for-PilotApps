@@ -9,9 +9,10 @@ module "naming" {
   version = ">= 0.3.0"
 }
 
-module "avm-res-keyvault-vault_example_default" {
-  source              = "Azure/avm-res-keyvault-vault/azurerm"
-  version             = "0.9.1"
+module "avm-res-keyvault-vault" {
+  source  = "Azure/avm-res-keyvault-vault/azurerm"
+  version = "0.9.1"
+  # insert the 4 required variables here
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   name                = var.keyvault_name
