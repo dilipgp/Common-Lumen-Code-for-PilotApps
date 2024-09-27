@@ -323,7 +323,7 @@ module "avm-res-desktopvirtualization-workspace" {
   subresource_names                             = ["feed"]
   private_endpoints = {
     primary = {
-      domain_name = var.domain_name
+      domain_name = var.domain_name 
       subnet_resource_id            = azurerm_subnet.example.id
     }
   }
