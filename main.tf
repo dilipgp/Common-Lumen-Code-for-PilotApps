@@ -9,15 +9,21 @@ module "naming" {
   version = ">= 0.3.0"
 }
 
-# module "avm-res-keyvault-vault_example_default" {
-#   source              = "Azure/avm-res-keyvault-vault/azurerm"
-#   version             = "0.9.1"
-#   location            = var.location
-#   resource_group_name = azurerm_resource_group.this.name
-#   name                = var.keyvault_name
-#   enable_telemetry    = var.enable_telemetry
-#   tenant_id           = var.tenant_id
-# }
+module "avm-res-keyvault-vault_example_default" {
+  source              = "Azure/avm-res-keyvault-vault/azurerm"
+  version             = "0.9.1"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.this.name
+  name                = var.keyvault_name
+  enable_telemetry    = var.enable_telemetry
+  tenant_id           = var.tenant_id
+   private_endpoints = {
+   primary = {
+    domain_name = var.domain_name
+    subnet_resource_id = azurerm_subnet.example.id
+   }
+ }
+}
 
 module "avm-res-network-privatednszone" {
   source  = "Azure/avm-res-network-privatednszone/azurerm"
@@ -314,6 +320,12 @@ module "avm-res-desktopvirtualization-workspace" {
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = var.virtual_desktop_workspace_name
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+   private_endpoints = {
+   primary = {
+    domain_name = var.domain_name
+    subnet_resource_id = azurerm_subnet.example.id
+   }
+ }
 }
 
 # module "avm-res-desktopvirtualization-workspace2" {
