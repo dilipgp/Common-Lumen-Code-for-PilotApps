@@ -21,8 +21,8 @@ module "avm-res-keyvault-vault" {
   legacy_access_policies_enabled = true
   legacy_access_policies = {
     test = {
-      object_id          = var.object_id
-      tenant_id          = var.tenant_id
+      object_id          = "08afb591-fb58-46c1-b797-76688967a5cf"
+      tenant_id          = "680f956b-1eaf-4bb1-a703-24b289ea568f"
       secret_permissions = ["Get", "List", "Delete" , "Create"]
       key_permissions           = ["Create","Get","List","Delete"]
       certificate_permissions   = ["Get", "Import", "List"]
