@@ -194,17 +194,3 @@ variable "domain_name" {
 # variable "private_dns_zone" {
 #   type = 
 # }
-
-
-variable "host_pools" {
-  description = "A map containing multiple host pools"
-  type = map(object({
-    virtual_desktop_host_pool_location            = string
-    virtual_desktop_host_pool_resource_group_name = string
-    friendly_name       = string
-    description         = string
-    virtual_desktop_host_pool_maximum_sessions_allowed   = number
-    virtual_desktop_host_pool_load_balancer_type  = string
-  }))
-}
-

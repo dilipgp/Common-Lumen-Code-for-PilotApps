@@ -23,47 +23,12 @@ storage_account_name                          = "lumenstorage1234"
 domain_name                                   = "privatelink.wvd.microsoft.com"
 # scope                                         = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/lumen-aks-rg-03/providers/Microsoft.Storage/storageAccounts/satestlumenmsft"
 # principal_id                                  = ""
-host_pools = {
-  "avdhostpool-1" = {
-    virtual_desktop_host_pool_location                       = "East US"
-    virtual_desktop_host_pool_resource_group_name            = "AVD"
-    friendly_name                                            = "Host Pool 1"
-    virtual_desktop_host_pool_maximum_sessions_allowed       = 10
-    virtual_desktop_host_pool_load_balancer_type             = "DepthFirst"
-    virtual_desktop_host_pool_type                           = "Pooled"
-  },
-  "avdhostpool-2" = {
-    virtual_desktop_host_pool_location                       = "East US"
-    virtual_desktop_host_pool_resource_group_name            = "AVD"
-    friendly_name                                            = "Host Pool 2"
-    virtual_desktop_host_pool_maximum_sessions_allowed       = 10
-    virtual_desktop_host_pool_load_balancer_type             = "DepthFirst"
-    virtual_desktop_host_pool_type                           = "Pooled"
-  },
-
-  "avdhostpool-3" = {
-    virtual_desktop_host_pool_location                       = "East US"
-    virtual_desktop_host_pool_resource_group_name            = "AVD"
-    friendly_name                                            = "Host Pool 3"
-    virtual_desktop_host_pool_maximum_sessions_allowed       = 10
-    virtual_desktop_host_pool_load_balancer_type             = "DepthFirst"
-    virtual_desktop_host_pool_type                           = "Personal"
-  },
-
-  "avdhostpool-4" = {
-    virtual_desktop_host_pool_location                       = "East US"
-    virtual_desktop_host_pool_resource_group_name            = "AVD"
-    friendly_name                                            = "Host Pool 4"
-    virtual_desktop_host_pool_maximum_sessions_allowed       = 10
-    virtual_desktop_host_pool_load_balancer_type             = "DepthFirst"
-    virtual_desktop_host_pool_type                           = "Personal"
-  }
-}
-
-
+virtual_desktop_host_pool_load_balancer_type  = "DepthFirst"
+virtual_desktop_host_pool_name                = "avdhostpool-1"
+virtual_desktop_host_pool_type                = "Pooled"
 virtual_desktop_application_group_name        = "applicationgroup-1"
 virtual_desktop_application_group_type        = "Desktop"
 virtual_desktop_workspace_name                = "AVDWorkspace"
 operationalinsights_workspace_name            = "OperationalInsightsWorkspaceLumen"
-
-
+virtual_desktop_host_pool_resource_group_name = "AVD"
+virtual_desktop_host_pool_location            = "East US"
