@@ -9,21 +9,21 @@ module "naming" {
   version = ">= 0.3.0"
 }
 
-module "avm-res-keyvault-vault_example_default" {
-  source              = "Azure/avm-res-keyvault-vault/azurerm"
-  version             = "0.9.1"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.this.name
-  name                = var.keyvault_name
-  enable_telemetry    = var.enable_telemetry
-  tenant_id           = var.tenant_id
-  private_endpoints = {
-    primary = {
-      domain_name        = var.domain_name
-      subnet_resource_id = azurerm_subnet.example.id
-    }
-  }
-}
+# module "avm-res-keyvault-vault_example_default" {
+#   source              = "Azure/avm-res-keyvault-vault/azurerm"
+#   version             = "0.9.1"
+#   location            = var.location
+#   resource_group_name = azurerm_resource_group.this.name
+#   name                = var.keyvault_name
+#   enable_telemetry    = var.enable_telemetry
+#   tenant_id           = var.tenant_id
+#   private_endpoints = {
+#     primary = {
+#       domain_name        = var.domain_name
+#       subnet_resource_id = azurerm_subnet.example.id
+#     }
+#   }
+# }
 
 module "avm-res-network-privatednszone" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
@@ -324,7 +324,7 @@ module "avm-res-desktopvirtualization-workspace" {
   private_endpoints = {
     primary = {
       private_dns_zone_resource_ids = module.avm-res-network-privatednszone.workspace.id
-      subnet_resource_id            = azurerm_subnet.eaxmple.id
+      subnet_resource_id            = azurerm_subnet.example.id
     }
   }
 }
