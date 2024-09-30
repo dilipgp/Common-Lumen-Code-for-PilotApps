@@ -1,6 +1,6 @@
 
 enable_telemetry    = true
-resource_group_name = "lumen-aks-rg-03"
+resource_group_name = "lumen-aks-rg-04"
 location            = "EastUS2"
 name                = "aks-02"
 kubernetes_version  = "1.28"
