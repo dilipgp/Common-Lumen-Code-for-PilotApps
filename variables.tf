@@ -206,3 +206,8 @@ variable "kv_domain" {
   type = string
 
 }
+
+variable "domain_global_name"{
+  default = "privatelink-global.wvd.microsoft.com"
+  type = string
+}

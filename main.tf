@@ -26,7 +26,7 @@ module "avm-res-keyvault-vault" {
   enable_telemetry    = var.enable_telemetry
   tenant_id           = var.tenant_id
   public_network_access_enabled = true
-  # legacy_access_policies_enabled = true
+  legacy_access_policies_enabled = true
   # legacy_access_policies = {
   #   test = {
   #     object_id          = "08afb591-fb58-46c1-b797-76688967a5cf"
@@ -41,7 +41,7 @@ module "avm-res-keyvault-vault" {
     primary = {
       kv_domain        = var.kv_domain
       subnet_resource_id = azurerm_subnet.example.id
-      object_id          = "08afb591-fb58-46c1-b797-76688967a5cf"
+      object_id          = var.object_id
     }
   }
 }
@@ -349,6 +349,7 @@ module "avm-res-desktopvirtualization-workspace2" {
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = "AVDWorkspace2"
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+  subresource_names                             = ["feed"]
   private_endpoints = {
     primary = {
       domain_name        = var.domain_name
@@ -363,10 +364,11 @@ module "avm-res-desktopvirtualization-workspace3" {
   resource_group_name                           = var.resource_group_name
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = "AVDWorkspace3"
+  subresource_names                             = ["global"]
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
   private_endpoints = {
     primary = {
-      domain_name        = var.domain_name
+      domain_name        = var.domain_global_name
       subnet_resource_id = azurerm_subnet.example.id
     }
   }
@@ -378,10 +380,11 @@ module "avm-res-desktopvirtualization-workspace4" {
   resource_group_name                           = var.resource_group_name
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = "AVDWorkspace4"
+  subresource_names                             = ["global"]
   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
   private_endpoints = {
     primary = {
-      domain_name        = var.domain_name
+      domain_name        = var.domain_global_name
       subnet_resource_id = azurerm_subnet.example.id
     }
   }
