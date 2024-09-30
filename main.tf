@@ -419,6 +419,14 @@ resource "azurerm_subnet" "example" {
   address_prefixes     = ["10.0.2.0/24"]
 }
 
+resource "azurerm_subnet" "bastionexample" {
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = azurerm_resource_group.this.name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefixes     = ["10.0.3.0/24"]
+}
+
+
 module "avm-res-compute-virtualmachine" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.16.0"
@@ -462,23 +470,27 @@ module "avm-res-compute-virtualmachine" {
   }
 }
 
-resource "azurerm_bastion_host" "example" {
-  name                = "example-bastion"
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
-  dns_name            = "example-bastion-dns"
+module "azure_bastion" {
+  source = "Azure/avm-res-network-bastionhost/azurerm"
 
-  ip_configuration {
-    name                 = "configuration"
-    subnet_id            = azurerm_subnet.example.id
-    public_ip_address_id = azurerm_public_ip.example.id
+  enable_telemetry    = true
+  name                = "avmtesinglumenbastion"
+  resource_group_name = azurerm_resource_group.this.name
+  location            = azurerm_resource_group.this.location
+  copy_paste_enabled  = true
+  file_copy_enabled   = false
+  sku                 = "Premium"
+  ip_configuration = {
+    name                 = "my-ipconfig"
+    subnet_id            = azurerm_subnet.bastionexample.id
   }
-}
+  ip_connect_enabled     = true
+  scale_units            = 4
+  shareable_link_enabled = true
+  tunneling_enabled      = true
+  kerberos_enabled       = true
 
-resource "azurerm_public_ip" "example" {
-  name                = "example-public-ip"
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
+  tags = {
+    environment = "production"
+  }
 }
