@@ -470,6 +470,14 @@ module "avm-res-compute-virtualmachine" {
   }
 }
 
+module "avm-res-network-publicipaddress" {
+  source  = "Azure/avm-res-network-publicipaddress/azurerm"
+  version = "0.1.2"
+  name    = "bastionPIlumen"
+  location = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+}
+
 module "azure_bastion" {
   source = "Azure/avm-res-network-bastionhost/azurerm"
 
@@ -479,10 +487,11 @@ module "azure_bastion" {
   location            = azurerm_resource_group.this.location
   copy_paste_enabled  = true
   file_copy_enabled   = false
-  sku                 = "Premium"
+  sku                 = "Standard"
   ip_configuration = {
     name                 = "my-ipconfig"
     subnet_id            = azurerm_subnet.bastionexample.id
+    public_ip_address_id = azurerm_public_ip.example.id
   }
   ip_connect_enabled     = true
   scale_units            = 4
