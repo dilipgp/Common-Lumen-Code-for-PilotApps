@@ -27,7 +27,9 @@ module "avm-res-keyvault-vault" {
   tenant_id           = var.tenant
   public_network_access_enabled = true
   legacy_access_policies_enabled = true
-  
+  network_acls = {
+    default_action             = "Allow"
+  }
   private_endpoints = {
     primary = {
       kv_domain        = var.kv_domain
