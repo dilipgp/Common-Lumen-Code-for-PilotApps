@@ -24,7 +24,7 @@ module "avm-res-keyvault-vault" {
   resource_group_name = azurerm_resource_group.this.name
   name                = var.keyvault_name
   enable_telemetry    = var.enable_telemetry
-  tenant_id           = var.tenant_id
+  tenant_id           = "c925fe9d-30b1-4191-acbf-4109845df16f"
   public_network_access_enabled = true
   legacy_access_policies_enabled = true
   # legacy_access_policies = {
