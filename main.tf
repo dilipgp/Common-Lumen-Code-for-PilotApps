@@ -321,7 +321,7 @@ module "avm-res-desktopvirtualization-workspace4" {
 
 resource "azurerm_virtual_desktop_application" "this" {
   name                         = "test"
-  application_group_id         = module.avm-res-desktopvirtualization-applicationgroup1.id
+  application_group_id         = module.avm-res-desktopvirtualization-applicationgroup1.resource_id
   friendly_name                = "test"
   description                  = "test"
   path                         = "test"
