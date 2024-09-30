@@ -19,7 +19,7 @@ node_pools = {
 }
 keyvault_name                                 = "lumen-avd-kv-03"
 object_id                                     = "08afb591-fb58-46c1-b797-76688967a5cf"
-tenant_id                                     = "680f956b-1eaf-4bb1-a703-24b289ea568f"
+tenant_id                                     = "c925fe9d-30b1-4191-acbf-4109845df16f"
 storage_account_name                          = "lumenstorage1234"
 domain_name                                   = "privatelink.wvd.microsoft.com"
 virtual_desktop_host_pool_load_balancer_type  = "DepthFirst"
