@@ -39,121 +39,116 @@ module "avm-res-keyvault-vault" {
 }
 #}
 
-# module "avm-res-storage-storageaccount" {
-#   source              = "Azure/avm-res-storage-storageaccount/azurerm"
-#   version             = "0.2.7"
-#   name                = "satestlumenmsft"
-#   resource_group_name = azurerm_resource_group.this.name
-#   location            = var.location
-#   # account_tier                            = var.account_tier
-#   # account_replication_type                = var.account_replication_type
-#   # account_kind                            = var.account_kind
-#   # access_tier                             = var.access_tier
-#   # tags                                    = local.tags
-#   public_network_access_enabled = true
-#   # allow_nested_items_to_be_public         = var.sa_allow_nested_items_to_be_public
-#   # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
-#   shared_access_key_enabled = true
-#   # enable_telemetry                        = var.enable_telemetry
-#   managed_identities = {
-#     identity = {
-#       system_assigned = true
-#     }
-#   }
-#   # private_endpoints = {
-#   #       storagepe = {
-#   #         name = "storageprivate"
-#   #         subnet_resource_id = azurerm_subnet.example.id
-#   #         subresource_name = "file"
-#   #         domain_name = var.domain_name
-#   #         resource_group_name = var.resource_group_name
+module "avm-res-storage-storageaccount" {
+  source              = "Azure/avm-res-storage-storageaccount/azurerm"
+  version             = "0.2.7"
+  name                = "satestlumenmsft"
+  resource_group_name = azurerm_resource_group.this.name
+  location            = var.location
+  public_network_access_enabled = true
+  allow_nested_items_to_be_public         = true
+  # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
+  shared_access_key_enabled = true
+  managed_identities = {
+    identity = {
+      system_assigned = true
+    }
+  }
+  private_endpoints = {
+        storagepe = {
+          name = "storageprivate"
+          subnet_resource_id = azurerm_subnet.example.id
+          subresource_name = "file"
+          resource_group_name = var.resource_group_name
+        }
+    }
 
-#   #       }
-#   #   }
+  #   shares                                  = {
+  #   share0 = {
+  #     name        = "fileshare-1"
+  #     quota       = 10
+  #     access_tier = "Hot"
+  #     metadata = {
+  #       key1 = "value1"
+  #       key2 = "value2"
+  #     }
+  #     signed_identifiers = [
+  #       {
+  #         id = "1"
+  #         access_policy = {
+  #           expiry_time = "2025-01-01T00:00:00Z"
+  #           permission  = "r"
+  #           start_time  = "2024-01-01T00:00:00Z"
+  #         }
+  #       }
+  #     ]
+  #   }
+  # }
+  # tables                                  = var.tables
+  # queues                                  = var.queues
+  # containers                              = var.containers
+  # share_properties                        = var.share_properties
+  # large_file_share_enabled                = var.large_file_share_enabled
+  # azure_files_authentication              = var.azure_files_authentication
+  # immutability_policy                     = var.immutability_policy
+  # is_hns_enabled                          = var.is_hns_enabled
+  # blob_properties                         = var.blob_properties
+  # table_encryption_key_type               = var.table_encryption_key_type
+  # queue_encryption_key_type               = var.queue_encryption_key_type
+  # queue_properties                        = var.queue_properties
+  # private_endpoints                       = var.private_endpoints
+  # storage_management_policy_rule          = var.storage_management_policy_rule
+  # storage_management_policy_timeouts      = var.storage_management_policy_timeouts
+  # diagnostic_settings_storage_account     = var.diagnostic_settings_storage_account
+  # diagnostic_settings_blob                = var.diagnostic_settings_blob
+  # diagnostic_settings_queue               = var.diagnostic_settings_queue
+  # diagnostic_settings_table               = var.diagnostic_settings_table
+  # diagnostic_settings_file                = var.diagnostic_settings_file
+  # storage_data_lake_gen2_filesystem       = var.storage_data_lake_gen2_filesystem
+  # customer_managed_key                    = var.customer_managed_key
+  # lock                                    = var.lock
+  # managed_identities                      = var.managed_identities
+  # private_endpoints_manage_dns_zone_group = var.private_endpoints_manage_dns_zone_group
+  # role_assignments                        = var.role_assignments
+  # allowed_copy_scope                      = var.allowed_copy_scope
+  # cross_tenant_replication_enabled        = var.cross_tenant_replication_enabled
+  # custom_domain                           = var.custom_domain
+  # default_to_oauth_authentication         = var.default_to_oauth_authentication
+  # edge_zone                               = var.edge_zone
+  # https_traffic_only_enabled              = var.https_traffic_only_enabled
+  # local_user                              = var.local_user
+  # min_tls_version                         = var.min_tls_version
+  # network_rules                           = var.network_rules
+  # nfsv3_enabled                           = var.nfsv3_enabled
+  # routing                                 = var.routing
+  # sas_policy                              = var.sas_policy
+  # sftp_enabled                            = var.sftp_enabled
+  # static_website                          = var.static_website
+  # timeouts                                = var.timeouts
 
-#   #   shares                                  = {
-#   #   share0 = {
-#   #     name        = "fileshare-1"
-#   #     quota       = 10
-#   #     access_tier = "Hot"
-#   #     metadata = {
-#   #       key1 = "value1"
-#   #       key2 = "value2"
-#   #     }
-#   #     signed_identifiers = [
-#   #       {
-#   #         id = "1"
-#   #         access_policy = {
-#   #           expiry_time = "2025-01-01T00:00:00Z"
-#   #           permission  = "r"
-#   #           start_time  = "2024-01-01T00:00:00Z"
-#   #         }
-#   #       }
-#   #     ]
-#   #   }
-#   # }
-#   # tables                                  = var.tables
-#   # queues                                  = var.queues
-#   # containers                              = var.containers
-#   # share_properties                        = var.share_properties
-#   # large_file_share_enabled                = var.large_file_share_enabled
-#   # azure_files_authentication              = var.azure_files_authentication
-#   # immutability_policy                     = var.immutability_policy
-#   # is_hns_enabled                          = var.is_hns_enabled
-#   # blob_properties                         = var.blob_properties
-#   # table_encryption_key_type               = var.table_encryption_key_type
-#   # queue_encryption_key_type               = var.queue_encryption_key_type
-#   # queue_properties                        = var.queue_properties
-#   # private_endpoints                       = var.private_endpoints
-#   # storage_management_policy_rule          = var.storage_management_policy_rule
-#   # storage_management_policy_timeouts      = var.storage_management_policy_timeouts
-#   # diagnostic_settings_storage_account     = var.diagnostic_settings_storage_account
-#   # diagnostic_settings_blob                = var.diagnostic_settings_blob
-#   # diagnostic_settings_queue               = var.diagnostic_settings_queue
-#   # diagnostic_settings_table               = var.diagnostic_settings_table
-#   # diagnostic_settings_file                = var.diagnostic_settings_file
-#   # storage_data_lake_gen2_filesystem       = var.storage_data_lake_gen2_filesystem
-#   # customer_managed_key                    = var.customer_managed_key
-#   # lock                                    = var.lock
-#   # managed_identities                      = var.managed_identities
-#   # private_endpoints_manage_dns_zone_group = var.private_endpoints_manage_dns_zone_group
-#   # role_assignments                        = var.role_assignments
-#   # allowed_copy_scope                      = var.allowed_copy_scope
-#   # cross_tenant_replication_enabled        = var.cross_tenant_replication_enabled
-#   # custom_domain                           = var.custom_domain
-#   # default_to_oauth_authentication         = var.default_to_oauth_authentication
-#   # edge_zone                               = var.edge_zone
-#   # https_traffic_only_enabled              = var.https_traffic_only_enabled
-#   # local_user                              = var.local_user
-#   # min_tls_version                         = var.min_tls_version
-#   # network_rules                           = var.network_rules
-#   # nfsv3_enabled                           = var.nfsv3_enabled
-#   # routing                                 = var.routing
-#   # sas_policy                              = var.sas_policy
-#   # sftp_enabled                            = var.sftp_enabled
-#   # static_website                          = var.static_website
-#   # timeouts                                = var.timeouts
+# }
 
-# # }
 
-# # resource "azurerm_storage_share" "example" {
-# #   name                 = "sharename"
-# #   storage_account_name = module.avm-res-storage-storageaccount.name
-# #   quota                = 50
-# #   acl {
-# #     id = "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI"
-# #     access_policy {
-# #       permissions = "rwdl"
-# #       start       = "2019-07-02T09:38:21.0000000Z"
-# #       expiry      = "2019-07-02T10:38:21.0000000Z"
-# #     }
-# #   }
-# # }
-# # resource "azurerm_role_assignment" "storage_file_data_contributor" {
-# #    scope                = azurerm_storage_account.example.id
-# #   role_definition_name = "Storage File Data SMB Share Contributor"
-# #   principal_id         = azurerm_storage_account.example.identity.principal_id
-#  }
+
+# resource "azurerm_role_assignment" "storage_file_data_contributor" {
+#    scope                = azurerm_storage_account.example.id
+#   role_definition_name = "Storage File Data SMB Share Contributor"
+#   principal_id         = azurerm_storage_account.example.identity.principal_id
+ }
+
+resource "azurerm_storage_share" "example" {
+  name                 = "sharename"
+  storage_account_name = module.avm-res-storage-storageaccount.name
+  quota                = 50
+  acl {
+    id = "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI"
+    access_policy {
+      permissions = "rwdl"
+      start       = "2019-07-02T09:38:21.0000000Z"
+      expiry      = "2019-07-02T10:38:21.0000000Z"
+    }
+  }
+}
 # module "avm-res-desktopvirtualization-hostpool" {
 #   source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
 #   version                                            = "0.2.1"
@@ -391,19 +386,19 @@ module "avm-res-keyvault-vault" {
 # }
 
 
-resource "azurerm_virtual_network" "example" {
-  name                = "example-network"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
-}
+# resource "azurerm_virtual_network" "example" {
+#   name                = "example-network"
+#   address_space       = ["10.0.0.0/16"]
+#   location            = azurerm_resource_group.this.location
+#   resource_group_name = azurerm_resource_group.this.name
+# }
 
-resource "azurerm_subnet" "example" {
-  name                 = "internal"
-  resource_group_name  = azurerm_resource_group.this.name
-  virtual_network_name = azurerm_virtual_network.example.name
-  address_prefixes     = ["10.0.2.0/24"]
-}
+# resource "azurerm_subnet" "example" {
+#   name                 = "internal"
+#   resource_group_name  = azurerm_resource_group.this.name
+#   virtual_network_name = azurerm_virtual_network.example.name
+#   address_prefixes     = ["10.0.2.0/24"]
+# }
 
 # module "avm-res-compute-virtualmachine" {
 #   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
