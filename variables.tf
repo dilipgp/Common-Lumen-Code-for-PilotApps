@@ -27,7 +27,7 @@ variable "object_id" {
   
 }
 
-variable "tenant_id" {
+variable "tenant" {
   type        = string
   description = "The tenant ID to use for the Key Vault."
   nullable    = false
