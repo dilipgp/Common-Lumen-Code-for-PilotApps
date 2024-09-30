@@ -491,7 +491,7 @@ module "azure_bastion" {
   ip_configuration = {
     name                 = "my-ipconfig"
     subnet_id            = azurerm_subnet.bastionexample.id
-    public_ip_address_id = azurerm_public_ip.example.id
+    public_ip_address_id = module.avm-res-network-publicipaddress.id
   }
   ip_connect_enabled     = true
   scale_units            = 4
