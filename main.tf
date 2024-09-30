@@ -324,8 +324,8 @@ resource "azurerm_virtual_desktop_application" "this" {
   application_group_id         = module.avm-res-desktopvirtualization-applicationgroup1.resource_id
   friendly_name                = "test"
   description                  = "test"
-  path                         = "test"
-  icon_path                    = "test"
+  path                         = "C:\\Program Files\\MyApp\\myapp.exe"
+  icon_path                    = "C:\\Program Files\\MyApp\\myapp.exe"
   command_line_argument_policy = "Allow"
 }
 
