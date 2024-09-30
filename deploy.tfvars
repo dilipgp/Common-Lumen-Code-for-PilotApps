@@ -1,6 +1,6 @@
 
 enable_telemetry    = true
-resource_group_name = "lumen-aks-rg-03"
+resource_group_name = "lumen-avd-rg-03"
 location            = "EastUS2"
 name                = "aks-02"
 kubernetes_version  = "1.28"
@@ -17,13 +17,11 @@ node_pools = {
     mode                 = "User"
   }
 }
-keyvault_name                                 = "lumen-aks-kv-03"
+keyvault_name                                 = "lumen-avd-kv-03"
 object_id                                     = "08afb591-fb58-46c1-b797-76688967a5cf"
 tenant_id                                     = "680f956b-1eaf-4bb1-a703-24b289ea568f"
 storage_account_name                          = "lumenstorage1234"
 domain_name                                   = "privatelink.wvd.microsoft.com"
-# scope                                         = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/lumen-aks-rg-03/providers/Microsoft.Storage/storageAccounts/satestlumenmsft"
-# principal_id                                  = ""
 virtual_desktop_host_pool_load_balancer_type  = "DepthFirst"
 virtual_desktop_host_pool_name                = "avdhostpool-1"
 virtual_desktop_host_pool_type                = "Pooled"
