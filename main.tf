@@ -319,6 +319,16 @@ module "avm-res-desktopvirtualization-workspace4" {
   }
 }
 
+resource "azurerm_virtual_desktop_application" "this" {
+  name                         = "test"
+  application_group_id         = module.avm-res-desktopvirtualization-applicationgroup1.id
+  friendly_name                = "test"
+  description                  = "test"
+  path                         = "test"
+  icon_path                    = "test"
+  command_line_argument_policy = "Allow"
+}
+
 module "avm-res-operationalinsights-workspace" {
   source              = "Azure/avm-res-operationalinsights-workspace/azurerm"
   version             = "0.4.1"
