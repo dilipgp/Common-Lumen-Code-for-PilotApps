@@ -39,7 +39,16 @@ module "avm-res-keyvault-vault" {
     }
   }
 }
-#}
+
+resource "azurerm_key_vault_secret" "example_secret1" {
+  name         = "example-secret1"
+  value        = "my-secret-value-1"
+  key_vault_id = module.avm-res-keyvault-vault.id
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+} 
 
 module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
