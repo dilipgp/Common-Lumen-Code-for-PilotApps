@@ -54,6 +54,9 @@ module "avm-res-storage-storageaccount" {
       system_assigned = true
     }
   }
+  network_rules = {
+    default_action             = "Allow"
+  }
   private_endpoints = {
         storagepe = {
           name = "storageprivate"
