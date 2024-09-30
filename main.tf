@@ -15,9 +15,37 @@ module "avm-res-network-privatednszone" {
   version             = "0.1.2"
   domain_name         = var.domain_name
   resource_group_name = azurerm_resource_group.this.name
-  # insert the 2 required variables here
 }
-
+module "avm-res-keyvault-vault" {
+  source  = "Azure/avm-res-keyvault-vault/azurerm"
+  version = "0.9.1"
+  # insert the 4 required variables here
+  location            = var.location
+  resource_group_name = azurerm_resource_group.this.name
+  name                = var.keyvault_name
+  enable_telemetry    = var.enable_telemetry
+  tenant_id           = var.tenant_id
+  public_network_access_enabled = true
+  # legacy_access_policies_enabled = true
+  # legacy_access_policies = {
+  #   test = {
+  #     object_id          = "08afb591-fb58-46c1-b797-76688967a5cf"
+  #     tenant_id          = "680f956b-1eaf-4bb1-a703-24b289ea568f"
+  #     secret_permissions = ["Get", "List", "Delete" , "Create"]
+  #     key_permissions           = ["Create","Get","List","Delete"]
+  #     certificate_permissions   = ["Get", "Import", "List"]
+  #     storage_permissions       = ["Backup", "Get", "List", "Recover"]
+  #   }
+  
+  private_endpoints = {
+    primary = {
+      kv_domain        = var.kv_domain
+      subnet_resource_id = azurerm_subnet.example.id
+      object_id          = "08afb591-fb58-46c1-b797-76688967a5cf"
+    }
+  }
+}
+#}
 
 module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
@@ -114,7 +142,7 @@ module "avm-res-storage-storageaccount" {
   # static_website                          = var.static_website
   # timeouts                                = var.timeouts
 
-}
+# }
 
 # resource "azurerm_storage_share" "example" {
 #   name                 = "sharename"
@@ -133,7 +161,7 @@ module "avm-res-storage-storageaccount" {
 #    scope                = azurerm_storage_account.example.id
 #   role_definition_name = "Storage File Data SMB Share Contributor"
 #   principal_id         = azurerm_storage_account.example.identity.principal_id
-# }
+ }
 module "avm-res-desktopvirtualization-hostpool" {
   source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
   version                                            = "0.2.1"
@@ -308,38 +336,56 @@ module "avm-res-desktopvirtualization-workspace" {
   subresource_names                             = ["feed"]
   private_endpoints = {
     primary = {
-      domain_name = var.domain_name 
-      subnet_resource_id            = azurerm_subnet.example.id
+      domain_name        = var.domain_name
+      subnet_resource_id = azurerm_subnet.example.id
     }
   }
 }
 
-# module "avm-res-desktopvirtualization-workspace2" {
-#   source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
-#   version                                       = "0.1.5"
-#   resource_group_name                           = var.resource_group_name
-#   virtual_desktop_workspace_location            = var.location
-#   virtual_desktop_workspace_name                = "AVDWorkspace2"
-#   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
-# }
+module "avm-res-desktopvirtualization-workspace2" {
+  source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
+  version                                       = "0.1.5"
+  resource_group_name                           = var.resource_group_name
+  virtual_desktop_workspace_location            = var.location
+  virtual_desktop_workspace_name                = "AVDWorkspace2"
+  virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+  private_endpoints = {
+    primary = {
+      domain_name        = var.domain_name
+      subnet_resource_id = azurerm_subnet.example.id
+    }
+  }
+}
 
-# module "avm-res-desktopvirtualization-workspace3" {
-#   source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
-#   version                                       = "0.1.5"
-#   resource_group_name                           = var.resource_group_name
-#   virtual_desktop_workspace_location            = var.location
-#   virtual_desktop_workspace_name                = "AVDWorkspace3"
-#   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
-# }
+module "avm-res-desktopvirtualization-workspace3" {
+  source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
+  version                                       = "0.1.5"
+  resource_group_name                           = var.resource_group_name
+  virtual_desktop_workspace_location            = var.location
+  virtual_desktop_workspace_name                = "AVDWorkspace3"
+  virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+  private_endpoints = {
+    primary = {
+      domain_name        = var.domain_name
+      subnet_resource_id = azurerm_subnet.example.id
+    }
+  }
+}
 
-# module "avm-res-desktopvirtualization-workspace4" {
-#   source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
-#   version                                       = "0.1.5"
-#   resource_group_name                           = var.resource_group_name
-#   virtual_desktop_workspace_location            = var.location
-#   virtual_desktop_workspace_name                = "AVDWorkspace4"
-#   virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
-# }
+module "avm-res-desktopvirtualization-workspace4" {
+  source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
+  version                                       = "0.1.5"
+  resource_group_name                           = var.resource_group_name
+  virtual_desktop_workspace_location            = var.location
+  virtual_desktop_workspace_name                = "AVDWorkspace4"
+  virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+  private_endpoints = {
+    primary = {
+      domain_name        = var.domain_name
+      subnet_resource_id = azurerm_subnet.example.id
+    }
+  }
+}
 
 module "avm-res-operationalinsights-workspace" {
   source              = "Azure/avm-res-operationalinsights-workspace/azurerm"
