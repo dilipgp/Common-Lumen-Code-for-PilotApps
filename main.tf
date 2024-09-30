@@ -1,13 +1,13 @@
 # # This is required for resource modules
-# resource "azurerm_resource_group" "this" {
-#   location = var.location
-#   name     = var.resource_group_name
-# }
+resource "azurerm_resource_group" "this" {
+  location = var.location
+  name     = var.resource_group_name
+}
 
-# module "naming" {
-#   source  = "Azure/naming/azurerm"
-#   version = ">= 0.3.0"
-# }
+module "naming" {
+  source  = "Azure/naming/azurerm"
+  version = ">= 0.3.0"
+}
 
 # # module "avm-res-keyvault-vault_example_default" {
 # #   source              = "Azure/avm-res-keyvault-vault/azurerm"
