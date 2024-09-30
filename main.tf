@@ -42,7 +42,7 @@ module "avm-res-keyvault-vault" {
       kv_domain        = var.kv_domain
       subnet_resource_id = azurerm_subnet.example.id
       object_id          = var.object_id
-      tenant_id          = var.tenant_id
+      tenant_id          = "c925fe9d-30b1-4191-acbf-4109845df16f"
     }
   }
 }
