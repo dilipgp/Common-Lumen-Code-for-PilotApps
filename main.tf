@@ -407,7 +407,7 @@ module "naming" {
 
 resource "azurerm_virtual_network" "example" {
   name                = "example-network"
-  address_space       = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/24"]
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
 }
@@ -460,4 +460,25 @@ module "avm-res-compute-virtualmachine" {
   tags = {
     environment = "dev"
   }
+}
+
+resource "azurerm_bastion_host" "example" {
+  name                = "example-bastion"
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+  dns_name            = "example-bastion-dns"
+
+  ip_configuration {
+    name                 = "configuration"
+    subnet_id            = azurerm_subnet.example.id
+    public_ip_address_id = azurerm_public_ip.example.id
+  }
+}
+
+resource "azurerm_public_ip" "example" {
+  name                = "example-public-ip"
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
 }
