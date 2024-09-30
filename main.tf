@@ -30,7 +30,7 @@ module "avm-res-keyvault-vault" {
   # legacy_access_policies = {
   #   test = {
   #     object_id          = "08afb591-fb58-46c1-b797-76688967a5cf"
-  #     tenant_id          = "680f956b-1eaf-4bb1-a703-24b289ea568f"
+  #     tenant_id          = "c925fe9d-30b1-4191-acbf-4109845df16f"
   #     secret_permissions = ["Get", "List", "Delete" , "Create"]
   #     key_permissions           = ["Create","Get","List","Delete"]
   #     certificate_permissions   = ["Get", "Import", "List"]
