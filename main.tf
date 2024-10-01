@@ -429,6 +429,50 @@ resource "azurerm_virtual_machine_extension" "vmext_dsc" {
   ]
 }
 
+# vm1
+module "avm-res-compute-virtualmachine" {
+  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version = "0.16.0"
+
+  # Required variables
+  network_interfaces = {
+    example_nic = {
+      name = "example-nic1"
+      ip_configurations = {
+        ipconfig1 = {
+          name     = "internal"
+          private_ip_subnet_resource_id = azurerm_subnet.example.id
+        }
+      }
+    }
+  }
+
+  zone = 1
+  name = "example-vm1"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  admin_username      = "adminuser"
+  admin_password      = "Password1234!"
+
+  sku_size = "Standard_D8ls_v5"
+  # Image configuration
+  source_image_reference = { 
+    "offer": "WindowsServer", 
+    "publisher": "MicrosoftWindowsServer", 
+    "sku": "2022-datacenter-g2", 
+    "version": "latest" 
+  }
+  # Optional variables (add as needed)
+
+  os_disk = {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+  tags = {
+    environment = "dev"
+  }
+}
+
 module "avm-res-compute-virtualmachine" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.16.0"
