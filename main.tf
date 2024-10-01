@@ -430,7 +430,7 @@ resource "azurerm_virtual_machine_extension" "vmext_dsc" {
 }
 
 # vm1
-module "avm-res-compute-virtualmachine" {
+module "avm-res-compute-virtualmachine1" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.16.0"
 
@@ -473,7 +473,7 @@ module "avm-res-compute-virtualmachine" {
   }
 }
 
-module "avm-res-compute-virtualmachine" {
+module "avm-res-compute-virtualmachine2" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.16.0"
 
