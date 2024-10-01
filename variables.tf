@@ -21,7 +21,13 @@ variable "keyvault_name" {
   nullable    = false
 }
 
-variable "tenant_id" {
+variable "object_id" {
+  type = string
+  description = "the object ID "
+  
+}
+
+variable "tenant" {
   type        = string
   description = "The tenant ID to use for the Key Vault."
   nullable    = false
@@ -166,7 +172,7 @@ variable "virtual_desktop_workspace_name" {
   description = "The name of the AVD Workspace"
 }
 
-variable "storage_accont_name" {
+variable "storage_account_name" {
   description = "The name of the storage account"
   type        = string
 }
@@ -176,5 +182,32 @@ variable "operationalinsights_workspace_name" {
     type        = string
 }
 
+variable "virtual_desktop_host_pool_resource_group_name" {
+  description = "name of the resource group"
+  type = string
+}
 
+variable "virtual_desktop_host_pool_location" {
+  description = "location of the host pool"
+  type = string
+}
 
+variable "domain_name" {
+  description = "name of the domain"
+  type = string
+}
+
+# variable "private_dns_zone" {
+#   type = 
+# }
+
+variable "kv_domain" {
+  default = "privatelink.vaultcore.azure.net"
+  type = string
+
+}
+
+variable "domain_global_name"{
+  default = "privatelink-global.wvd.microsoft.com"
+  type = string
+}
