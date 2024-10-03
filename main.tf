@@ -43,6 +43,7 @@ module "avm-res-keyvault-vault" {
   network_acls = {
     default_action             = "Allow"
   }
+  
   private_endpoints = {
     primary = {
       kv_domain        = var.kv_domain
@@ -79,6 +80,13 @@ resource "azurerm_key_vault_secret" "keys" {
     ]
   }
 }
+
+output "created_secrets" {
+  # The output will return a list of the names of the created secrets.
+  value = [for s in azurerm_key_vault_secret.keys : s.name]
+  description = "List of secrets created in the Azure Key Vault."
+}
+
 
 module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
