@@ -59,55 +59,24 @@ resource "random_password" "pass" {
   special = true
 }
 
-resource "azurerm_key_vault_key" "keys" {
-  for_each        = { for key in var.keys : key.name => key }
-  key_vault_id    = module.avm-res-keyvault-vault.resource_id
-  name            = each.value.name
-  key_type        = each.value.key_type
-  key_size        = each.value.key_size
-  curve           = each.value.curve
-  key_opts        = each.value.key_opts
-  not_before_date = each.value.not_before_date
-  expiration_date = each.value.expiration_date
+resource "azurerm_key_vault_secret" "secret" {
+  name         = "secret-sample"
+  value        = random_password.pass.result
+  key_vault_id = module.avm-res-keyvault-vault.resource_id
 }
 
-resource "azurerm_key_vault_secret" "secrets" {
-  for_each        = { for secret in var.secrets : secret.name => secret }
-  key_vault_id    = module.avm-res-keyvault-vault.resource_id
-  name            = each.value.name
-  value           = random_password.pass.result
-  content_type    = each.value.content_type
-  not_before_date = each.value.not_before_date
-  expiration_date = each.value.expiration_date
-}
-# Output the list of secret names created
-output "created_secrets" {
+
+output "created_secret" {
   value = {
-    for secret in azurerm_key_vault_secret.secrets :
-    secret.name => {
-      "value"        : secret.value,
-      "content_type" : secret.content_type,
-      "not_before"   : secret.not_before_date,
-      "expiration"   : secret.expiration_date
-    }
+    name  = azurerm_key_vault_secret.secret.name
+    value = azurerm_key_vault_secret.secret.value
+    key_vault_id = module.avm-res-keyvault-vault.resource_id
+    
+
   }
-  description = "List of secrets created in Azure Key Vault with details"
+  sensitive = true
 }
 
-# Output the list of keys created
-output "created_keys" {
-  value = {
-    for key in azurerm_key_vault_key.keys :
-    key.name => {
-      "key_type"      : key.key_type,
-      "key_size"      : key.key_size,
-      "curve"         : key.curve,
-      "not_before"    : key.not_before_date,
-      "expiration"    : key.expiration_date
-    }
-  }
-  description = "List of keys created in Azure Key Vault with details"
-}
 
 
 
