@@ -46,10 +46,9 @@ module "avm-res-keyvault-vault" {
 #     test = {
 #       object_id               = data.azurerm_client_config.this.object_id
 #       secret_permissions      = ["Get","List","Set"]
-      
-
 #     }
-#}
+#     
+
 
   network_acls = {
     default_action             = "Allow"
@@ -66,13 +65,13 @@ module "avm-res-keyvault-vault" {
 }
 resource "azurerm_key_vault_access_policy" "deploy" {
   key_vault_id = module.avm-res-keyvault-vault.resource_id
-  tenant_id    = data.azurerm_client_config.this.tenant_id
-  object_id    = data.azurerm_client_config.this.object_id
+  tenant_id    = "c925fe9d-30b1-4191-acbf-4109845df16f"
+  object_id    = "08afb591-fb58-46c1-b797-76688967a5cf"
 
   key_permissions         = ["Get", "List", "Update", "Create", "Import", "Delete", "Recover"]
   secret_permissions      = ["Get", "List", "Set", "Delete", "Purge", "Recover"]
-  # certificate_permissions = ["Get", "List", "Update", "Create", "Import", "Delete", "Purge", "Recover"]
-  # storage_permissions     = ["Get", "List", "Update", "Delete"]
+  certificate_permissions = ["Get", "List", "Update", "Create", "Import", "Delete", "Purge", "Recover"]
+  storage_permissions     = ["Get", "List", "Update", "Delete"]
 }
 
 resource "random_string" "secret_value" {
@@ -80,17 +79,45 @@ resource "random_string" "secret_value" {
   special = true
 }
 
-
-resource "azurerm_key_vault_secret" "example" {
-  name         = "example-secret"
-  value        = random_string.secret_value.result
-  key_vault_id = module.avm-res-keyvault-vault.resource_id
+resource "azurerm_key_vault_key" "keys" {
+  for_each        = { for key in var.keys : key.name => key }
+  key_vault_id    = module.avm-res-keyvault-vault.resource_id
+  name            = each.value.name
+  key_type        = each.value.key_type
+  key_size        = each.value.key_size
+  curve           = each.value.curve
+  key_opts        = each.value.key_opts
+  not_before_date = each.value.not_before_date
+  expiration_date = each.value.expiration_date
 }
 
-output "secret_value" {
-  value = azurerm_key_vault_secret.example.id
-  sensitive = true
+resource "azurerm_key_vault_secret" "secrets" {
+  for_each        = { for secret in var.secrets : secret.name => secret }
+  key_vault_id    = module.avm-res-keyvault-vault.resource_id
+  name            = each.value.name
+  value           = random_string.secret_value.result
+  content_type    = each.value.content_type
+  not_before_date = each.value.not_before_date
+  expiration_date = each.value.expiration_date
 }
+
+output "key_vault_secrets" {
+  value = { for k, v in azurerm_key_vault_secret.secrets : k => {
+    name            = v.name
+    value           = v.value
+    content_type    = v.content_type
+    not_before_date = v.not_before_date
+    expiration_date = v.expiration_date
+  }}
+}
+
+
+
+
+# output "secret_value" {
+#   value = azurerm_key_vault_secret.secrets.value
+#   sensitive = true
+# }
 
 module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
