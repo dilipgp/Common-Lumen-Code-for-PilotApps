@@ -54,36 +54,35 @@ module "avm-res-keyvault-vault" {
   }
 }
 
-resource "random_password" "passwd" {
-  for_each    = { for k, v in var.secrets : k => v if v == "" }
-  length      = var.random_password_length
-  min_upper   = 4
-  min_lower   = 2
-  min_numeric = 4
-  min_special = 4
-
-  keepers = {
-    name = each.key
-  }
+resource "random_password" "pass" {
+  length  = 24
+  special = true
 }
 
-resource "azurerm_key_vault_secret" "keys" {
-  for_each     = var.secrets
-  name         = each.key
-  value        = each.value != "" ? each.value : random_password.passwd[each.key].result
-  key_vault_id = module.avm-res-keyvault-vault.resource_id
-
-  lifecycle {
-    ignore_changes = [
-      tags,
-      value,
-    ]
-  }
+resource "azurerm_key_vault_key" "keys" {
+  for_each        = { for key in var.keys : key.name => key }
+  key_vault_id    = module.avm-res-keyvault-vault.resource_id
+  name            = each.value.name
+  key_type        = each.value.key_type
+  key_size        = each.value.key_size
+  curve           = each.value.curve
+  key_opts        = each.value.key_opts
+  not_before_date = each.value.not_before_date
+  expiration_date = each.value.expiration_date
 }
 
+resource "azurerm_key_vault_secret" "secrets" {
+  for_each        = { for secret in var.secrets : secret.name => secret }
+  key_vault_id    = module.avm-res-keyvault-vault.resource_id
+  name            = each.value.name
+  value           = each.value.value
+  content_type    = each.value.content_type
+  not_before_date = each.value.not_before_date
+  expiration_date = each.value.expiration_date
+}
 output "created_secrets" {
   # The output will return a list of the names of the created secrets.
-  value = [for s in azurerm_key_vault_secret.keys : s.name]
+  value = [for secret in azurerm_key_vault_secret.secrets : secret.name]
   description = "List of secrets created in the Azure Key Vault."
 }
 
