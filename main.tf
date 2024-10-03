@@ -1,4 +1,4 @@
-# This is required for resource modules
+#This is required for resource modules
 resource "azurerm_resource_group" "this" {
   location = var.location
   name     = var.resource_group_name
@@ -15,11 +15,24 @@ module "avm-res-network-privatednszone" {
   version             = "0.1.2"
   domain_name         = var.domain_name
   resource_group_name = azurerm_resource_group.this.name
+# resource "azurerm_network_interface" "winvm_nic" {
+#   for_each            = var.winvm  # Loop over the same winvm map
+#   name                = "${each.value.name}-nic"
+#   location            = var.location
+#   resource_group_name = var.resource_group_name
+
+  #Associate the NIC with the subnet in your virtual network
+#   ip_configuration {
+#     name                          = "internal"
+#     subnet_id                     = azurerm_subnet.example.id  # Ensure the subnet resource exists
+#     private_ip_address_allocation = "Dynamic"
+#   }
+# }
 }
 module "avm-res-keyvault-vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
   version = "0.9.1"
-  # insert the 4 required variables here
+  #insert the 4 required variables here
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   name                = var.keyvault_name
@@ -40,15 +53,32 @@ module "avm-res-keyvault-vault" {
   }
 }
 
-# resource "azurerm_key_vault_secret" "example_secret1" {
-#   name         = "example-secret1"
-#   value        = "my-secret-value-1"
-#   key_vault_id = module.avm-res-keyvault-vault.resource_id
+resource "random_password" "passwd" {
+  for_each    = { for k, v in var.secrets : k => v if v == "" }
+  length      = var.random_password_length
+  min_upper   = 4
+  min_lower   = 2
+  min_numeric = 4
+  min_special = 4
 
-#   lifecycle {
-#     ignore_changes = [value]
-#   }
-# } 
+  keepers = {
+    name = each.key
+  }
+}
+
+resource "azurerm_key_vault_secret" "keys" {
+  for_each     = var.secrets
+  name         = each.key
+  value        = each.value != "" ? each.value : random_password.passwd[each.key].result
+  key_vault_id = module.avm-res-keyvault-vault.resource_id
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+      value,
+    ]
+  }
+}
 
 module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
@@ -58,7 +88,7 @@ module "avm-res-storage-storageaccount" {
   location            = var.location
   public_network_access_enabled = true
   allow_nested_items_to_be_public         = true
-  # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
+ # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
   shared_access_key_enabled = true
   managed_identities = {
     identity = {
@@ -76,7 +106,9 @@ module "avm-res-storage-storageaccount" {
           resource_group_name = var.resource_group_name
         }
     }
+    
  }
+ 
 
 resource "azurerm_storage_share" "example" {
   name                 = "sharename"
@@ -356,7 +388,7 @@ module "avm-res-compute-virtualmachine" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.16.0"
 
-  # Required variables
+  #Required variables
   network_interfaces = {
     example_nic = {
       name = "example-nic"
@@ -377,14 +409,14 @@ module "avm-res-compute-virtualmachine" {
   admin_password      = "Password1234!"
 
 
-  # Image configuration
+  #Image configuration
   source_image_reference = {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "Windows-11"
     sku       = "win11-21h2-avd"
     version   = "latest"
   }
-  # Optional variables (add as needed)
+  #Optional variables (add as needed)
 
   os_disk = {
     caching              = "ReadWrite"

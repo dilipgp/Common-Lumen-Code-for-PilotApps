@@ -17,3 +17,4 @@ virtual_desktop_workspace_name                = "AVDWorkspace"
 operationalinsights_workspace_name            = "OperationalInsightsWorkspaceLumen"
 virtual_desktop_host_pool_resource_group_name = "AVD"
 virtual_desktop_host_pool_location            = "East US"
+

@@ -211,3 +211,22 @@ variable "domain_global_name"{
   default = "privatelink-global.wvd.microsoft.com"
   type = string
 }
+
+
+#Variable for Azure Key Vault ID
+variable "key_vault_id" {
+  default = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/lumen-avd-rg-03/providers/Microsoft.KeyVault/vaults/lumen-avd-kv-04"
+  description = "ID of the Azure Key Vault where secrets will be stored"
+  type        = string
+}
+
+variable "secrets" {
+  type        = map(string)
+  description = "A map of secrets for the Key Vault."
+  default     = {}
+}
+
+variable "random_password_length" {
+  description = "The desired length of random password created by this module"
+  default     = 32
+}
