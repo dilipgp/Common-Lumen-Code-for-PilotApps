@@ -75,7 +75,7 @@ resource "azurerm_key_vault_secret" "secrets" {
   for_each        = { for secret in var.secrets : secret.name => secret }
   key_vault_id    = module.avm-res-keyvault-vault.resource_id
   name            = each.value.name
-  value           = random_password.pass
+  value           = random_password.pass.result
   content_type    = each.value.content_type
   not_before_date = each.value.not_before_date
   expiration_date = each.value.expiration_date
