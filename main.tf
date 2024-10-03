@@ -82,7 +82,7 @@ resource "azurerm_key_vault_secret" "secrets" {
 }
 output "created_secrets" {
   # The output will return a list of the names of the created secrets.
-  value = [for secret in azurerm_key_vault_secret.secrets : secret.name]
+  value = [for secret in azurerm_key_vault_key.keys : secret.name]
   description = "List of secrets created in the Azure Key Vault."
 }
 
