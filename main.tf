@@ -49,7 +49,7 @@ module "avm-res-keyvault-vault" {
       
 
 #     }
-#   }
+#}
 
   network_acls = {
     default_action             = "Allow"
@@ -64,24 +64,23 @@ module "avm-res-keyvault-vault" {
     }
   }
 }
+resource "azurerm_key_vault_access_policy" "deploy" {
+  key_vault_id = module.avm-res-keyvault-vault.resource_id
+  tenant_id    = data.azurerm_client_config.this.tenant_id
+  object_id    = data.azurerm_client_config.this.object_id
+
+  key_permissions         = ["Get", "List", "Update", "Create", "Import", "Delete", "Recover"]
+  secret_permissions      = ["Get", "List", "Set", "Delete", "Purge", "Recover"]
+  # certificate_permissions = ["Get", "List", "Update", "Create", "Import", "Delete", "Purge", "Recover"]
+  # storage_permissions     = ["Get", "List", "Update", "Delete"]
+}
 
 resource "random_string" "secret_value" {
   length  = 16
   special = true
 }
 
-resource "azurerm_key_vault_access_policy" "example" {
-  key_vault_id = module.avm-res-keyvault-vault.resource_id
-  tenant_id    = "c925fe9d-30b1-4191-acbf-4109845df16f"
-  object_id    = "08afb591-fb58-46c1-b797-76688967a5cf"  # Replace with your actual object ID
 
-  secret_permissions = [
-    "Get",
-    "List",
-    "Set",
-    "Delete",
-  ]
-}
 resource "azurerm_key_vault_secret" "example" {
   name         = "example-secret"
   value        = random_string.secret_value.result
