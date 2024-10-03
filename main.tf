@@ -80,11 +80,35 @@ resource "azurerm_key_vault_secret" "secrets" {
   not_before_date = each.value.not_before_date
   expiration_date = each.value.expiration_date
 }
+# Output the list of secret names created
 output "created_secrets" {
-  # The output will return a list of the names of the created secrets.
-  value = [for secret in azurerm_key_vault_key.keys : secret.name]
-  description = "List of secrets created in the Azure Key Vault."
+  value = {
+    for secret in azurerm_key_vault_secret.secrets :
+    secret.name => {
+      "value"        : secret.value,
+      "content_type" : secret.content_type,
+      "not_before"   : secret.not_before_date,
+      "expiration"   : secret.expiration_date
+    }
+  }
+  description = "List of secrets created in Azure Key Vault with details"
 }
+
+# Output the list of keys created
+output "created_keys" {
+  value = {
+    for key in azurerm_key_vault_key.keys :
+    key.name => {
+      "key_type"      : key.key_type,
+      "key_size"      : key.key_size,
+      "curve"         : key.curve,
+      "not_before"    : key.not_before_date,
+      "expiration"    : key.expiration_date
+    }
+  }
+  description = "List of keys created in Azure Key Vault with details"
+}
+
 
 
 module "avm-res-storage-storageaccount" {
