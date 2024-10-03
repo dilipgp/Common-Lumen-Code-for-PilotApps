@@ -29,6 +29,7 @@ module "avm-res-network-privatednszone" {
 #   }
 # }
 }
+data "azurerm_client_config" "this" {}
 
 module "avm-res-keyvault-vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
@@ -43,8 +44,9 @@ module "avm-res-keyvault-vault" {
  # legacy_access_policies_enabled = true
  legacy_access_policies = {
     test = {
-      object_id               = "08afb591-fb58-46c1-b797-76688967a5cf"
+      object_id               = data.azurerm_client_config.this.object_id
       secret_permissions      = ["Get","List","Set"]
+      
 
     }
   }
