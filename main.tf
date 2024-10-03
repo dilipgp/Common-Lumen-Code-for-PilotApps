@@ -44,6 +44,7 @@ module "avm-res-keyvault-vault" {
     default_action             = "Allow"
   }
   
+  
   private_endpoints = {
     primary = {
       kv_domain        = var.kv_domain
@@ -54,31 +55,21 @@ module "avm-res-keyvault-vault" {
   }
 }
 
-resource "random_password" "pass" {
-  length  = 24
+resource "random_string" "secret_value" {
+  length  = 16
   special = true
 }
 
-resource "azurerm_key_vault_secret" "secret" {
-  name         = "secret-sample"
-  value        = random_password.pass.result
+resource "azurerm_key_vault_secret" "example" {
+  name         = "example-secret"
+  value        = random_string.secret_value.result
   key_vault_id = module.avm-res-keyvault-vault.resource_id
 }
 
-
-output "created_secret" {
-  value = {
-    name  = azurerm_key_vault_secret.secret.name
-    value = azurerm_key_vault_secret.secret.value
-    key_vault_id = module.avm-res-keyvault-vault.resource_id
-    
-
-  }
+output "secret_value" {
+  value = azurerm_key_vault_secret.example.id
   sensitive = true
 }
-
-
-
 
 module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
