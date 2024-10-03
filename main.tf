@@ -29,6 +29,7 @@ module "avm-res-network-privatednszone" {
 #   }
 # }
 }
+
 module "avm-res-keyvault-vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
   version = "0.9.1"
@@ -39,11 +40,18 @@ module "avm-res-keyvault-vault" {
   enable_telemetry    = var.enable_telemetry
   tenant_id           = var.tenant
   public_network_access_enabled = true
-  legacy_access_policies_enabled = true
+ # legacy_access_policies_enabled = true
+ legacy_access_policies = {
+    test = {
+      object_id               = "08afb591-fb58-46c1-b797-76688967a5cf"
+      secret_permissions      = ["Get","List","Set"]
+
+    }
+  }
+
   network_acls = {
     default_action             = "Allow"
   }
-  
   
   private_endpoints = {
     primary = {
