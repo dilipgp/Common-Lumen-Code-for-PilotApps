@@ -42,14 +42,14 @@ module "avm-res-keyvault-vault" {
   tenant_id           = var.tenant
   public_network_access_enabled = true
  # legacy_access_policies_enabled = true
- legacy_access_policies = {
-    test = {
-      object_id               = data.azurerm_client_config.this.object_id
-      secret_permissions      = ["Get","List","Set"]
+#  legacy_access_policies = {
+#     test = {
+#       object_id               = data.azurerm_client_config.this.object_id
+#       secret_permissions      = ["Get","List","Set"]
       
 
-    }
-  }
+#     }
+#   }
 
   network_acls = {
     default_action             = "Allow"
@@ -70,6 +70,18 @@ resource "random_string" "secret_value" {
   special = true
 }
 
+resource "azurerm_key_vault_access_policy" "example" {
+  key_vault_id = module.avm-res-keyvault-vault.resource_id
+  tenant_id    = "c925fe9d-30b1-4191-acbf-4109845df16f"
+  object_id    = "08afb591-fb58-46c1-b797-76688967a5cf"  # Replace with your actual object ID
+
+  secret_permissions = [
+    "Get",
+    "List",
+    "Set",
+    "Delete",
+  ]
+}
 resource "azurerm_key_vault_secret" "example" {
   name         = "example-secret"
   value        = random_string.secret_value.result
