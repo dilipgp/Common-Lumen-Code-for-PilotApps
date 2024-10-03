@@ -1,0 +1,7 @@
+tenant_id: "c925fe9d-30b1-4191-acbf-4109845df16f"
+subscription_id: "8ac116fa-33ed-4b86-a94e-f39228fecb4a"
+tf_remote_state_resource_group: "Github"
+tf_remote_state_storage_account: "devopslumen01"
+tf_remote_state_container_name: "tfstatefile"
+tf_app_name: "testapp01"
+env: "nonprod"
