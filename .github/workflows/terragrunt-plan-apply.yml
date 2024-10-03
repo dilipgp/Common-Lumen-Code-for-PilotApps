@@ -1,5 +1,16 @@
 name: Terragrunt Plan and Apply
 on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Choose action to perform'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+          - Plan
+          - Plan&Apply
+          - Plan&Destroy
   workflow_call:
     inputs:
       environment:
