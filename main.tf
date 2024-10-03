@@ -73,51 +73,36 @@ resource "azurerm_key_vault_access_policy" "deploy" {
   certificate_permissions = ["Get", "List", "Update", "Create", "Import", "Delete", "Purge", "Recover"]
   storage_permissions     = ["Get", "List", "Update", "Delete"]
 }
-
-resource "random_string" "secret_value" {
+ 
+# Generate a random password
+resource "random_password" "password" {
   length  = 16
   special = true
 }
-
-resource "azurerm_key_vault_key" "keys" {
-  for_each        = { for key in var.keys : key.name => key }
-  key_vault_id    = module.avm-res-keyvault-vault.resource_id
-  name            = each.value.name
-  key_type        = each.value.key_type
-  key_size        = each.value.key_size
-  curve           = each.value.curve
-  key_opts        = each.value.key_opts
-  not_before_date = each.value.not_before_date
-  expiration_date = each.value.expiration_date
+# Create a secret in Key Vault using the random password
+resource "azurerm_key_vault_secret" "example" {
+  name         = "example-secret"
+  value        = random_password.password.result
+  key_vault_id = module.avm-res-keyvault-vault.resource_id
 }
 
-resource "azurerm_key_vault_secret" "secrets" {
-  for_each        = { for secret in var.secrets : secret.name => secret }
-  key_vault_id    = module.avm-res-keyvault-vault.resource_id
-  name            = each.value.name
-  value           = random_string.secret_value.result
-  content_type    = each.value.content_type
-  not_before_date = each.value.not_before_date
-  expiration_date = each.value.expiration_date
+# Output to display the secret's name and value
+output "key_vault_secret" {
+  value = {
+    secret_name  = azurerm_key_vault_secret.example.name
+    secret_value = azurerm_key_vault_secret.example.value
+  }
+  
+  # Mark as sensitive to avoid exposing the secret value in logs
+  sensitive = true
 }
 
-output "key_vault_secrets" {
-  value = { for k, v in azurerm_key_vault_secret.secrets : k => {
-    name            = v.name
-    value           = v.value
-    content_type    = v.content_type
-    not_before_date = v.not_before_date
-    expiration_date = v.expiration_date
-  }}
-}
+# Data source to get Azure Client configuration (tenant and object ID)
+data "azurerm_client_config" "example" {}
+ 
 
 
 
-
-# output "secret_value" {
-#   value = azurerm_key_vault_secret.secrets.value
-#   sensitive = true
-# }
 
 module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
