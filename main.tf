@@ -180,7 +180,7 @@ module "azure_bastion" {
   }
 }
 
-resource "azurerm_private_dns_zone" "example" {
+data "azurerm_private_dns_zone" "example" {
   name                = "privatelink.bastion.azure.com"
   resource_group_name = data.azurerm_resource_group.this.name
 }
@@ -188,8 +188,8 @@ resource "azurerm_private_dns_zone" "example" {
 resource "azurerm_private_dns_zone_virtual_network_link" "example" {
   name                  = "example-link"
   resource_group_name   = data.azurerm_resource_group.this.name
-  private_dns_zone_name = azurerm_private_dns_zone.example.name
-  virtual_network_id    = azurerm_virtual_network.example.id
+  private_dns_zone_name = data.azurerm_private_dns_zone.example.name
+  virtual_network_id    = data.azurerm_virtual_network.example.id
 }
 
 
@@ -488,10 +488,10 @@ resource "azurerm_storage_share" "example" {
 # }
 
 
-resource "azurerm_virtual_network" "example" {
+data "azurerm_virtual_network" "example" {
   name                = "example-network"
-  address_space       = ["10.10.0.0/16"]
-  location            = data.azurerm_resource_group.this.location
+  #address_space       = ["10.10.0.0/16"]
+  #location            = data.azurerm_resource_group.this.location
   resource_group_name = data.azurerm_resource_group.this.name
 }
 
@@ -504,14 +504,14 @@ resource "azurerm_virtual_network" "example" {
 resource "azurerm_subnet" "AzureBastionSubnet" {
   name                 = "AzureBastionSubnet"
   resource_group_name  = data.azurerm_resource_group.this.name
-  virtual_network_name = azurerm_virtual_network.example.name
+  virtual_network_name = data.azurerm_virtual_network.example.name
   address_prefixes     = ["10.0.1.0/27"]
 }
 
 resource "azurerm_subnet" "example" {
   name                 = "internal"
   resource_group_name  = data.azurerm_resource_group.this.name
-  virtual_network_name = azurerm_virtual_network.example.name
+  virtual_network_name = data.azurerm_virtual_network.example.name
   address_prefixes     = ["10.10.2.0/24"]
 }
 
