@@ -73,6 +73,12 @@ module "avm-res-storage-storageaccount" {
           subnet_resource_id = azurerm_subnet.example.id
           subresource_name = "file"
           resource_group_name = var.resource_group_name
+        },
+        storagepeblob = {
+          name = "storageprivateblob"
+          subnet_resource_id = azurerm_subnet.example.id
+          subresource_name = "blob"
+          resource_group_name = var.resource_group_name
         }
     }
  }
