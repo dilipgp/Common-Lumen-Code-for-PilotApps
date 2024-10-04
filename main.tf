@@ -359,7 +359,7 @@ resource "azurerm_subnet" "example" {
 resource "azurerm_subnet" "AzureBastionSubnet" {
   name                 = "AzureBastionSubnet"
   resource_group_name  = data.azurerm_resource_group.this.name
-  virtual_network_name = azurerm_virtual_network.example.name
+  virtual_network_name = data.azurerm_virtual_network.this.name
   address_prefixes     = ["10.0.1.0/26"]
 }
 
@@ -579,7 +579,7 @@ module "avm-res-compute-virtualmachine2" {
 resource "azurerm_public_ip" "bastion" {
   name                = "example-bastion-pip"
   location            = data.azurerm_resource_group.this.location
-  resource_group_name = data.data.azurerm_resource_group.this.name
+  resource_group_name = data.azurerm_resource_group.this.name
   allocation_method   = "Static"
   sku                 = "Standard"
 }
@@ -588,7 +588,7 @@ module "azure_bastion" {
   source = "Azure/avm-res-network-bastionhost/azurerm"
   version = "0.3.0"
   enable_telemetry    = true
-  resource_group_name = data.data.azurerm_resource_group.this.name
+  resource_group_name = data.azurerm_resource_group.this.name
   location = var.location
   name = "avd-bastion"
   copy_paste_enabled     = true
@@ -612,7 +612,7 @@ module "azure_bastion" {
 
 resource "azurerm_private_dns_zone" "example" {
   name                = "privatelink.bastion.azure.com"
-  resource_group_name = data.data.azurerm_resource_group.this.name
+  resource_group_name = data.azurerm_resource_group.this.name
 }
  
 resource "azurerm_private_dns_zone_virtual_network_link" "example" {
