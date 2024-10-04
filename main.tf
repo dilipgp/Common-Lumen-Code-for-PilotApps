@@ -15,21 +15,8 @@ module "avm-res-network-privatednszone" {
   version             = "0.1.2"
   domain_name         = var.domain_name
   resource_group_name = azurerm_resource_group.this.name
-# resource "azurerm_network_interface" "winvm_nic" {
-#   for_each            = var.winvm  # Loop over the same winvm map
-#   name                = "${each.value.name}-nic"
-#   location            = var.location
-#   resource_group_name = var.resource_group_name
 
-  #Associate the NIC with the subnet in your virtual network
-#   ip_configuration {
-#     name                          = "internal"
-#     subnet_id                     = azurerm_subnet.example.id  # Ensure the subnet resource exists
-#     private_ip_address_allocation = "Dynamic"
-#   }
-# }
 }
-data "azurerm_client_config" "this" {}
 
 module "avm-res-keyvault-vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
@@ -41,7 +28,7 @@ module "avm-res-keyvault-vault" {
   enable_telemetry    = var.enable_telemetry
   tenant_id           = var.tenant
   public_network_access_enabled = true
- # legacy_access_policies_enabled = true
+  legacy_access_policies_enabled = true
 #  legacy_access_policies = {
 #     test = {
 #       object_id               = data.azurerm_client_config.this.object_id
@@ -63,43 +50,149 @@ module "avm-res-keyvault-vault" {
     }
   }
 }
-resource "azurerm_key_vault_access_policy" "deploy" {
-  key_vault_id = module.avm-res-keyvault-vault.resource_id
-  tenant_id    = "c925fe9d-30b1-4191-acbf-4109845df16f"
-  object_id    = "08afb591-fb58-46c1-b797-76688967a5cf"
-
-  key_permissions         = ["Get", "List", "Update", "Create", "Import", "Delete", "Recover"]
-  secret_permissions      = ["Get", "List", "Set", "Delete", "Purge", "Recover"]
-  certificate_permissions = ["Get", "List", "Update", "Create", "Import", "Delete", "Purge", "Recover"]
-  storage_permissions     = ["Get", "List", "Update", "Delete"]
-}
+# data "azurerm_key_vault" "vault" {
+#   name                = "avd-domainjoin-for-lumen" # Replace with your Key Vault name
+#   resource_group_name = "AD"                       # Replace with the resource group name where the Key Vault is deployed
+# }
  
-# Generate a random password
-resource "random_password" "password" {
-  length  = 16
-  special = true
-}
-# Create a secret in Key Vault using the random password
-resource "azurerm_key_vault_secret" "example" {
-  name         = "example-secret"
-  value        = random_password.password.result
-  key_vault_id = module.avm-res-keyvault-vault.resource_id
-}
+# # Retrieve the domain join username from Azure Key Vault
+# data "azurerm_key_vault_secret" "domain_username" {
+#   name         = "domain-join-account-username"
+#   key_vault_id = data.azurerm_key_vault.vault.id
+#   #key_vault_id = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/AD/providers/Microsoft.KeyVault/vaults/avd-domainjoin-for-lumen"
+# }
+# # Retrieve the domain join password from Azure Key Vault
+# data "azurerm_key_vault_secret" "domain_password" {
+#   name         = "domain-join-account-password"
+#   key_vault_id = data.azurerm_key_vault.vault.id
+#   #key_vault_id = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/AD/providers/Microsoft.KeyVault/vaults/avd-domainjoin-for-lumen"
+# }
+ 
+# resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
+#   name                       = "ExtensionName1GoesHere"
+#   for_each                   = azurerm_windows_virtual_machine.winvm // Your key logic here
+#   virtual_machine_id         = azurerm_windows_virtual_machine.winvm[each.key].id
+#   publisher                  = "Microsoft.Compute"
+#   type                       = "JsonADDomainExtension"
+#   type_handler_version       = "1.3"
+#   auto_upgrade_minor_version = true
+ 
+#   settings = <<-SETTINGS
+#     {
+#       "Name": "ditclouds.com",
+#       "OUPath": "OU=AVD-Hosts,DC=ditclouds,DC=com",
+#       "User": "${data.azurerm_key_vault_secret.domain_username.value}",
+#       "Restart": "true",
+#       "Options": "3"
+#     }
+#     SETTINGS
+ 
+#   protected_settings = <<-PSETTINGS
+#     {
+#       "Password": "${data.azurerm_key_vault_secret.domain_password.value}"
+#     }
+#     PSETTINGS
+ 
+#   lifecycle {
+#     ignore_changes = [settings, protected_settings]
+#   }
+# }
+ 
+# # Generate a random password
+# resource "random_password" "password" {
+#   length  = 16
+#   special = true
+# }
+ 
+# # Store the admin username in the existing Azure Key Vault
+# resource "azurerm_key_vault_secret" "winvm_username" {
+#   for_each     = azurerm_windows_virtual_machine.winvm
+#   name         = "${each.value.name}-Username-"
+#   value        = each.value.admin_username
+#   key_vault_id = data.azurerm_key_vault.vault.id
+# }
+# # Store the generated password in the existing Azure Key Vault
+# resource "azurerm_key_vault_secret" "winvm_password" {
+#   for_each     = azurerm_windows_virtual_machine.winvm
+#   name         = "${each.value.name}-Password"
+#   value        = random_password.password.result
+#   key_vault_id = data.azurerm_key_vault.vault.id
+#}
+# resource "azurerm_key_vault_access_policy" "deploy" {
+#   key_vault_id = module.avm-res-keyvault-vault.resource_id
+#   tenant_id    = "c925fe9d-30b1-4191-acbf-4109845df16f"
+#   object_id    = "08afb591-fb58-46c1-b797-76688967a5cf"
 
-# Output to display the secret's name and value
-output "key_vault_secret" {
-  value = {
-    secret_name  = azurerm_key_vault_secret.example.name
-    secret_value = azurerm_key_vault_secret.example.value
-  }
+#   key_permissions         = ["Get", "List", "Update", "Create", "Import", "Delete", "Recover"]
+#   secret_permissions      = ["Get", "List", "Set", "Delete", "Purge", "Recover"]
+#   certificate_permissions = ["Get", "List", "Update", "Create", "Import", "Delete", "Purge", "Recover"]
+#   storage_permissions     = ["Get", "List", "Update", "Delete"]
+# }
+ 
+# # Generate a random password
+# resource "random_password" "password" {
+#   length  = 16
+#   special = true
+# }
+# # Create a secret in Key Vault using the random password
+# resource "azurerm_key_vault_secret" "example" {
+#   name         = "example-secret"
+#   value        = random_password.password.result
+#   key_vault_id = module.avm-res-keyvault-vault.resource_id
+# }
+
+# # Output to display the secret's name and value
+# output "key_vault_secret" {
+#   value = {
+#     secret_name  = azurerm_key_vault_secret.example.name
+#     secret_value = azurerm_key_vault_secret.example.value
+#   }
   
-  # Mark as sensitive to avoid exposing the secret value in logs
-  sensitive = true
+#   # Mark as sensitive to avoid exposing the secret value in logs
+#   sensitive = true
+# }
+
+# # Data source to get Azure Client configuration (tenant and object ID)
+# data "azurerm_client_config" "example" {}
+ 
+module "azure_bastion" {
+  source = "Azure/avm-res-network-bastionhost/azurerm"
+  version = "0.3.0"
+  enable_telemetry    = true
+  resource_group_name = var.resource_group_name
+  location = var.location
+  name = "avd-bastion"
+  copy_paste_enabled     = true
+  file_copy_enabled      = false
+  sku                 = "Standard"  # Change to Premium SKU
+  ip_configuration = {
+    name                 = "my-ipconfig"
+    subnet_id            = azurerm_subnet.AzureBastionSubnet.id
+    public_ip_address_id = null  # Set to null to use private IP
+  }
+  ip_connect_enabled     = true
+  scale_units            = 4
+  shareable_link_enabled = true
+  tunneling_enabled      = true
+  kerberos_enabled       = true
+ 
+  tags = {
+    environment = "production"
+  }
 }
 
-# Data source to get Azure Client configuration (tenant and object ID)
-data "azurerm_client_config" "example" {}
+resource "azurerm_private_dns_zone" "example" {
+  name                = "privatelink.bastion.azure.com"
+  resource_group_name = azurerm_resource_group.this.name
+}
  
+resource "azurerm_private_dns_zone_virtual_network_link" "example" {
+  name                  = "example-link"
+  resource_group_name   = azurerm_resource_group.this.name
+  private_dns_zone_name = azurerm_private_dns_zone.example.name
+  virtual_network_id    = azurerm_virtual_network.example.id
+}
+
 
 
 
@@ -147,6 +240,8 @@ resource "azurerm_storage_share" "example" {
     }
   }
 }
+
+
 # module "avm-res-desktopvirtualization-hostpool" {
 #   source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
 #   version                                            = "0.2.1"
@@ -401,6 +496,19 @@ resource "azurerm_virtual_network" "example" {
   resource_group_name = azurerm_resource_group.this.name
 }
 
+# resource "azurerm_management_lock" "vnet_lock_test" {
+#   name       = "vnet-lock"
+#   scope      = azurerm_virtual_network.example.id
+#   lock_level = "CanNotDelete"
+# }
+
+resource "azurerm_subnet" "AzureBastionSubnet" {
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = azurerm_resource_group.this.name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefixes     = ["10.0.1.0/27"]
+}
+
 resource "azurerm_subnet" "example" {
   name                 = "internal"
   resource_group_name  = azurerm_resource_group.this.name
@@ -451,36 +559,3 @@ module "avm-res-compute-virtualmachine" {
   }
 }
 
-# resource "azurerm_virtual_machine_extension" "vmext_dsc" {
-#   count                      = 1
-#   name                       = "avd_dsc"
-#   virtual_machine_id         = module.avm-res-compute-virtualmachine.resource.id
-#   publisher                  = "Microsoft.Powershell"
-#   type                       = "DSC"
-#   type_handler_version       = "2.73"
-#   auto_upgrade_minor_version = true
-
-#   settings = <<-SETTINGS
-#     {
-#       "modulesUrl": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_09-08-2022.zip",
-#       "configurationFunction": "Configuration.ps1\\AddSessionHost",
-#       "properties": {
-#         "HostPoolName":"${var.virtual_desktop_host_pool_name}"
-#       }
-#     }
-#   SETTINGS
-
-#   protected_settings = <<PROTECTED_SETTINGS
-#   {
-#     "properties": {
-#       "registrationInfoToken": "${module.avm-res-desktopvirtualization-hostpool.registrationinfo_token}"
-#     }
-#   }
-#   PROTECTED_SETTINGS
-
-
-#   depends_on = [
-#     module.avm-res-compute-virtualmachine,
-#     module.avm-res-desktopvirtualization-hostpool
-#   ]
-# }

@@ -224,3 +224,79 @@ variable "random_password_length" {
   description = "The desired length of random password created by this module"
   default     = 32
 }
+variable "copy_paste_enabled" {
+  type        = bool
+  default     = true
+  description = "Specifies whether copy-paste functionality is enabled for the Azure Bastion Host."
+  nullable    = false
+}
+
+variable "file_copy_enabled" {
+  type        = bool
+  default     = false
+  description = "Specifies whether file copy functionality is enabled for the Azure Bastion Host."
+  nullable    = false
+}
+
+variable "ip_configuration" {
+  type = object({
+    name                 = string
+    subnet_id            = string
+    public_ip_address_id = string
+  })
+  default     = null
+  description = <<DESCRIPTION
+The IP configuration for the Azure Bastion Host.
+
+- `name` - The name of the IP configuration.
+- `subnet_id` - The ID of the subnet where the Azure Bastion Host will be deployed.
+- `public_ip_address_id` - The ID of the public IP address associated with the Azure Bastion Host.
+DESCRIPTION
+}
+
+variable "ip_connect_enabled" {
+  type        = bool
+  default     = false
+  description = "Specifies whether IP connect functionality is enabled for the Azure Bastion Host."
+  nullable    = false
+}
+
+variable "kerberos_enabled" {
+  type        = bool
+  default     = false
+  description = "Specifies whether Kerberos authentication is enabled for the Azure Bastion Host."
+  nullable    = false
+}
+
+variable "scale_units" {
+  type        = number
+  default     = 2
+  description = "The number of scale units for the Azure Bastion Host."
+  nullable    = false
+}
+
+variable "shareable_link_enabled" {
+  type        = bool
+  default     = false
+  description = "Specifies whether shareable link functionality is enabled for the Azure Bastion Host."
+  nullable    = false
+}
+
+
+variable "tunneling_enabled" {
+  type        = bool
+  default     = false
+  description = "Specifies whether tunneling functionality is enabled for the Azure Bastion Host."
+  nullable    = false
+}
+
+variable "virtual_network_id" {
+  type        = string
+  default     = null
+  description = "The ID of the virtual network where the Azure Bastion Host is deployed."
+}
+
+# variable "tags" {
+#   type = string
+#   default = null
+# }
