@@ -1,7 +1,6 @@
 # This is required for resource modules
-resource "azurerm_resource_group" "this" {
-  location = var.location
-  name     = var.resource_group_name
+data "azurerm_resource_group" "this" {
+  name = "lumen-avd-rg-03"
 }
 
 module "naming" {
@@ -14,14 +13,14 @@ module "avm-res-network-privatednszone" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
   version             = "0.1.2"
   domain_name         = var.domain_name
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = data.azurerm_resource_group.this.name
 }
 module "avm-res-keyvault-vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
   version = "0.9.1"
   # insert the 4 required variables here
   location            = var.location
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = data.azurerm_resource_group.this.name
   name                = var.keyvault_name
   enable_telemetry    = var.enable_telemetry
   tenant_id           = var.tenant
@@ -54,7 +53,7 @@ module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
   version             = "0.2.7"
   name                = "satestlumenmsft"
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = data.azurerm_resource_group.this.name
   location            = var.location
   public_network_access_enabled = true
   allow_nested_items_to_be_public         = true
@@ -94,11 +93,11 @@ resource "azurerm_storage_share" "example" {
 module "avm-res-desktopvirtualization-hostpool" {
   source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
   version                                            = "0.2.1"
-  resource_group_name                                = azurerm_resource_group.this.name
+  resource_group_name                                = data.azurerm_resource_group.this.name
   virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
   virtual_desktop_host_pool_location                 = var.location
   virtual_desktop_host_pool_name                     = var.virtual_desktop_host_pool_name
-  virtual_desktop_host_pool_resource_group_name      = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_resource_group_name      = data.azurerm_resource_group.this.name
   virtual_desktop_host_pool_type                     = var.virtual_desktop_host_pool_type
   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
@@ -139,11 +138,11 @@ module "avm-res-desktopvirtualization-hostpool" {
 module "avm-res-desktopvirtualization-hostpool2" {
   source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
   version                                            = "0.2.1"
-  resource_group_name                                = azurerm_resource_group.this.name
+  resource_group_name                                = data.azurerm_resource_group.this.name
   virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
   virtual_desktop_host_pool_location                 = var.location
   virtual_desktop_host_pool_name                     = "avdhostpool-2"
-  virtual_desktop_host_pool_resource_group_name      = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_resource_group_name      = data.azurerm_resource_group.this.name
   virtual_desktop_host_pool_type                     = "Pooled"
   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
@@ -158,11 +157,11 @@ module "avm-res-desktopvirtualization-hostpool2" {
 module "avm-res-desktopvirtualization-hostpool3" {
   source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
   version                                            = "0.2.1"
-  resource_group_name                                = azurerm_resource_group.this.name
+  resource_group_name                                = data.azurerm_resource_group.this.name
   virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
   virtual_desktop_host_pool_location                 = var.location
   virtual_desktop_host_pool_name                     = "avdhostpool-3"
-  virtual_desktop_host_pool_resource_group_name      = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_resource_group_name      = data.azurerm_resource_group.this.name
   virtual_desktop_host_pool_type                     = "Personal"
   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
@@ -177,11 +176,11 @@ module "avm-res-desktopvirtualization-hostpool3" {
 module "avm-res-desktopvirtualization-hostpool4" {
   source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
   version                                            = "0.2.1"
-  resource_group_name                                = azurerm_resource_group.this.name
+  resource_group_name                                = data.azurerm_resource_group.this.name
   virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
   virtual_desktop_host_pool_location                 = var.location
   virtual_desktop_host_pool_name                     = "avdhostpool-4"
-  virtual_desktop_host_pool_resource_group_name      = azurerm_resource_group.this.name
+  virtual_desktop_host_pool_resource_group_name      = data.azurerm_resource_group.this.name
   virtual_desktop_host_pool_type                     = "Personal"
   virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
   virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
@@ -199,7 +198,7 @@ module "avm-res-desktopvirtualization-applicationgroup1" {
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool.resource.id
   virtual_desktop_application_group_location            = var.location
   virtual_desktop_application_group_name                = "applicationgroup-1"
-  virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
+  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = "RemoteApp"
 }
 
@@ -209,7 +208,7 @@ module "avm-res-desktopvirtualization-applicationgroup2" {
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool.resource.id
   virtual_desktop_application_group_location            = var.location
   virtual_desktop_application_group_name                = "desktopgroup-1"
-  virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
+  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = "Desktop"
 }
 
@@ -219,7 +218,7 @@ module "avm-res-desktopvirtualization-applicationgroup3" {
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool2.resource.id
   virtual_desktop_application_group_location            = var.location
   virtual_desktop_application_group_name                = "applicationgroup-2"
-  virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
+  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = "RemoteApp"
 }
 
@@ -229,7 +228,7 @@ module "avm-res-desktopvirtualization-applicationgroup4" {
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool2.resource.id
   virtual_desktop_application_group_location            = var.location
   virtual_desktop_application_group_name                = "desktopgroup-2"
-  virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
+  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = "Desktop"
 }
 
@@ -239,7 +238,7 @@ module "avm-res-desktopvirtualization-applicationgroup6" {
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool3.resource.id
   virtual_desktop_application_group_location            = var.location
   virtual_desktop_application_group_name                = "desktopgroup-3"
-  virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
+  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = "Desktop"
 }
 
@@ -249,7 +248,7 @@ module "avm-res-desktopvirtualization-applicationgroup8" {
   virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool4.resource.id
   virtual_desktop_application_group_location            = var.location
   virtual_desktop_application_group_name                = "desktopgroup-4"
-  virtual_desktop_application_group_resource_group_name = azurerm_resource_group.this.name
+  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
   virtual_desktop_application_group_type                = "Desktop"
 }
 
@@ -261,7 +260,7 @@ module "avm-res-desktopvirtualization-workspace" {
   resource_group_name                           = var.resource_group_name
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = var.virtual_desktop_workspace_name
-  virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+  virtual_desktop_workspace_resource_group_name = data.azurerm_resource_group.this.name
   subresource_names                             = ["feed"]
   private_endpoints = {
     primary = {
@@ -277,7 +276,7 @@ module "avm-res-desktopvirtualization-workspace2" {
   resource_group_name                           = var.resource_group_name
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = "AVDWorkspace2"
-  virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+  virtual_desktop_workspace_resource_group_name = data.azurerm_resource_group.this.name
   subresource_names                             = ["feed"]
   private_endpoints = {
     primary = {
@@ -294,7 +293,7 @@ module "avm-res-desktopvirtualization-workspace3" {
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = "AVDWorkspace3"
   subresource_names                             = ["global"]
-  virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+  virtual_desktop_workspace_resource_group_name = data.azurerm_resource_group.this.name
   private_endpoints = {
     primary = {
       domain_name        = var.domain_global_name
@@ -310,7 +309,7 @@ module "avm-res-desktopvirtualization-workspace4" {
   virtual_desktop_workspace_location            = var.location
   virtual_desktop_workspace_name                = "AVDWorkspace4"
   subresource_names                             = ["global"]
-  virtual_desktop_workspace_resource_group_name = azurerm_resource_group.this.name
+  virtual_desktop_workspace_resource_group_name = data.azurerm_resource_group.this.name
   private_endpoints = {
     primary = {
       domain_name        = var.domain_global_name
@@ -333,23 +332,35 @@ module "avm-res-operationalinsights-workspace" {
   source              = "Azure/avm-res-operationalinsights-workspace/azurerm"
   version             = "0.4.1"
   location            = var.location
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = data.azurerm_resource_group.this.name
   name                = var.operationalinsights_workspace_name
 }
 
-
-resource "azurerm_virtual_network" "example" {
-  name                = "example-network"
-  address_space       = ["10.10.0.0/16"]
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
+# This is required for resource modules
+data "azurerm_virtual_network" "this" {
+  name = "example-network"
+  resource_group_name = data.azurerm_resource_group.this.name
 }
+
+# resource "azurerm_virtual_network" "example" {
+#   name                = "example-network"
+#   address_space       = ["10.10.0.0/16"]
+#   location            = azurerm_resource_group.this.location
+#   resource_group_name = data.azurerm_resource_group.this.name
+# }
 
 resource "azurerm_subnet" "example" {
   name                 = "internal"
-  resource_group_name  = azurerm_resource_group.this.name
-  virtual_network_name = azurerm_virtual_network.example.name
+  resource_group_name  = data.azurerm_resource_group.this.name
+  virtual_network_name = data.azurerm_virtual_network.this.name
   address_prefixes     = ["10.10.2.0/24"]
+}
+
+resource "azurerm_subnet" "AzureBastionSubnet" {
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = data.azurerm_resource_group.this.name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefixes     = ["10.0.1.0/26"]
 }
 
 module "avm-res-compute-virtualmachine" {
@@ -563,4 +574,50 @@ module "avm-res-compute-virtualmachine2" {
   tags = {
     environment = "dev"
   }
+}
+
+resource "azurerm_public_ip" "bastion" {
+  name                = "example-bastion-pip"
+  location            = data.azurerm_resource_group.this.location
+  resource_group_name = data.data.azurerm_resource_group.this.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+module "azure_bastion" {
+  source = "Azure/avm-res-network-bastionhost/azurerm"
+  version = "0.3.0"
+  enable_telemetry    = true
+  resource_group_name = data.data.azurerm_resource_group.this.name
+  location = var.location
+  name = "avd-bastion"
+  copy_paste_enabled     = true
+  file_copy_enabled      = false
+  sku                 = "Standard"  # Change to Premium SKU
+  ip_configuration = {
+    name                 = "my-ipconfig"
+    subnet_id            = azurerm_subnet.AzureBastionSubnet.id
+    public_ip_address_id = azurerm_public_ip.bastion.id  # Set to null to use private IP
+  }
+  ip_connect_enabled     = true
+  scale_units            = 4
+  shareable_link_enabled = true
+  tunneling_enabled      = true
+  kerberos_enabled       = true
+ 
+  tags = {
+    environment = "dev"
+  }
+}
+
+resource "azurerm_private_dns_zone" "example" {
+  name                = "privatelink.bastion.azure.com"
+  resource_group_name = data.data.azurerm_resource_group.this.name
+}
+ 
+resource "azurerm_private_dns_zone_virtual_network_link" "example" {
+  name                  = "example-link"
+  resource_group_name   = data.data.azurerm_resource_group.this.name
+  private_dns_zone_name = azurerm_private_dns_zone.example.name
+  virtual_network_id    = azurerm_virtual_network.example.id
 }
