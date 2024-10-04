@@ -340,7 +340,7 @@ module "avm-res-operationalinsights-workspace" {
 
 resource "azurerm_virtual_network" "example" {
   name                = "example-network"
-  address_space       = ["10.0.0.0/16"]
+  address_space       = ["10.10.0.0/16"]
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
 }
@@ -349,7 +349,7 @@ resource "azurerm_subnet" "example" {
   name                 = "internal"
   resource_group_name  = azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.example.name
-  address_prefixes     = ["10.0.2.0/24"]
+  address_prefixes     = ["10.10.2.0/24"]
 }
 
 module "avm-res-compute-virtualmachine" {
@@ -427,6 +427,55 @@ resource "azurerm_virtual_machine_extension" "vmext_dsc" {
     module.avm-res-compute-virtualmachine,
     module.avm-res-desktopvirtualization-hostpool
   ]
+}
+
+
+data "azurerm_key_vault" "vault" {
+  name                = "avd-domainjoin-for-lumen" # Replace with your Key Vault name
+  resource_group_name = "AD"                       # Replace with the resource group name where the Key Vault is deployed
+}
+ 
+# Retrieve the domain join username from Azure Key Vault
+data "azurerm_key_vault_secret" "domain_username" {
+  name         = "domain-join-account-username"
+  key_vault_id = data.azurerm_key_vault.vault.id
+  #key_vault_id = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/AD/providers/Microsoft.KeyVault/vaults/avd-domainjoin-for-lumen"
+}
+# Retrieve the domain join password from Azure Key Vault
+data "azurerm_key_vault_secret" "domain_password" {
+  name         = "domain-join-account-password"
+  key_vault_id = data.azurerm_key_vault.vault.id
+  #key_vault_id = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/AD/providers/Microsoft.KeyVault/vaults/avd-domainjoin-for-lumen"
+}
+ 
+resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
+  name                       = "ExtensionName1GoesHere"
+  # for_each                   = azurerm_windows_virtual_machine.winvm // Your key logic here
+  virtual_machine_id         = module.avm-res-compute-virtualmachine.resource.id
+  publisher                  = "Microsoft.Compute"
+  type                       = "JsonADDomainExtension"
+  type_handler_version       = "1.3"
+  auto_upgrade_minor_version = true
+ 
+  settings = <<-SETTINGS
+    {
+      "Name": "ditclouds.com",
+      "OUPath": "OU=AVD-Hosts,DC=ditclouds,DC=com",
+      "User": "${data.azurerm_key_vault_secret.domain_username.value}",
+      "Restart": "true",
+      "Options": "3"
+    }
+    SETTINGS
+ 
+  protected_settings = <<-PSETTINGS
+    {
+      "Password": "${data.azurerm_key_vault_secret.domain_password.value}"
+    }
+    PSETTINGS
+ 
+  lifecycle {
+    ignore_changes = [settings, protected_settings]
+  }
 }
 
 # vm1
