@@ -360,7 +360,7 @@ resource "azurerm_subnet" "AzureBastionSubnet" {
   name                 = "AzureBastionSubnet"
   resource_group_name  = data.azurerm_resource_group.this.name
   virtual_network_name = data.azurerm_virtual_network.this.name
-  address_prefixes     = ["10.0.1.0/26"]
+  address_prefixes     = ["10.10.1.0/26"]
 }
 
 module "avm-res-compute-virtualmachine" {
