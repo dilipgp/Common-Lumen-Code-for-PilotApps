@@ -1,7 +1,6 @@
 #This is required for resource modules
-resource "azurerm_resource_group" "this" {
-  location = var.location
-  name     = var.resource_group_name
+data "azurerm_resource_group" "this" {
+  name = "lumen-avd-rg-03"
 }
 
 module "naming" {
@@ -14,7 +13,7 @@ module "avm-res-network-privatednszone" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
   version             = "0.1.2"
   domain_name         = var.domain_name
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = data.azurerm_resource_group.this.name
 
 }
 
@@ -23,7 +22,7 @@ module "avm-res-keyvault-vault" {
   version = "0.9.1"
   #insert the 4 required variables here
   location            = var.location
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = data.azurerm_resource_group.this.name
   name                = var.keyvault_name
   enable_telemetry    = var.enable_telemetry
   tenant_id           = var.tenant
@@ -183,12 +182,12 @@ module "azure_bastion" {
 
 resource "azurerm_private_dns_zone" "example" {
   name                = "privatelink.bastion.azure.com"
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = data.azurerm_resource_group.this.name
 }
  
 resource "azurerm_private_dns_zone_virtual_network_link" "example" {
   name                  = "example-link"
-  resource_group_name   = azurerm_resource_group.this.name
+  resource_group_name   = data.azurerm_resource_group.this.name
   private_dns_zone_name = azurerm_private_dns_zone.example.name
   virtual_network_id    = azurerm_virtual_network.example.id
 }
@@ -201,8 +200,8 @@ module "avm-res-storage-storageaccount" {
   source              = "Azure/avm-res-storage-storageaccount/azurerm"
   version             = "0.2.7"
   name                = "satestlumenmsft"
-  resource_group_name = azurerm_resource_group.this.name
-  location            = var.location
+  resource_group_name = data.azurerm_resource_group.this.name
+  location            = data.azurerm_resource_group.this.location
   public_network_access_enabled = true
   allow_nested_items_to_be_public         = true
  # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
@@ -492,8 +491,8 @@ resource "azurerm_storage_share" "example" {
 resource "azurerm_virtual_network" "example" {
   name                = "example-network"
   address_space       = ["10.10.0.0/16"]
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
+  location            = data.azurerm_resource_group.this.location
+  resource_group_name = data.azurerm_resource_group.this.name
 }
 
 # resource "azurerm_management_lock" "vnet_lock_test" {
@@ -504,14 +503,14 @@ resource "azurerm_virtual_network" "example" {
 
 resource "azurerm_subnet" "AzureBastionSubnet" {
   name                 = "AzureBastionSubnet"
-  resource_group_name  = azurerm_resource_group.this.name
+  resource_group_name  = data.azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.example.name
   address_prefixes     = ["10.0.1.0/27"]
 }
 
 resource "azurerm_subnet" "example" {
   name                 = "internal"
-  resource_group_name  = azurerm_resource_group.this.name
+  resource_group_name  = data.azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.example.name
   address_prefixes     = ["10.10.2.0/24"]
 }
