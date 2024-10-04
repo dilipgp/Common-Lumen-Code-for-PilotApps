@@ -623,7 +623,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "example" {
 }
 
 resource "azurerm_private_dns_zone" "example_blob" {
-  name                = "privatelink.blob.azure.com"
+  name                = "privatelink.blob.core.windows.net"
   resource_group_name = data.azurerm_resource_group.this.name
 }
  
