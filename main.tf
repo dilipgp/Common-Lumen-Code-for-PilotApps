@@ -68,17 +68,14 @@ module "avm-res-storage-storageaccount" {
     default_action             = "Allow"
   }
   private_endpoints = {
-        storagepe = {
-          name = "storageprivate"
-          subnet_resource_id = azurerm_subnet.example.id
-          subresource_name = "file"
-          resource_group_name = var.resource_group_name
-        },
         storagepeblob = {
           name = "storageprivateblob"
           subnet_resource_id = azurerm_subnet.example.id
           subresource_name = "blob"
-          resource_group_name = var.resource_group_name
+          resource_group_name = var.resource_group_name,
+          private_dns_zone_group_name = var.resource_group_name,
+          private_dns_zone_resource_ids = azurerm_private_dns_zone.example_blob.id,
+          private_service_connection_name = "blobsc"
         }
     }
  }
