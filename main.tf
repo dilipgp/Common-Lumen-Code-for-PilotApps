@@ -621,3 +621,15 @@ resource "azurerm_private_dns_zone_virtual_network_link" "example" {
   private_dns_zone_name = azurerm_private_dns_zone.example.name
   virtual_network_id    = data.azurerm_virtual_network.this.id
 }
+
+resource "azurerm_private_dns_zone" "example_blob" {
+  name                = "privatelink.blob.azure.com"
+  resource_group_name = data.azurerm_resource_group.this.name
+}
+ 
+resource "azurerm_private_dns_zone_virtual_network_link" "example_blob_link" {
+  name                  = "example-link-blob"
+  resource_group_name   = data.azurerm_resource_group.this.name
+  private_dns_zone_name = azurerm_private_dns_zone.example_blob.name
+  virtual_network_id    = data.azurerm_virtual_network.this.id
+}
