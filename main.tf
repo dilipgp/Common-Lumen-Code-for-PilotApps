@@ -617,7 +617,7 @@ resource "azurerm_private_dns_zone" "example" {
  
 resource "azurerm_private_dns_zone_virtual_network_link" "example" {
   name                  = "example-link"
-  resource_group_name   = data.data.azurerm_resource_group.this.name
+  resource_group_name   = data.azurerm_resource_group.this.name
   private_dns_zone_name = azurerm_private_dns_zone.example.name
-  virtual_network_id    = azurerm_virtual_network.example.id
+  virtual_network_id    = data.azurerm_virtual_network.this.id
 }
