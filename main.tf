@@ -602,7 +602,7 @@ module "avm-res-compute-virtualmachine1" {
   }
 }
 
-resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
+resource "azurerm_virtual_machine_extension" "vm1ext_domain_join1" {
   name                       = "DJ"
   # for_each                   = azurerm_windows_virtual_machine.winvm // Your key logic here
   virtual_machine_id         = module.avm-res-compute-virtualmachine1.resource.id
@@ -632,7 +632,7 @@ resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
   }
 }
 
-resource "azurerm_virtual_machine_extension" "vmext_dsc" {
+resource "azurerm_virtual_machine_extension" "vmext_dsc1" {
   count                      = 1
   name                       = "avd_dsc"
   virtual_machine_id         = module.avm-res-compute-virtualmachine1.resource.id
@@ -715,7 +715,7 @@ module "avm-res-compute-virtualmachine2" {
   }
 }
 
-resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
+resource "azurerm_virtual_machine_extension" "vm1ext_domain_join2" {
   name                       = "ExtensionName1GoesHere"
   # for_each                   = azurerm_windows_virtual_machine.winvm // Your key logic here
   virtual_machine_id         = module.avm-res-compute-virtualmachine2.resource.id
@@ -745,7 +745,7 @@ resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
   }
 }
 
-resource "azurerm_virtual_machine_extension" "vmext_dsc" {
+resource "azurerm_virtual_machine_extension" "vmext_dsc2" {
   count                      = 1
   name                       = "avd_dsc"
   virtual_machine_id         = module.avm-res-compute-virtualmachine2.resource.id
