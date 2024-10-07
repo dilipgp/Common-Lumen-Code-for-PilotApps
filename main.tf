@@ -80,6 +80,15 @@ module "avm-res-storage-storageaccount" {
           private_dns_zone_resource_ids = [azurerm_private_dns_zone.example_blob.id],
           private_service_connection_name = "blobsc"
         }
+        storagepeblob = {
+          name = "storageprivatefile"
+          subnet_resource_id = azurerm_subnet.example.id
+          subresource_name = "file"
+          resource_group_name = var.resource_group_name,
+          private_dns_zone_group_name = var.resource_group_name,
+          private_dns_zone_resource_ids = [azurerm_private_dns_zone.example_file.id],
+          private_service_connection_name = "filesc"
+        }
     }
  }
 
@@ -839,6 +848,11 @@ resource "azurerm_private_dns_zone" "example_blob" {
   resource_group_name = data.azurerm_resource_group.this.name
 }
 
+resource "azurerm_private_dns_zone" "example_file" {
+  name                = "privatelink.file.core.windows.net"
+  resource_group_name = data.azurerm_resource_group.this.name
+}
+
 resource "azurerm_private_dns_zone" "example_keyvault" {
   name                = "privatelink.vaultcore.azure.net"
   resource_group_name = data.azurerm_resource_group.this.name
@@ -855,5 +869,12 @@ resource "azurerm_private_dns_zone_virtual_network_link" "example_blob_link" {
   name                  = "example-link-blob"
   resource_group_name   = data.azurerm_resource_group.this.name
   private_dns_zone_name = azurerm_private_dns_zone.example_blob.name
+  virtual_network_id    = data.azurerm_virtual_network.this.id
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "example_file_link" {
+  name                  = "example-link-file"
+  resource_group_name   = data.azurerm_resource_group.this.name
+  private_dns_zone_name = azurerm_private_dns_zone.example_file.name
   virtual_network_id    = data.azurerm_virtual_network.this.id
 }
