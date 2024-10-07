@@ -420,7 +420,7 @@ resource "azurerm_virtual_machine_extension" "vmext_dsc" {
 
   settings = <<-SETTINGS
     {
-      "modulesUrl": "https://satestlumenmsft.blob.core.windows.net/test/Configuration_09-08-2022.zip",
+      "modulesUrl": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration.zip",
       "configurationFunction": "Configuration.ps1\\AddSessionHost",
       "properties": {
         "HostPoolName":"${var.virtual_desktop_host_pool_name}"
