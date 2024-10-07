@@ -79,7 +79,7 @@ module "avm-res-storage-storageaccount" {
           private_dns_zone_group_name = var.resource_group_name,
           private_dns_zone_resource_ids = [azurerm_private_dns_zone.example_blob.id],
           private_service_connection_name = "blobsc"
-        }
+        },
         storagepeblob = {
           name = "storageprivatefile"
           subnet_resource_id = azurerm_subnet.example.id
