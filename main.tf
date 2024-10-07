@@ -366,6 +366,11 @@ resource "azurerm_subnet" "AzureBastionSubnet" {
   address_prefixes     = ["10.10.1.0/26"]
 }
 
+resource "azurerm_subnet_network_security_group_association" "example" {
+  subnet_id                 = azurerm_subnet.example.id
+  network_security_group_id = module.avm-res-network-networksecuritygroup.resource.id
+}
+
 module "avm-res-network-networksecuritygroup" {
   source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
   version = "0.2.0"
