@@ -602,6 +602,71 @@ module "avm-res-compute-virtualmachine1" {
   }
 }
 
+resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
+  name                       = "DJ"
+  # for_each                   = azurerm_windows_virtual_machine.winvm // Your key logic here
+  virtual_machine_id         = module.avm-res-compute-virtualmachine1.resource.id
+  publisher                  = "Microsoft.Compute"
+  type                       = "JsonADDomainExtension"
+  type_handler_version       = "1.3"
+  auto_upgrade_minor_version = true
+ 
+  settings = <<-SETTINGS
+    {
+      "Name": "ditclouds.com",
+      "OUPath": "OU=AVD-Hosts,DC=ditclouds,DC=com",
+      "User": "${data.azurerm_key_vault_secret.domain_username.value}",
+      "Restart": "true",
+      "Options": "3"
+    }
+    SETTINGS
+ 
+  protected_settings = <<-PSETTINGS
+    {
+      "Password": "${data.azurerm_key_vault_secret.domain_password.value}"
+    }
+    PSETTINGS
+ 
+  lifecycle {
+    ignore_changes = [settings, protected_settings]
+  }
+}
+
+resource "azurerm_virtual_machine_extension" "vmext_dsc" {
+  count                      = 1
+  name                       = "avd_dsc"
+  virtual_machine_id         = module.avm-res-compute-virtualmachine1.resource.id
+  publisher                  = "Microsoft.Powershell"
+  type                       = "DSC"
+  type_handler_version       = "2.73"
+  auto_upgrade_minor_version = true
+
+  settings = <<-SETTINGS
+    {
+      "modulesUrl": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration.zip",
+      "configurationFunction": "Configuration.ps1\\AddSessionHost",
+      "properties": {
+        "HostPoolName":"${var.virtual_desktop_host_pool_name}"
+      }
+    }
+  SETTINGS
+
+  protected_settings = <<PROTECTED_SETTINGS
+  {
+    "properties": {
+      "registrationInfoToken": "${module.avm-res-desktopvirtualization-hostpool.registrationinfo_token}"
+    }
+  }
+  PROTECTED_SETTINGS
+
+
+  depends_on = [
+    module.avm-res-compute-virtualmachine,
+    module.avm-res-desktopvirtualization-hostpool,
+    azurerm_private_dns_zone_virtual_network_link.example_blob_link
+  ]
+}
+
 module "avm-res-compute-virtualmachine2" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.16.0"
@@ -648,6 +713,71 @@ module "avm-res-compute-virtualmachine2" {
   tags = {
     environment = "dev"
   }
+}
+
+resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
+  name                       = "ExtensionName1GoesHere"
+  # for_each                   = azurerm_windows_virtual_machine.winvm // Your key logic here
+  virtual_machine_id         = module.avm-res-compute-virtualmachine2.resource.id
+  publisher                  = "Microsoft.Compute"
+  type                       = "JsonADDomainExtension"
+  type_handler_version       = "1.3"
+  auto_upgrade_minor_version = true
+ 
+  settings = <<-SETTINGS
+    {
+      "Name": "ditclouds.com",
+      "OUPath": "OU=AVD-Hosts,DC=ditclouds,DC=com",
+      "User": "${data.azurerm_key_vault_secret.domain_username.value}",
+      "Restart": "true",
+      "Options": "3"
+    }
+    SETTINGS
+ 
+  protected_settings = <<-PSETTINGS
+    {
+      "Password": "${data.azurerm_key_vault_secret.domain_password.value}"
+    }
+    PSETTINGS
+ 
+  lifecycle {
+    ignore_changes = [settings, protected_settings]
+  }
+}
+
+resource "azurerm_virtual_machine_extension" "vmext_dsc" {
+  count                      = 1
+  name                       = "avd_dsc"
+  virtual_machine_id         = module.avm-res-compute-virtualmachine2.resource.id
+  publisher                  = "Microsoft.Powershell"
+  type                       = "DSC"
+  type_handler_version       = "2.73"
+  auto_upgrade_minor_version = true
+
+  settings = <<-SETTINGS
+    {
+      "modulesUrl": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration.zip",
+      "configurationFunction": "Configuration.ps1\\AddSessionHost",
+      "properties": {
+        "HostPoolName":"${var.virtual_desktop_host_pool_name}"
+      }
+    }
+  SETTINGS
+
+  protected_settings = <<PROTECTED_SETTINGS
+  {
+    "properties": {
+      "registrationInfoToken": "${module.avm-res-desktopvirtualization-hostpool.registrationinfo_token}"
+    }
+  }
+  PROTECTED_SETTINGS
+
+
+  depends_on = [
+    module.avm-res-compute-virtualmachine,
+    module.avm-res-desktopvirtualization-hostpool,
+    azurerm_private_dns_zone_virtual_network_link.example_blob_link
+  ]
 }
 
 resource "azurerm_public_ip" "bastion" {
