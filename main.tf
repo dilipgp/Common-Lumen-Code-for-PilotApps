@@ -366,6 +366,15 @@ resource "azurerm_subnet" "AzureBastionSubnet" {
   address_prefixes     = ["10.10.1.0/26"]
 }
 
+module "avm-res-network-networksecuritygroup" {
+  source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  version = "0.2.0"
+  # insert the 3 required variables here
+  location = var.location
+  name = "examplevm-nsg"
+  resource_group_name = data.azurerm_resource_group.this.name
+}
+
 module "avm-res-compute-virtualmachine" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.16.0"
@@ -378,6 +387,11 @@ module "avm-res-compute-virtualmachine" {
         ipconfig1 = {
           name                          = "internal"
           private_ip_subnet_resource_id = azurerm_subnet.example.id
+        }
+      }
+      network_security_groups = {
+        nsg = {
+          network_security_group_resource_id = module.avm-res-network-networksecuritygroup.resource.id
         }
       }
     }
@@ -493,6 +507,15 @@ resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
   }
 }
 
+module "avm-res-network-networksecuritygroup1" {
+  source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  version = "0.2.0"
+  # insert the 3 required variables here
+  location = var.location
+  name = "examplevm-nsg1"
+  resource_group_name = data.azurerm_resource_group.this.name
+}
+
 # vm1
 module "avm-res-compute-virtualmachine1" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
@@ -506,6 +529,11 @@ module "avm-res-compute-virtualmachine1" {
         ipconfig1 = {
           name     = "internal"
           private_ip_subnet_resource_id = azurerm_subnet.example.id
+        }
+      }
+      network_security_groups = {
+        nsg = {
+          network_security_group_resource_id = module.avm-res-network-networksecuritygroup1.resource.id
         }
       }
     }
@@ -537,6 +565,15 @@ module "avm-res-compute-virtualmachine1" {
   }
 }
 
+module "avm-res-network-networksecuritygroup2" {
+  source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  version = "0.2.0"
+  # insert the 3 required variables here
+  location = var.location
+  name = "examplevm-nsg2"
+  resource_group_name = data.azurerm_resource_group.this.name
+}
+
 module "avm-res-compute-virtualmachine2" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.16.0"
@@ -549,6 +586,11 @@ module "avm-res-compute-virtualmachine2" {
         ipconfig1 = {
           name     = "internal"
           private_ip_subnet_resource_id = azurerm_subnet.example.id
+        }
+      }
+      network_security_groups = {
+        nsg = {
+          network_security_group_resource_id = module.avm-res-network-networksecuritygroup2.resource.id
         }
       }
     }
