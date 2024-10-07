@@ -373,6 +373,52 @@ module "avm-res-network-networksecuritygroup" {
   location = var.location
   name = "examplevm-nsg"
   resource_group_name = data.azurerm_resource_group.this.name
+  security_rules = {
+    example_rule = {
+      name                       = "SSH"
+      priority                   = 1001
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "22"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    },
+    example_rule2 = {
+      name                       = "RDP"
+      priority                   = 1002
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "3389"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    },
+    example_rule3 = {
+      name                       = "HTTP"
+      priority                   = 1003
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "80"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    },
+    example_rule4 = {
+      name                       = "HTTPS"
+      priority                   = 1004
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    }
+  }
 }
 
 module "avm-res-compute-virtualmachine" {
@@ -507,15 +553,6 @@ resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
   }
 }
 
-module "avm-res-network-networksecuritygroup1" {
-  source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version = "0.2.0"
-  # insert the 3 required variables here
-  location = var.location
-  name = "examplevm-nsg1"
-  resource_group_name = data.azurerm_resource_group.this.name
-}
-
 # vm1
 module "avm-res-compute-virtualmachine1" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
@@ -533,7 +570,7 @@ module "avm-res-compute-virtualmachine1" {
       }
       network_security_groups = {
         nsg = {
-          network_security_group_resource_id = module.avm-res-network-networksecuritygroup1.resource.id
+          network_security_group_resource_id = module.avm-res-network-networksecuritygroup.resource.id
         }
       }
     }
@@ -565,15 +602,6 @@ module "avm-res-compute-virtualmachine1" {
   }
 }
 
-module "avm-res-network-networksecuritygroup2" {
-  source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version = "0.2.0"
-  # insert the 3 required variables here
-  location = var.location
-  name = "examplevm-nsg2"
-  resource_group_name = data.azurerm_resource_group.this.name
-}
-
 module "avm-res-compute-virtualmachine2" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.16.0"
@@ -590,7 +618,7 @@ module "avm-res-compute-virtualmachine2" {
       }
       network_security_groups = {
         nsg = {
-          network_security_group_resource_id = module.avm-res-network-networksecuritygroup2.resource.id
+          network_security_group_resource_id = module.avm-res-network-networksecuritygroup.resource.id
         }
       }
     }
