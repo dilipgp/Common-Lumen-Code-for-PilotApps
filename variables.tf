@@ -15,6 +15,26 @@ variable "resource_group_name" {
   nullable    = false
 }
 
+variable "virtual_network_name" {
+  type        = string
+  description = "The name of the Virtual Network to create."
+  nullable    = false
+  
+}
+variable "address_space" {
+  description = "The address space that is used by the virtual network"
+  type        = list(string)
+}
+variable "address_prefixes" {
+  description = "The address prefixes that is used by the subnet"
+  type        = list(string)
+  
+}
+variable "subnet_name" {
+  description = "The name of the subnet"
+  type        = string
+}
+
 variable "keyvault_name" {
   type        = string
   description = "The name of the Key Vault to create."
