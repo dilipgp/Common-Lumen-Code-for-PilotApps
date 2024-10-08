@@ -32,7 +32,7 @@ data "azurerm_subnet" "example" {
   virtual_network_name = data.azurerm_virtual_network.this.name
 }
 
-resource "azurerm_subnet" "AzureBastionSubnet" {
+resource "azurerm_subnet" "pooled" {
   name                 = "pooled"
   resource_group_name  = data.azurerm_resource_group.this.name
   virtual_network_name = data.azurerm_virtual_network.this.name
