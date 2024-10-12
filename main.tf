@@ -140,11 +140,11 @@ module "avm-res-network-networksecuritygroup" {
 // NSG Subnet Association
 locals {
   subnet_nsg_associations = [
-    { subnet_id = data.azurerm_subnet.image.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_image_name].id },
-    { subnet_id = data.azurerm_subnet.personal_hostpool.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_personal_hostpool_name].id },
-    { subnet_id = data.azurerm_subnet.pooled_hostpool.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_pooled_hostpool_name].id },
-    { subnet_id = data.azurerm_subnet.bastion.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_bastion_name].id },
-    { subnet_id = data.azurerm_subnet.pe.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_pe_name].id }
+    { subnet_id = data.azurerm_subnet.image.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_image_name].resource_id },
+    { subnet_id = data.azurerm_subnet.personal_hostpool.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_personal_hostpool_name].resource_id },
+    { subnet_id = data.azurerm_subnet.pooled_hostpool.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_pooled_hostpool_name].resource_id },
+    { subnet_id = data.azurerm_subnet.bastion.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_bastion_name].resource_id },
+    { subnet_id = data.azurerm_subnet.pe.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_pe_name].resource_id }
   ]
 }
 
@@ -270,7 +270,7 @@ module "avm-res-desktopvirtualization-workspace" {
 //Remote App Group WS Assignment
 resource "azurerm_virtual_desktop_workspace_application_group_association" "example" {
   for_each = { for group in local.remoteapp_groups : group.name => group }
-  workspace_id        = module.azurerm_virtual_desktop_workspace.id
+  workspace_id        = module.azurerm_virtual_desktop_workspace.resource_id
   application_group_id = module.avm-res-remoteapp[each.key].resource.id
 }
 
@@ -289,8 +289,7 @@ module "avm-res-keyvault-vault" {
   network_acls = {
     default_action             = "Deny"
     bypass                     = "AzureServices"
-    virtual_network_subnet_ids = [azurerm_subnet.pe.id, azurerm_subnet.personal_hostpool.id, azurerm_subnet.pooled_hostpool.id, azurerm_subnet.image.id, azurerm_subnet.bastion.id]
-  }
+    }
   private_endpoints = {
     primary = {
       subnet_resource_id = data.azurerm_subnet.pe.id
@@ -347,7 +346,7 @@ module "avm-res-storage-storageaccount" {
       subresource_name = "blob"
       resource_group_name = local.resource_group_name_avd
       private_dns_zone_group_name = local.dns_rg_name
-      private_dns_zone_resource_ids = [azurerm_private_dns_zone.example_blob.id]
+      private_dns_zone_resource_ids = [data.azurerm_private_dns_zone.example_blob.id]
       private_service_connection_name = "blobsc"
     },
     storagepefile = {
@@ -356,7 +355,7 @@ module "avm-res-storage-storageaccount" {
       subresource_name = "file"
       resource_group_name = local.resource_group_name_avd
       private_dns_zone_group_name = local.dns_rg_name
-      private_dns_zone_resource_ids = [azurerm_private_dns_zone.example_file.id]
+      private_dns_zone_resource_ids = [data.azurerm_private_dns_zone.example_file.id]
       private_service_connection_name = "filesc"
     }
   }
@@ -454,7 +453,7 @@ module "avm-res-compute-virtualmachine" {
   # Required variables
   network_interfaces = {}
 
-  zone                = [1, 2, 3]
+  zone                = "1"
   name                = "${local.virtualmachinename}${each.key}"
   location            = var.location
   resource_group_name = data.azurerm_resource_group.avd.name
@@ -483,6 +482,7 @@ module "avm-res-compute-virtualmachine" {
       managed_disk_type = "Premium_ZRS"
       storage_account_type = "Premium_ZRS"
       lun                     = 0
+      caching                = "ReadWrite"
       name                    = "${local.virtualmachinename}${each.key}-data-disk"
     }
   }
