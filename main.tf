@@ -436,7 +436,7 @@ resource "random_password" "admin_password" {
 
 // check the count
 module "avm-res-compute-virtualmachine" {
-  for_each = { for vm in local.vm_categories : "${vm.category}-${vm.count}" => vm }
+  for_each = { for vm in local.vm_categories : "${vm.category}-${vm.type}" => vm }
   source   = "Azure/avm-res-compute-virtualmachine/azurerm"
   version  = "0.16.0"
 
