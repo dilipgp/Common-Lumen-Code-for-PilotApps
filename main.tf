@@ -273,7 +273,7 @@ module "avm-res-desktopvirtualization-workspace" {
 //Remote App Group WS Assignment
 resource "azurerm_virtual_desktop_workspace_application_group_association" "example" {
   for_each = { for group in local.remoteapp_groups : group.name => group }
-  workspace_id        = module.avm-res-desktopvirtualization-workspace.resource_id["workspace"]
+  workspace_id        = module.avm-res-desktopvirtualization-workspace.resource.id
   application_group_id = module.avm-res-remoteapp[each.key].resource.id
 }
 
@@ -400,10 +400,10 @@ resource "azurerm_storage_share" "example" {
 // Session Host VM
 locals {
   vm_categories = [
-    { type="Pooled", category = local.virtual_desktop_host_pool1_name, image_sku = "win11-21h2-avd-multisession", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool1_name].registrationinfo_token },
-    { type="Pooled", category = local.virtual_desktop_host_pool2_name, image_sku = "win11-21h2-avd-multisession", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool2_name].registrationinfo_token },
-    { type="Personal", category = local.virtual_desktop_host_pool3_name, image_sku = "win11-21h2-avd", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool3_name].registrationinfo_token },
-    { type="Personal", category = local.virtual_desktop_host_pool4_name, image_sku = "win11-21h2-avd", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool4_name].registrationinfo_token },
+    { type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool1_name, image_sku = "win11-21h2-avd-multisession", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool1_name].registrationinfo_token },
+    { type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool2_name, image_sku = "win11-21h2-avd-multisession", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool2_name].registrationinfo_token },
+    { type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool3_name, image_sku = "win11-21h2-avd", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool3_name].registrationinfo_token },
+    { type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool4_name, image_sku = "win11-21h2-avd", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool4_name].registrationinfo_token },
   ]
 
   vm_instances = flatten([
@@ -453,7 +453,17 @@ module "avm-res-compute-virtualmachine" {
   version  = "0.16.0"
 
   # Required variables
-  network_interfaces = {}
+  network_interfaces = {
+    example_nic = {
+      name = "${each.key}-nic"
+      ip_configurations = {
+        ipconfig1 = {
+          name                          = "internal"
+          private_ip_subnet_resource_id = each.value.subnet
+        }
+      }
+    }
+  }
 
   zone                = "1"
   name                = "${local.virtualmachinename}${each.key}"
