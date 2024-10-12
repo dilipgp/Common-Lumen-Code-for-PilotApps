@@ -75,7 +75,6 @@ data "azurerm_private_dns_zone" "example_avd" {
   resource_group_name = local.dns_rg_name
 }
 
-
 // NSG creation 5
 locals {
   nsg_names = [local.nsg_image_name, local.nsg_personal_hostpool_name, local.nsg_pooled_hostpool_name, local.nsg_pe_name, local.nsg_bastion_name]
@@ -131,6 +130,28 @@ module "avm-res-network-networksecuritygroup" {
       protocol                   = "Tcp"
       source_port_range          = "*"
       destination_port_range     = "443"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    },
+    bastion_rule1 = {
+      name                       = "AzureBastionSubnetRule1"
+      priority                   = 1005
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    },
+    bastion_rule2 = {
+      name                       = "AzureBastionSubnetRule2"
+      priority                   = 1006
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "4443"
       source_address_prefix      = "*"
       destination_address_prefix = "*"
     }
