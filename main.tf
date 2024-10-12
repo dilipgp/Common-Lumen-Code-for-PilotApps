@@ -405,6 +405,18 @@ locals {
     { type="Personal", category = local.virtual_desktop_host_pool3_name, image_sku = "win11-21h2-avd", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool3_name].registrationinfo_token },
     { type="Personal", category = local.virtual_desktop_host_pool4_name, image_sku = "win11-21h2-avd", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool4_name].registrationinfo_token },
   ]
+
+  vm_instances = flatten([
+    for vm in local.vm_categories : [
+      for i in range(vm.count) : {
+        type              = vm.type
+        category          = vm.category
+        image_sku         = vm.image_sku
+        registration_info = vm.registration_info
+        instance_index    = i
+      }
+    ]
+  ])
 }
 
 data "azurerm_key_vault" "vault" {
@@ -436,17 +448,15 @@ resource "random_password" "admin_password" {
 
 // check the count
 module "avm-res-compute-virtualmachine" {
-  for_each = { for vm in local.vm_categories : "${vm.category}-${vm.type}" => vm }
+  for_each = { for vm in local.vm_instances : "${vm.category}-${vm.type}-${vm.instance_index}" => vm }
   source   = "Azure/avm-res-compute-virtualmachine/azurerm"
   version  = "0.16.0"
-
-  count = each.value.count
 
   # Required variables
   network_interfaces = {}
 
   zone                = [1, 2, 3]
-  name                = "${local.virtualmachinename}${each.key}-${count.index}"
+  name                = "${local.virtualmachinename}${each.key}"
   location            = var.location
   resource_group_name = data.azurerm_resource_group_avd.this.name
   admin_username      = local.adminuser
@@ -466,7 +476,7 @@ module "avm-res-compute-virtualmachine" {
     storage_account_type = "PremiumV2_ZRS"
   }
 
-  // add a data disk of size Premium SSD ZRS 256gb
+  # Add a data disk of size Premium SSD ZRS 256GB
   data_disk_managed_disks = {
     example_data_disk = {
       create_option = "Empty"
@@ -474,7 +484,7 @@ module "avm-res-compute-virtualmachine" {
       managed_disk_type = "Premium_ZRS"
       storage_account_type = "Premium_ZRS"
       lun                     = 0
-      name                    = "${local.virtualmachinename}${each.key}-${count.index}data-disk"
+      name                    = "${local.virtualmachinename}${each.key}-data-disk"
     }
   }
 
@@ -495,7 +505,7 @@ module "avm-res-compute-virtualmachine" {
       }
       SETTINGS
 
-      protected_settings = <<PROTECTED_SETTINGS
+      protected_settings = <<-PROTECTED_SETTINGS
       {
         "properties": {
           "registrationInfoToken": "${each.value.registration_info}"
