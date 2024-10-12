@@ -467,7 +467,7 @@ module "avm-res-compute-virtualmachine" {
   }
 
   zone                = "1"
-  name                = "${local.virtualmachinename}${each.key}"
+  name                = substr("${local.virtualmachinename}${each.key}", 0, 15)
   location            = var.location
   resource_group_name = data.azurerm_resource_group.avd.name
   admin_username      = local.adminuser
