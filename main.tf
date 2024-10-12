@@ -335,9 +335,9 @@ module "avm-res-storage-storageaccount" {
   allow_nested_items_to_be_public         = false
   shared_access_key_enabled = true
   network_rules = {
-    default_action             = "Deny"
-    bypass                     = "AzureServices"
-   }
+    default_action = "Deny"
+    bypass         = ["AzureServices"]
+  }
   private_endpoints = {
     storagepeblob = {
       name = "${each.value.name}blobpe"
