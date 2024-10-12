@@ -668,28 +668,28 @@ module "avm-res-network-publicipaddress" {
   sku                 = "Standard"
 }
 
-module "azure_bastion" {
-  source = "Azure/avm-res-network-bastionhost/azurerm"
-  version = "0.3.0"
-  enable_telemetry    = true
-  resource_group_name = data.azurerm_resource_group.avd.name
-  location = var.location
-  name = "avd-bastion"
-  copy_paste_enabled     = true
-  file_copy_enabled      = false
-  sku                 = "Standard"  # Change to Premium SKU
-  ip_configuration = {
-    name                 = "my-ipconfig"
-    subnet_id            = data.azurerm_subnet.bastion.id
-    public_ip_address_id = module.avm-res-network-publicipaddress.public_ip_id  # Set to null to use private IP
-  }
-  ip_connect_enabled     = true
-  scale_units            = 4
-  shareable_link_enabled = true
-  tunneling_enabled      = true
-  kerberos_enabled       = true
+# module "azure_bastion" {
+#   source = "Azure/avm-res-network-bastionhost/azurerm"
+#   version = "0.3.0"
+#   enable_telemetry    = true
+#   resource_group_name = data.azurerm_resource_group.avd.name
+#   location = var.location
+#   name = "avd-bastion"
+#   copy_paste_enabled     = true
+#   file_copy_enabled      = false
+#   sku                 = "Standard"  # Change to Premium SKU
+#   ip_configuration = {
+#     name                 = "my-ipconfig"
+#     subnet_id            = data.azurerm_subnet.bastion.id
+#     public_ip_address_id = module.avm-res-network-publicipaddress.public_ip_id  # Set to null to use private IP
+#   }
+#   ip_connect_enabled     = true
+#   scale_units            = 4
+#   shareable_link_enabled = true
+#   tunneling_enabled      = true
+#   kerberos_enabled       = true
  
-  tags = {
-    environment = "dev"
-  }
-}
+#   tags = {
+#     environment = "dev"
+#   }
+# }
