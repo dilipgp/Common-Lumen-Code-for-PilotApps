@@ -150,8 +150,8 @@ locals {
 
 resource "azurerm_subnet_network_security_group_association" "this" {
   for_each = {
-    for assoc in local.subnet_nsg_associations :
-    "${assoc.subnet_id}-${assoc.nsg_id}" => assoc
+    for idx, assoc in local.subnet_nsg_associations :
+    idx => assoc
   }
   subnet_id                 = each.value.subnet_id
   network_security_group_id = each.value.nsg_id
