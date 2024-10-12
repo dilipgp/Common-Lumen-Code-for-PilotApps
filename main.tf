@@ -484,7 +484,7 @@ module "avm-res-compute-virtualmachine" {
   # Optional variables (add as needed)
   os_disk = {
     caching              = "ReadWrite"
-    storage_account_type = "PremiumV2_ZRS"
+    storage_account_type = "Premium_ZRS"
   }
 
   # Add a data disk of size Premium SSD ZRS 256GB
