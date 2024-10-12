@@ -141,7 +141,7 @@ locals {
     keyvault_name = "vdavdkey0023"
 
     // Diag Workspace Name
-    operationalinsights_workspace_name            = "OperationalInsights02939"
+    operationalinsights_workspace_name            = "OperationalInsights02939vd"
 
     domain_name_avd = "privatelink.wvd.microsoft.com"
     }
