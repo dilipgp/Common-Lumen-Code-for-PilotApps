@@ -151,10 +151,7 @@ locals {
 resource "azurerm_subnet_network_security_group_association" "this" {
   for_each = {
     for assoc in local.subnet_nsg_associations :
-    "${assoc.subnet_id}-${assoc.nsg_id}" => {
-      subnet_id = assoc.subnet_id
-      nsg_id    = assoc.nsg_id
-    }
+    "${assoc.subnet_id}-${assoc.nsg_id}" => assoc
   }
   subnet_id                 = each.value.subnet_id
   network_security_group_id = each.value.nsg_id
@@ -276,7 +273,7 @@ module "avm-res-desktopvirtualization-workspace" {
 //Remote App Group WS Assignment
 resource "azurerm_virtual_desktop_workspace_application_group_association" "example" {
   for_each = { for group in local.remoteapp_groups : group.name => group }
-  workspace_id        = module.avm-res-desktopvirtualization-workspace.resource_id
+  workspace_id        = module.avm-res-desktopvirtualization-workspace.resource_id["workspace"]
   application_group_id = module.avm-res-remoteapp[each.key].resource.id
 }
 
