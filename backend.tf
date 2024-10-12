@@ -3,7 +3,7 @@ terraform {
     resource_group_name  = "Github"
     storage_account_name = "devopslumen01"
     container_name       = "tfstatefile"
-    key                  = "terraform2.tfstate"
+    key                  = "terraform3.tfstate"
 
   }
 }

@@ -1,4 +1,4 @@
-location            = "CentralUS"
+location            = "EastUS2"
 name                = "aks-02"
 keyvault_name                                 = "lumen-avd-kv-04"
 object_id                                     = "08afb591-fb58-46c1-b797-76688967a5cf"
