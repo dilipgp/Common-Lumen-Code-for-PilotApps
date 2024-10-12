@@ -270,7 +270,7 @@ module "avm-res-desktopvirtualization-workspace" {
 //Remote App Group WS Assignment
 resource "azurerm_virtual_desktop_workspace_application_group_association" "example" {
   for_each = { for group in local.remoteapp_groups : group.name => group }
-  workspace_id        = module.azurerm_virtual_desktop_workspace.resource_id
+  workspace_id        = module.avm-res-desktopvirtualization-workspace.resource_id
   application_group_id = module.avm-res-remoteapp[each.key].resource.id
 }
 
@@ -337,11 +337,10 @@ module "avm-res-storage-storageaccount" {
   network_rules = {
     default_action             = "Deny"
     bypass                     = "AzureServices"
-    virtual_network_subnet_ids = [data.azurerm_subnet.pe.id, data.azurerm_subnet.personal_hostpool.id, data.azurerm_subnet.pooled_hostpool.id, data.azurerm_subnet.image.id, data.azurerm_subnet.bastion.id]
-  }
+   }
   private_endpoints = {
     storagepeblob = {
-      name = each.value.name + "blobpe"
+      name = "${each.value.name}blobpe"
       subnet_resource_id = data.azurerm_subnet.pe.id
       subresource_name = "blob"
       resource_group_name = local.resource_group_name_avd
@@ -350,7 +349,7 @@ module "avm-res-storage-storageaccount" {
       private_service_connection_name = "blobsc"
     },
     storagepefile = {
-      name = each.value.name + "filepe"
+      name = "${each.value.name}filepe"
       subnet_resource_id = data.azurerm_subnet.pe.id
       subresource_name = "file"
       resource_group_name = local.resource_group_name_avd
