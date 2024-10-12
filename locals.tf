@@ -19,7 +19,7 @@ locals {
     nsg_image_name = "vd-nsg-image-avd-poc-cus-01"
     nsg_personal_hostpool_name = "vd-nsg-personal-wklds-avd-poc-cus-01"
     nsg_pooled_hostpool_name = "vd-nsg-pool-wklds-avd-poc-cus-01"
-    nsg_bastion_name = "vd-nsg-bastion-avd-poc-cus-01"
+    nsg_bastion_name = "AzureBastionSubnet"
     nsg_pe_name = "vd-nsg-pe-avd-poc-cus-01"
 
     avd_rg_name = "rg0-1"
@@ -34,7 +34,7 @@ locals {
     virtual_desktop_host_pool1_type = "Pooled"
     virtual_desktop_host_pool1_maximum_sessions_allowed = 3
     virtual_desktop_host_pool1_start_vm_on_connect = true
-    virtual_desktop_host_pool1_preferred_app_group_type = "None"
+    virtual_desktop_host_pool1_preferred_app_group_type = "RailApplications"
 
     //Hostpool2
     virtual_desktop_host_pool2_load_balancer_type = "BreadthFirst"
@@ -42,7 +42,7 @@ locals {
     virtual_desktop_host_pool2_type = "Pooled"
     virtual_desktop_host_pool2_maximum_sessions_allowed = 3
     virtual_desktop_host_pool2_start_vm_on_connect = true
-    virtual_desktop_host_pool2_preferred_app_group_type = "None"
+    virtual_desktop_host_pool2_preferred_app_group_type = "RailApplications"
 
     //Hostpool3
     virtual_desktop_host_pool3_load_balancer_type = "BreadthFirst"
@@ -132,16 +132,16 @@ locals {
       ]
 
     // AppV image Sku
-    appv_sku = "2022-datacenter-g2"
+    appv_sku = "2022-datacenter"
     appv_offer = "WindowsServer"
-    appv_publisher = "MicrosoftWindowsDesktop"
+    appv_publisher = "MicrosoftWindowsServer"
     appv_version = "latest"
 
     // key Vault name
-    keyvault_name = "vdavdkeyvault"
+    keyvault_name = "vdavdkey0023"
 
     // Diag Workspace Name
-    operationalinsights_workspace_name            = "OperationalInsightsWorkspaceLumen"
+    operationalinsights_workspace_name            = "OperationalInsights02939"
 
     domain_name_avd = "privatelink.wvd.microsoft.com"
     }
