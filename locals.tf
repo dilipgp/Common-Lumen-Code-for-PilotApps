@@ -13,7 +13,7 @@ locals {
     subnet_pe_name = "vd-snet-pe-avd-poc-cus-01"
     resource_group_name_vnet = "lumen-avd-rg-03"
     resource_group_name_shared = "AD"
-    resource_group_name_avd = "rg0-1"
+    resource_group_name_avd = "Vnet01"
     resource_group_name_dns = "for-DNSZone"
 
     nsg_image_name = "vd-nsg-image-avd-poc-cus-01"
@@ -22,8 +22,8 @@ locals {
     nsg_bastion_name = "AzureBastionSubnet"
     nsg_pe_name = "vd-nsg-pe-avd-poc-cus-01"
 
-    avd_rg_name = "rg0-1"
-    avd_rg_shared_name = "rg0-1"
+    avd_rg_name = "Vnet01"
+    avd_rg_shared_name = "Vnet01"
 
     // DNS RG Name
     dns_rg_name = "for-DNSZone"
