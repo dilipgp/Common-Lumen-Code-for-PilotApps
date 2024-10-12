@@ -149,7 +149,13 @@ locals {
 }
 
 resource "azurerm_subnet_network_security_group_association" "this" {
-  for_each = { for assoc in local.subnet_nsg_associations : "${assoc.subnet_id}-${assoc.nsg_id}" => assoc }
+  for_each = {
+    for assoc in local.subnet_nsg_associations :
+    "${assoc.subnet_id}-${assoc.nsg_id}" => {
+      subnet_id = assoc.subnet_id
+      nsg_id    = assoc.nsg_id
+    }
+  }
   subnet_id                 = each.value.subnet_id
   network_security_group_id = each.value.nsg_id
 }
@@ -606,6 +612,9 @@ module "appV" {
     disk_size_gb         = disk.size_gb
     managed_disk_type    = disk.type
     storage_account_type = disk.type
+    caching              = "ReadWrite"
+    lun                  = disk.lun
+    name                 = disk.name
   }}
 
   tags = {

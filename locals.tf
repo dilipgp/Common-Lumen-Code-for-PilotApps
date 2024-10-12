@@ -34,7 +34,7 @@ locals {
     virtual_desktop_host_pool1_type = "Pooled"
     virtual_desktop_host_pool1_maximum_sessions_allowed = 3
     virtual_desktop_host_pool1_start_vm_on_connect = true
-    virtual_desktop_host_pool1_preferred_app_group_type = "RemoteApp"
+    virtual_desktop_host_pool1_preferred_app_group_type = "None"
 
     //Hostpool2
     virtual_desktop_host_pool2_load_balancer_type = "BreadthFirst"
@@ -42,7 +42,7 @@ locals {
     virtual_desktop_host_pool2_type = "Pooled"
     virtual_desktop_host_pool2_maximum_sessions_allowed = 3
     virtual_desktop_host_pool2_start_vm_on_connect = true
-    virtual_desktop_host_pool2_preferred_app_group_type = "RemoteApp"
+    virtual_desktop_host_pool2_preferred_app_group_type = "None"
 
     //Hostpool3
     virtual_desktop_host_pool3_load_balancer_type = "BreadthFirst"
@@ -119,16 +119,16 @@ locals {
 
     // AppV  3 VM data disk sizes
     appv_vm1_data_disk_size = [
-        { size_gb = 100, type = "Premium_LRS", name = "appv-vm1-disk1" },
-        { size_gb = 100, type = "Premium_LRS", name = "appv-vm1-disk2" },
-        { size_gb = 50, type = "Premium_LRS", name = "appv-vm1-disk3" },
-        { size_gb = 50, type = "Premium_LRS", name = "appv-vm1-disk4" }
+      { size_gb = 100, type = "Premium_LRS", name = "appv-vm1-disk1", lun = 0 },
+      { size_gb = 100, type = "Premium_LRS", name = "appv-vm1-disk2", lun = 1 },
+      { size_gb = 50, type = "Premium_LRS", name = "appv-vm1-disk3", lun = 2 },
+      { size_gb = 50, type = "Premium_LRS", name = "appv-vm1-disk4", lun = 3 }
       ]
     appv_vm2_data_disk_size = [
-        { size_gb = 1024, type = "Premium_LRS", name = "appv-vm2-disk1" }
+      { size_gb = 1024, type = "Premium_LRS", name = "appv-vm2-disk1", lun = 0 }
       ]
     appv_vm3_data_disk_size = [
-        { size_gb = 1024, type = "Premium_LRS", name = "appv-vm3-disk1" }
+      { size_gb = 1024, type = "Premium_LRS", name = "appv-vm3-disk1", lun = 0 }
       ]
 
     // AppV image Sku
