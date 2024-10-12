@@ -294,7 +294,6 @@ module "avm-res-keyvault-vault" {
   }
   private_endpoints = {
     primary = {
-      kv_domain        = var.kv_domain
       subnet_resource_id = data.azurerm_subnet_pe.this.id
       object_id          = var.object_id
       tenant_id          = var.tenant
@@ -310,7 +309,7 @@ module "avm-res-operationalinsights-workspace" {
   source              = "Azure/avm-res-operationalinsights-workspace/azurerm"
   version             = "0.4.1"
   location            = var.location
-  resource_group_name = data.azurerm-azurerm_resource_group_shared.this.name
+  resource_group_name = data.azurerm_resource_group_shared.this.name
   name                = local.operationalinsights_workspace_name
 }
 
@@ -401,10 +400,10 @@ resource "azurerm_storage_share" "example" {
 // Session Host VM
 locals {
   vm_categories = [
-    { type="Pooled", category = local.virtual_desktop_host_pool1_name, image_sku = "win11-21h2-avd-multisession", count = 20, registration_info = module.HP[local.virtual_desktop_host_pool1_name].registrationinfo_token },
-    { type="Pooled", category = local.virtual_desktop_host_pool2_name, image_sku = "win11-21h2-avd-multisession", count = 20, registration_info = module.HP[local.virtual_desktop_host_pool2_name].registrationinfo_token },
-    { type="Personal", category = local.virtual_desktop_host_pool3_name, image_sku = "win11-21h2-avd", count = 5, registration_info = module.HP[local.virtual_desktop_host_pool3_name].registrationinfo_token },
-    { type="Personal", category = local.virtual_desktop_host_pool4_name, image_sku = "win11-21h2-avd", count = 5, registration_info = module.HP[local.virtual_desktop_host_pool4_name].registrationinfo_token },
+    { type="Pooled", category = local.virtual_desktop_host_pool1_name, image_sku = "win11-21h2-avd-multisession", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool1_name].registrationinfo_token },
+    { type="Pooled", category = local.virtual_desktop_host_pool2_name, image_sku = "win11-21h2-avd-multisession", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool2_name].registrationinfo_token },
+    { type="Personal", category = local.virtual_desktop_host_pool3_name, image_sku = "win11-21h2-avd", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool3_name].registrationinfo_token },
+    { type="Personal", category = local.virtual_desktop_host_pool4_name, image_sku = "win11-21h2-avd", count = 2, registration_info = module.HP[local.virtual_desktop_host_pool4_name].registrationinfo_token },
   ]
 }
 

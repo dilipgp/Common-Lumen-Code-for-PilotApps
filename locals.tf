@@ -3,30 +3,30 @@ locals {
     appvserveradminusername = "appvserveruser"
     domainname = "ditclouds.com"
     oupath = "OU=AVD-Hosts,DC=ditclouds,DC=com"
-    domainusername = ""
-    virtualmachinename = "vmlumen"
-    virtual_network_name = "vnet-avd-poc-cus-01"
-    subnet_image_name         = "snet-image-n-mgmt-avd-poc-cus-01"
-    subnet_personal_hostpool_name = "snet-personal-wklds-avd-poc-cus-01"
+    domainusername = "adminuser"
+    virtualmachinename = "vdvmlumen"
+    virtual_network_name = "example-network"
+    subnet_image_name         = "vd-snet-image-n-mgmt-avd-poc-cus-01"
+    subnet_personal_hostpool_name = "vd-snet-personal-wklds-avd-poc-cus-01"
     subnet_pooled_hootpool_name = "snet-pool-wklds-avd-poc-cus-01"
-    subnet_bastion_name = "snet-bastion-avd-poc-cus-01"
-    subnet_pe_name = "snet-pe-avd-poc-cus-01"
-    resource_group_name_vnet = "rg-vnet-avd-poc-cus-01"
-    resource_group_name_shared = "rg-shared-avd-poc-cus-01"
-    resource_group_name_avd = "rg-avd-cus-01"
-    resource_group_name_dns = "rg-dns-avd-poc-cus-01"
+    subnet_bastion_name = "AzureBastionSubnet"
+    subnet_pe_name = "vd-snet-pe-avd-poc-cus-01"
+    resource_group_name_vnet = "lumen-avd-rg-03"
+    resource_group_name_shared = "AD"
+    resource_group_name_avd = "rg0-1"
+    resource_group_name_dns = "for-DNSZone"
 
-    nsg_image_name = "nsg-image-avd-poc-cus-01"
-    nsg_personal_hostpool_name = "nsg-personal-wklds-avd-poc-cus-01"
-    nsg_pooled_hostpool_name = "nsg-pool-wklds-avd-poc-cus-01"
-    nsg_bastion_name = "nsg-bastion-avd-poc-cus-01"
-    nsg_pe_name = "nsg-pe-avd-poc-cus-01"
+    nsg_image_name = "vd-nsg-image-avd-poc-cus-01"
+    nsg_personal_hostpool_name = "vd-nsg-personal-wklds-avd-poc-cus-01"
+    nsg_pooled_hostpool_name = "vd-nsg-pool-wklds-avd-poc-cus-01"
+    nsg_bastion_name = "vd-nsg-bastion-avd-poc-cus-01"
+    nsg_pe_name = "vd-nsg-pe-avd-poc-cus-01"
 
-    avd_rg_name = "rg-avd-cus-01"
-    avd_rg_shared_name = "rg-avd-shared-cus-01"
+    avd_rg_name = "rg0-1"
+    avd_rg_shared_name = "rg0-1"
 
     // DNS RG Name
-    dns_rg_name = "rg-dns-avd-poc-cus-01"
+    dns_rg_name = "for-DNSZone"
 
     //Hostpool1
     virtual_desktop_host_pool1_load_balancer_type = "BreadthFirst"
@@ -94,18 +94,18 @@ locals {
 
 
     // Existing Keyvault
-    keyvault_name_existing = ""
-    secretnamedjusername = "domainjoinusername"
-    secretnamedjpassword = "domainjoinpassword"
+    keyvault_name_existing = "avd-domainjoin-for-lumen"
+    secretnamedjusername = "domain-join-account-username"
+    secretnamedjpassword = "domain-join-account-password"
 
     // storage
-    storage_account_name = "avdstorageaccount"
-    storageblobpename = "avdstorageblobpe"
-    storagefilepename = "avdstoragefilepe"
-    diagstoragename = "diagstoragename"
-    fsstoragename = "fsstoragename"
-    artifactstoragename = "artifactstoragename"
-    filesharename = "filesharename"
+    storage_account_name = "vdavdstorageaccount"
+    storageblobpename = "vdavdstorageblobpe"
+    storagefilepename = "vdavdstoragefilepe"
+    diagstoragename = "vddiagstoragename"
+    fsstoragename = "vdfsstoragename"
+    artifactstoragename = "vdartifactstoragename"
+    filesharename = "vdlumenfilesharename"
 
     // AppV  3 VM Names
     appv_vm1_name = "appv-vm1"
@@ -138,7 +138,7 @@ locals {
     appv_version = "latest"
 
     // key Vault name
-    keyvault_name = "avdkeyvault"
+    keyvault_name = "vdavdkeyvault"
 
     // Diag Workspace Name
     operationalinsights_workspace_name            = "OperationalInsightsWorkspaceLumen"
