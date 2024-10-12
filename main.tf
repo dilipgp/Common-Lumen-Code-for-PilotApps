@@ -414,6 +414,7 @@ locals {
         image_sku         = vm.image_sku
         registration_info = vm.registration_info
         instance_index    = i
+        subnet            = vm.subnet
       }
     ]
   ])
