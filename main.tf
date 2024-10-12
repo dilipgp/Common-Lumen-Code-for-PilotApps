@@ -30,7 +30,7 @@ output "secret_value" {
   value = data.azurerm_key_vault_secret.domain_password.value
 }
 
-output "secret_value" {
+output "secret_value2" {
   value = data.azurerm_key_vault_secret.domain_username.value
 }
  
