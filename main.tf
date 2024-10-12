@@ -88,7 +88,7 @@ module "avm-res-network-networksecuritygroup" {
 
   location            = var.location
   name                = each.value
-  resource_group_name = data.azurerm_resource_group.vnet.name
+  resource_group_name = data.azurerm_resource_group.avd.name
   security_rules = {
     example_rule = {
       name                       = "SSH"
