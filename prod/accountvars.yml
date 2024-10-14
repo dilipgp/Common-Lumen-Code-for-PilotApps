@@ -1,7 +1,0 @@
-tenant_id: "72b17115-9915-42c0-9f1b-4f98e5a4bcd2"
-subscription_id: "8939e7de-7f79-41cf-a8c7-572bce16fd7c"
-tf_remote_state_resource_group: "Infra.Ops-CCOE-HCA-state-management-rg"
-tf_remote_state_storage_account: "infraopstfstatesa"
-tf_remote_state_container_name: "poc-tfstates"
-tf_app_name: "testapp01"
-env: "prod"

@@ -1,396 +1,84 @@
-# This is required for resource modules
-data "azurerm_resource_group" "this" {
-  name = "lumen-avd-rg-03"
+// RG
+data "azurerm_resource_group" "vnet" {
+  name = local.resource_group_name_vnet
 }
 
-module "naming" {
-  source  = "Azure/naming/azurerm"
-  version = ">= 0.3.0"
+data "azurerm_resource_group" "avd" {
+  name = local.resource_group_name_avd
 }
 
-
-module "avm-res-network-privatednszone" {
-  source              = "Azure/avm-res-network-privatednszone/azurerm"
-  version             = "0.1.2"
-  domain_name         = var.domain_name
-  resource_group_name = data.azurerm_resource_group.this.name
-}
-module "avm-res-keyvault-vault" {
-  source  = "Azure/avm-res-keyvault-vault/azurerm"
-  version = "0.9.1"
-  # insert the 4 required variables here
-  location            = var.location
-  resource_group_name = data.azurerm_resource_group.this.name
-  name                = var.keyvault_name
-  enable_telemetry    = var.enable_telemetry
-  tenant_id           = var.tenant
-  public_network_access_enabled = true
-  legacy_access_policies_enabled = true
-  network_acls = {
-    default_action             = "Allow"
-  }
-  private_endpoints = {
-    primary = {
-      kv_domain        = var.kv_domain
-      subnet_resource_id = azurerm_subnet.example.id
-      object_id          = var.object_id
-      tenant_id          = var.tenant
-      private_dns_zone_group_name = var.resource_group_name,
-      private_dns_zone_resource_ids = [azurerm_private_dns_zone.example_keyvault.id],
-      private_service_connection_name = "keyvaultsc"
-    }
-  }
+data "azurerm_resource_group" "shared" {
+  name = local.resource_group_name_shared
 }
 
-# resource "azurerm_key_vault_secret" "example_secret1" {
-#   name         = "example-secret1"
-#   value        = "my-secret-value-1"
-#   key_vault_id = module.avm-res-keyvault-vault.resource_id
+// VNET
 
-#   lifecycle {
-#     ignore_changes = [value]
-#   }
-# } 
-
-module "avm-res-storage-storageaccount" {
-  source              = "Azure/avm-res-storage-storageaccount/azurerm"
-  version             = "0.2.7"
-  name                = "satestlumenmsft"
-  resource_group_name = data.azurerm_resource_group.this.name
-  location            = var.location
-  public_network_access_enabled = true
-  allow_nested_items_to_be_public         = true
-  # infrastructure_encryption_enabled       = var.sa_infrastructure_encryption_enabled
-  shared_access_key_enabled = true
-  managed_identities = {
-    identity = {
-      system_assigned = true
-    }
-  }
-  network_rules = {
-    default_action             = "Allow"
-  }
-  private_endpoints = {
-        storagepeblob = {
-          name = "storageprivateblob"
-          subnet_resource_id = azurerm_subnet.example.id
-          subresource_name = "blob"
-          resource_group_name = var.resource_group_name,
-          private_dns_zone_group_name = var.resource_group_name,
-          private_dns_zone_resource_ids = [azurerm_private_dns_zone.example_blob.id],
-          private_service_connection_name = "blobsc"
-        },
-        storagepeblob = {
-          name = "storageprivatefile"
-          subnet_resource_id = azurerm_subnet.example.id
-          subresource_name = "file"
-          resource_group_name = var.resource_group_name,
-          private_dns_zone_group_name = var.resource_group_name,
-          private_dns_zone_resource_ids = [azurerm_private_dns_zone.example_file.id],
-          private_service_connection_name = "filesc"
-        }
-    }
- }
-
-resource "azurerm_storage_share" "example" {
-  name                 = "sharename"
-  storage_account_name = module.avm-res-storage-storageaccount.name
-  quota                = 50
-  acl {
-    id = "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI"
-    access_policy {
-      permissions = "rwdl"
-      start       = "2019-07-02T09:38:21.0000000Z"
-      expiry      = "2019-07-02T10:38:21.0000000Z"
-    }
-  }
-}
-module "avm-res-desktopvirtualization-hostpool" {
-  source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version                                            = "0.2.1"
-  resource_group_name                                = data.azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location                 = var.location
-  virtual_desktop_host_pool_name                     = var.virtual_desktop_host_pool_name
-  virtual_desktop_host_pool_resource_group_name      = data.azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type                     = var.virtual_desktop_host_pool_type
-  virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
-  virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-  virtual_desktop_host_pool_vm_template = {
-    type = "Gallery"
-    gallery_image_reference = {
-      publisher = "MicrosoftWindowsDesktop"
-      offer     = "Windows-11"
-      sku       = "win11-21h2-avd"
-      version   = "latest"
-    }
-    osDisktype = "PremiumLRS"
-  }
-  # diagnostic_settings = {
-  #   setting1 = {
-  #     name                                = "example-setting-2"
-  #     log_groups                          = ["allLogs"]
-  #     metric_categories                   = ["AllMetrics"]
-  #     log_analytics_destination_type      = "Dedicated"
-  #     workspace_resource_id               = module.avm-res-operationalinsights-workspace.resource.id
-  #     storage_account_resource_id         = null
-  #     event_hub_authorization_rule_resource_id = null
-  #     event_hub_name                      = null
-  #     marketplace_partner_resource_id     = null
-  #   },
-
-  # }
-  private_endpoints = {
-    primary = {
-      domain_name        = var.domain_name
-      subnet_resource_id = azurerm_subnet.example.id
-    }
-  }
-}
-
-
-
-module "avm-res-desktopvirtualization-hostpool2" {
-  source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version                                            = "0.2.1"
-  resource_group_name                                = data.azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location                 = var.location
-  virtual_desktop_host_pool_name                     = "avdhostpool-2"
-  virtual_desktop_host_pool_resource_group_name      = data.azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type                     = "Pooled"
-  virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
-  virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-  private_endpoints = {
-    primary = {
-      domain_name        = var.domain_name
-      subnet_resource_id = azurerm_subnet.example.id
-    }
-  }
-}
-
-module "avm-res-desktopvirtualization-hostpool3" {
-  source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version                                            = "0.2.1"
-  resource_group_name                                = data.azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location                 = var.location
-  virtual_desktop_host_pool_name                     = "avdhostpool-3"
-  virtual_desktop_host_pool_resource_group_name      = data.azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type                     = "Personal"
-  virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
-  virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-  private_endpoints = {
-    primary = {
-      domain_name        = var.domain_name
-      subnet_resource_id = azurerm_subnet.example.id
-    }
-  }
-}
-
-module "avm-res-desktopvirtualization-hostpool4" {
-  source                                             = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
-  version                                            = "0.2.1"
-  resource_group_name                                = data.azurerm_resource_group.this.name
-  virtual_desktop_host_pool_load_balancer_type       = var.virtual_desktop_host_pool_load_balancer_type
-  virtual_desktop_host_pool_location                 = var.location
-  virtual_desktop_host_pool_name                     = "avdhostpool-4"
-  virtual_desktop_host_pool_resource_group_name      = data.azurerm_resource_group.this.name
-  virtual_desktop_host_pool_type                     = "Personal"
-  virtual_desktop_host_pool_maximum_sessions_allowed = var.virtual_desktop_host_pool_maximum_sessions_allowed
-  virtual_desktop_host_pool_start_vm_on_connect      = var.virtual_desktop_host_pool_start_vm_on_connect
-  private_endpoints = {
-    primary = {
-      domain_name        = var.domain_name
-      subnet_resource_id = azurerm_subnet.example.id
-    }
-  }
-}
-
-module "avm-res-desktopvirtualization-applicationgroup1" {
-  source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
-  version                                               = "0.1.5"
-  virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool.resource.id
-  virtual_desktop_application_group_location            = var.location
-  virtual_desktop_application_group_name                = "applicationgroup-1"
-  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
-  virtual_desktop_application_group_type                = "RemoteApp"
-}
-
-module "avm-res-desktopvirtualization-applicationgroup2" {
-  source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
-  version                                               = "0.1.5"
-  virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool.resource.id
-  virtual_desktop_application_group_location            = var.location
-  virtual_desktop_application_group_name                = "desktopgroup-1"
-  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
-  virtual_desktop_application_group_type                = "Desktop"
-}
-
-module "avm-res-desktopvirtualization-applicationgroup3" {
-  source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
-  version                                               = "0.1.5"
-  virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool2.resource.id
-  virtual_desktop_application_group_location            = var.location
-  virtual_desktop_application_group_name                = "applicationgroup-2"
-  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
-  virtual_desktop_application_group_type                = "RemoteApp"
-}
-
-module "avm-res-desktopvirtualization-applicationgroup4" {
-  source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
-  version                                               = "0.1.5"
-  virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool2.resource.id
-  virtual_desktop_application_group_location            = var.location
-  virtual_desktop_application_group_name                = "desktopgroup-2"
-  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
-  virtual_desktop_application_group_type                = "Desktop"
-}
-
-module "avm-res-desktopvirtualization-applicationgroup6" {
-  source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
-  version                                               = "0.1.5"
-  virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool3.resource.id
-  virtual_desktop_application_group_location            = var.location
-  virtual_desktop_application_group_name                = "desktopgroup-3"
-  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
-  virtual_desktop_application_group_type                = "Desktop"
-}
-
-module "avm-res-desktopvirtualization-applicationgroup8" {
-  source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
-  version                                               = "0.1.5"
-  virtual_desktop_application_group_host_pool_id        = module.avm-res-desktopvirtualization-hostpool4.resource.id
-  virtual_desktop_application_group_location            = var.location
-  virtual_desktop_application_group_name                = "desktopgroup-4"
-  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.this.name
-  virtual_desktop_application_group_type                = "Desktop"
-}
-
-
-
-module "avm-res-desktopvirtualization-workspace" {
-  source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
-  version                                       = "0.1.5"
-  resource_group_name                           = var.resource_group_name
-  virtual_desktop_workspace_location            = var.location
-  virtual_desktop_workspace_name                = var.virtual_desktop_workspace_name
-  virtual_desktop_workspace_resource_group_name = data.azurerm_resource_group.this.name
-  subresource_names                             = ["feed"]
-  private_endpoints = {
-    primary = {
-      domain_name        = var.domain_name
-      subnet_resource_id = azurerm_subnet.example.id
-    }
-  }
-}
-
-module "avm-res-desktopvirtualization-workspace2" {
-  source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
-  version                                       = "0.1.5"
-  resource_group_name                           = var.resource_group_name
-  virtual_desktop_workspace_location            = var.location
-  virtual_desktop_workspace_name                = "AVDWorkspace2"
-  virtual_desktop_workspace_resource_group_name = data.azurerm_resource_group.this.name
-  subresource_names                             = ["feed"]
-  private_endpoints = {
-    primary = {
-      domain_name        = var.domain_name
-      subnet_resource_id = azurerm_subnet.example.id
-    }
-  }
-}
-
-module "avm-res-desktopvirtualization-workspace3" {
-  source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
-  version                                       = "0.1.5"
-  resource_group_name                           = var.resource_group_name
-  virtual_desktop_workspace_location            = var.location
-  virtual_desktop_workspace_name                = "AVDWorkspace3"
-  subresource_names                             = ["global"]
-  virtual_desktop_workspace_resource_group_name = data.azurerm_resource_group.this.name
-  private_endpoints = {
-    primary = {
-      domain_name        = var.domain_global_name
-      subnet_resource_id = azurerm_subnet.example.id
-    }
-  }
-}
-
-module "avm-res-desktopvirtualization-workspace4" {
-  source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
-  version                                       = "0.1.5"
-  resource_group_name                           = var.resource_group_name
-  virtual_desktop_workspace_location            = var.location
-  virtual_desktop_workspace_name                = "AVDWorkspace4"
-  subresource_names                             = ["global"]
-  virtual_desktop_workspace_resource_group_name = data.azurerm_resource_group.this.name
-  private_endpoints = {
-    primary = {
-      domain_name        = var.domain_global_name
-      subnet_resource_id = azurerm_subnet.example.id
-    }
-  }
-}
-
-resource "azurerm_virtual_desktop_application" "this" {
-  name                         = "test"
-  application_group_id         = module.avm-res-desktopvirtualization-applicationgroup1.resource_id
-  friendly_name                = "test"
-  description                  = "test"
-  path                         = "C:\\Program Files\\MyApp\\myapp.exe"
-  icon_path                    = "C:\\Program Files\\MyApp\\myapp.exe"
-  command_line_argument_policy = "Allow"
-}
-
-module "avm-res-operationalinsights-workspace" {
-  source              = "Azure/avm-res-operationalinsights-workspace/azurerm"
-  version             = "0.4.1"
-  location            = var.location
-  resource_group_name = data.azurerm_resource_group.this.name
-  name                = var.operationalinsights_workspace_name
-}
-
-# This is required for resource modules
 data "azurerm_virtual_network" "this" {
-  name = "example-network"
-  resource_group_name = data.azurerm_resource_group.this.name
+  name = local.virtual_network_name
+  resource_group_name = data.azurerm_resource_group.vnet.name
 }
 
-# resource "azurerm_virtual_network" "example" {
-#   name                = "example-network"
-#   address_space       = ["10.10.0.0/16"]
-#   location            = azurerm_resource_group.this.location
-#   resource_group_name = data.azurerm_resource_group.this.name
-# }
-
-resource "azurerm_subnet" "example" {
-  name                 = "internal"
-  resource_group_name  = data.azurerm_resource_group.this.name
+data "azurerm_subnet" "image" {
+  name                 = local.subnet_image_name
+  resource_group_name  = data.azurerm_resource_group.vnet.name
   virtual_network_name = data.azurerm_virtual_network.this.name
-  address_prefixes     = ["10.10.2.0/24"]
 }
 
-resource "azurerm_subnet" "AzureBastionSubnet" {
-  name                 = "AzureBastionSubnet"
-  resource_group_name  = data.azurerm_resource_group.this.name
+data "azurerm_subnet" "personal_hostpool" {
+  name                 = local.subnet_personal_hostpool_name
+  resource_group_name  = data.azurerm_resource_group.vnet.name
   virtual_network_name = data.azurerm_virtual_network.this.name
-  address_prefixes     = ["10.10.1.0/26"]
 }
 
-resource "azurerm_subnet_network_security_group_association" "example" {
-  subnet_id                 = azurerm_subnet.example.id
-  network_security_group_id = module.avm-res-network-networksecuritygroup.resource.id
+data "azurerm_subnet" "pooled_hostpool" {
+  name                 = local.subnet_pooled_hootpool_name
+  resource_group_name  = data.azurerm_resource_group.vnet.name
+  virtual_network_name = data.azurerm_virtual_network.this.name
 }
 
-module "avm-res-network-networksecuritygroup" {
-  source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version = "0.2.0"
-  # insert the 3 required variables here
-  location = var.location
-  name = "examplevm-nsg"
-  resource_group_name = data.azurerm_resource_group.this.name
-  security_rules = {
+data "azurerm_subnet" "pe" {
+  name                 = local.subnet_pe_name
+  resource_group_name  = data.azurerm_resource_group.vnet.name
+  virtual_network_name = data.azurerm_virtual_network.this.name
+}
+
+data "azurerm_subnet" "bastion" {
+  name                 = local.subnet_bastion_name
+  resource_group_name  = data.azurerm_resource_group.vnet.name
+  virtual_network_name = data.azurerm_virtual_network.this.name
+}
+
+// DNS
+
+data "azurerm_private_dns_zone" "example" {
+  name                = "privatelink.bastion.azure.com"
+  resource_group_name = local.dns_rg_name
+}
+
+data "azurerm_private_dns_zone" "example_blob" {
+  name                = "privatelink.blob.core.windows.net"
+  resource_group_name = local.dns_rg_name
+}
+
+data "azurerm_private_dns_zone" "example_file" {
+  name                = "privatelink.file.core.windows.net"
+  resource_group_name = local.dns_rg_name
+}
+
+data "azurerm_private_dns_zone" "example_keyvault" {
+  name                = "privatelink.vaultcore.azure.net"
+  resource_group_name = local.dns_rg_name
+}
+
+data "azurerm_private_dns_zone" "example_avd" {
+  name                = "privatelink.wvd.microsoft.com"
+  resource_group_name = local.dns_rg_name
+}
+
+// NSG creation 5
+locals {
+  nsg_names = [local.nsg_image_name, local.nsg_personal_hostpool_name, local.nsg_pooled_hostpool_name, local.nsg_pe_name]
+  security_rule = {
     example_rule = {
       name                       = "SSH"
       priority                   = 1001
@@ -438,443 +126,569 @@ module "avm-res-network-networksecuritygroup" {
   }
 }
 
-module "avm-res-compute-virtualmachine" {
-  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version = "0.16.0"
+module "avm-res-network-networksecuritygroup" {
+  for_each = toset(local.nsg_names)
+  source   = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  version  = "0.2.0"
 
-  # Required variables
-  network_interfaces = {
-    example_nic = {
-      name = "example-nic"
-      ip_configurations = {
-        ipconfig1 = {
-          name                          = "internal"
-          private_ip_subnet_resource_id = azurerm_subnet.example.id
-        }
-      }
-      network_security_groups = {
-        nsg = {
-          network_security_group_resource_id = module.avm-res-network-networksecuritygroup.resource.id
-        }
-      }
-    }
-  }
-
-  zone                = 1
-  name                = "example-vm"
   location            = var.location
-  resource_group_name = var.resource_group_name
-  admin_username      = "adminuser"
-  admin_password      = "Password1234!"
-
-
-  # Image configuration
-  source_image_reference = {
-    publisher = "MicrosoftWindowsDesktop"
-    offer     = "Windows-11"
-    sku       = "win11-21h2-avd"
-    version   = "latest"
-  }
-  # Optional variables (add as needed)
-
-  os_disk = {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-  tags = {
-    environment = "production"
-  }
+  name                = each.value
+  resource_group_name = data.azurerm_resource_group.avd.name
+  security_rules      = local.security_rule
 }
 
-resource "azurerm_virtual_machine_extension" "vmext_dsc" {
-  count                      = 1
-  name                       = "avd_dsc"
-  virtual_machine_id         = module.avm-res-compute-virtualmachine.resource.id
-  publisher                  = "Microsoft.Powershell"
-  type                       = "DSC"
-  type_handler_version       = "2.73"
-  auto_upgrade_minor_version = true
-
-  settings = <<-SETTINGS
-    {
-      "modulesUrl": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration.zip",
-      "configurationFunction": "Configuration.ps1\\AddSessionHost",
-      "properties": {
-        "HostPoolName":"${var.virtual_desktop_host_pool_name}"
-      }
-    }
-  SETTINGS
-
-  protected_settings = <<PROTECTED_SETTINGS
-  {
-    "properties": {
-      "registrationInfoToken": "${module.avm-res-desktopvirtualization-hostpool.registrationinfo_token}"
-    }
-  }
-  PROTECTED_SETTINGS
-
-
-  depends_on = [
-    module.avm-res-compute-virtualmachine,
-    module.avm-res-desktopvirtualization-hostpool,
-    azurerm_private_dns_zone_virtual_network_link.example_blob_link
+// NSG Subnet Association
+locals {
+  subnet_nsg_associations = [
+    { subnet_id = data.azurerm_subnet.image.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_image_name].resource_id },
+    { subnet_id = data.azurerm_subnet.personal_hostpool.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_personal_hostpool_name].resource_id },
+    { subnet_id = data.azurerm_subnet.pooled_hostpool.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_pooled_hostpool_name].resource_id },
+    { subnet_id = data.azurerm_subnet.pe.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_pe_name].resource_id }
   ]
 }
 
+resource "azurerm_subnet_network_security_group_association" "this" {
+  for_each = {
+    for idx, assoc in local.subnet_nsg_associations :
+    idx => assoc
+  }
+  subnet_id                 = each.value.subnet_id
+  network_security_group_id = each.value.nsg_id
+}
+
+
+// HP
+
+locals {
+  hostpools = [
+    {
+      name = local.virtual_desktop_host_pool1_name,
+      load_balancer_type = local.virtual_desktop_host_pool1_load_balancer_type,
+      type = local.virtual_desktop_host_pool1_type,
+      maximum_sessions_allowed = local.virtual_desktop_host_pool1_maximum_sessions_allowed,
+      start_vm_on_connect = local.virtual_desktop_host_pool1_start_vm_on_connect,
+      preferred_app_group_type = local.virtual_desktop_host_pool1_preferred_app_group_type
+    },
+    {
+      name = local.virtual_desktop_host_pool2_name,
+      load_balancer_type = local.virtual_desktop_host_pool2_load_balancer_type,
+      type = local.virtual_desktop_host_pool2_type,
+      maximum_sessions_allowed = local.virtual_desktop_host_pool2_maximum_sessions_allowed,
+      start_vm_on_connect = local.virtual_desktop_host_pool2_start_vm_on_connect,
+      preferred_app_group_type = local.virtual_desktop_host_pool2_preferred_app_group_type
+    },
+    {
+      name = local.virtual_desktop_host_pool3_name,
+      load_balancer_type = local.virtual_desktop_host_pool3_load_balancer_type,
+      type = local.virtual_desktop_host_pool3_type,
+      maximum_sessions_allowed = local.virtual_desktop_host_pool3_maximum_sessions_allowed,
+      start_vm_on_connect = local.virtual_desktop_host_pool3_start_vm_on_connect,
+      preferred_app_group_type = local.virtual_desktop_host_pool3_preferred_app_group_type
+    },
+    {
+      name = local.virtual_desktop_host_pool4_name,
+      load_balancer_type = local.virtual_desktop_host_pool4_load_balancer_type,
+      type = local.virtual_desktop_host_pool4_type,
+      maximum_sessions_allowed = local.virtual_desktop_host_pool4_maximum_sessions_allowed,
+      start_vm_on_connect = local.virtual_desktop_host_pool4_start_vm_on_connect,
+      preferred_app_group_type = local.virtual_desktop_host_pool4_preferred_app_group_type
+    }
+  ]
+}
+
+module "HP" {
+  for_each                                            = { for hp in local.hostpools : hp.name => hp }
+  source                                              = "Azure/avm-res-desktopvirtualization-hostpool/azurerm"
+  version                                             = "0.2.1"
+  resource_group_name                                 = data.azurerm_resource_group.avd.name
+  virtual_desktop_host_pool_load_balancer_type        = each.value.load_balancer_type
+  virtual_desktop_host_pool_location                  = var.location
+  virtual_desktop_host_pool_name                      = each.value.name
+  virtual_desktop_host_pool_resource_group_name       = data.azurerm_resource_group.avd.name
+  virtual_desktop_host_pool_type                      = each.value.type
+  virtual_desktop_host_pool_maximum_sessions_allowed  = each.value.maximum_sessions_allowed
+  virtual_desktop_host_pool_start_vm_on_connect       = each.value.start_vm_on_connect
+  virtual_desktop_host_pool_preferred_app_group_type  = each.value.preferred_app_group_type
+  private_endpoints = {
+    primary = {
+      domain_name                     = local.domain_name_avd
+      subnet_resource_id              = data.azurerm_subnet.pe.id
+      private_dns_zone_group_name     = local.dns_rg_name
+      private_dns_zone_resource_ids   = [data.azurerm_private_dns_zone.example_avd.id]
+      private_service_connection_name = "hostpoolsc"
+    }
+  }
+}
+
+//Remote Apps
+locals {
+  remoteapp_groups = [
+    { name = local.app1_application_group_name, host_pool_id = module.HP[local.virtual_desktop_host_pool1_name].resource.id, type = "RemoteApp" },
+    { name = local.app2_application_group_name, host_pool_id = module.HP[local.virtual_desktop_host_pool1_name].resource.id, type = "RemoteApp" },
+    { name = local.app3_application_group_name, host_pool_id = module.HP[local.virtual_desktop_host_pool1_name].resource.id, type = "RemoteApp"  },
+    { name = local.app4_application_group_name, host_pool_id = module.HP[local.virtual_desktop_host_pool1_name].resource.id, type = "RemoteApp"  },
+    { name = local.app5_application_group_name, host_pool_id = module.HP[local.virtual_desktop_host_pool1_name].resource.id, type = "RemoteApp"  },
+    { name = local.app6_application_group_name, host_pool_id = module.HP[local.virtual_desktop_host_pool2_name].resource.id, type = "RemoteApp"  },
+    { name = local.app7_application_group_name, host_pool_id = module.HP[local.virtual_desktop_host_pool2_name].resource.id, type = "RemoteApp"  },
+    { name = local.app8_application_group_name, host_pool_id = module.HP[local.virtual_desktop_host_pool2_name].resource.id, type = "RemoteApp"  },
+    { name = local.app9_application_group_name, host_pool_id = module.HP[local.virtual_desktop_host_pool2_name].resource.id, type = "RemoteApp"  },
+    { name = local.app10_application_group_name, host_pool_id = module.HP[local.virtual_desktop_host_pool2_name].resource.id, type = "RemoteApp"  },
+    { name = local.desktop_group1_name , host_pool_id = module.HP[local.virtual_desktop_host_pool3_name].resource.id, type = "Desktop"  },
+    { name = local.desktop_group2_name , host_pool_id = module.HP[local.virtual_desktop_host_pool4_name].resource.id, type = "Desktop"  }
+  ]
+}
+
+module "avm-res-remoteapp" {
+  for_each                                             = { for group in local.remoteapp_groups : group.name => group }
+  source                                                = "Azure/avm-res-desktopvirtualization-applicationgroup/azurerm"
+  version                                               = "0.1.5"
+  virtual_desktop_application_group_host_pool_id        = each.value.host_pool_id
+  virtual_desktop_application_group_location            = var.location
+  virtual_desktop_application_group_name                = each.value.name
+  virtual_desktop_application_group_resource_group_name = data.azurerm_resource_group.avd.name
+  virtual_desktop_application_group_type                = each.value.type
+}
+
+//Workspace
+module "avm-res-desktopvirtualization-workspace" {
+  source                                        = "Azure/avm-res-desktopvirtualization-workspace/azurerm"
+  version                                       = "0.1.5"
+  resource_group_name                           = local.resource_group_name_avd
+  virtual_desktop_workspace_location            = var.location
+  virtual_desktop_workspace_name                = local.virtual_desktop_workspace_name
+  virtual_desktop_workspace_resource_group_name = data.azurerm_resource_group.avd.name
+  subresource_names                             = ["feed"]
+  private_endpoints = {
+    primary = {
+      domain_name        = local.domain_name_avd
+      subnet_resource_id = data.azurerm_subnet.pe.id
+      private_dns_zone_group_name = local.dns_rg_name,
+      private_dns_zone_resource_ids = [data.azurerm_private_dns_zone.example_avd.id],
+      private_service_connection_name = "workspacesc"
+    }
+  }
+}
+
+//Remote App Group WS Assignment
+resource "azurerm_virtual_desktop_workspace_application_group_association" "example" {
+  for_each = { for group in local.remoteapp_groups : group.name => group }
+  workspace_id        = module.avm-res-desktopvirtualization-workspace.resource.id
+  application_group_id = module.avm-res-remoteapp[each.key].resource.id
+}
+
+// keyvault
+module "avm-res-keyvault-vault" {
+  source  = "Azure/avm-res-keyvault-vault/azurerm"
+  version = "0.9.1"
+  # insert the 4 required variables here
+  location            = var.location
+  resource_group_name = data.azurerm_resource_group.avd.name
+  name                = local.keyvault_name
+  enable_telemetry    = true
+  tenant_id           = var.tenant
+  public_network_access_enabled = false
+  legacy_access_policies_enabled = true
+  network_acls = {
+    default_action             = "Deny"
+    bypass                     = "AzureServices"
+    }
+  private_endpoints = {
+    primary = {
+      subnet_resource_id = data.azurerm_subnet.pe.id
+      object_id          = var.object_id
+      tenant_id          = var.tenant
+      private_dns_zone_group_name = local.dns_rg_name,
+      private_dns_zone_resource_ids = [data.azurerm_private_dns_zone.example_keyvault.id],
+      private_service_connection_name = "keyvaultsc"
+    }
+  }
+}
+
+// Diagnostics
+module "avm-res-operationalinsights-workspace" {
+  source              = "Azure/avm-res-operationalinsights-workspace/azurerm"
+  version             = "0.4.1"
+  location            = var.location
+  resource_group_name = data.azurerm_resource_group.shared.name
+  name                = local.operationalinsights_workspace_name
+}
+
+
+
+
+
+// Storage
+locals {
+  storage_accounts = [
+    { name = local.diagstoragename },
+    { name = local.fsstoragename },
+    { name = local.artifactstoragename }
+  ]
+}
+
+module "avm-res-storage-storageaccount" {
+  for_each = { for sa in local.storage_accounts : sa.name => sa }
+  source              = "Azure/avm-res-storage-storageaccount/azurerm"
+  version             = "0.2.7"
+  name                = each.value.name
+  resource_group_name = data.azurerm_resource_group.avd.name
+  location            = var.location
+  public_network_access_enabled = false
+  allow_nested_items_to_be_public         = false
+  shared_access_key_enabled = true
+  network_rules = {
+    default_action = "Deny"
+    bypass         = ["AzureServices"]
+  }
+  private_endpoints = {
+    storagepeblob = {
+      name = "${each.value.name}blobpe"
+      subnet_resource_id = data.azurerm_subnet.pe.id
+      subresource_name = "blob"
+      resource_group_name = local.resource_group_name_avd
+      private_dns_zone_group_name = local.dns_rg_name
+      private_dns_zone_resource_ids = [data.azurerm_private_dns_zone.example_blob.id]
+      private_service_connection_name = "blobsc"
+    },
+    storagepefile = {
+      name = "${each.value.name}filepe"
+      subnet_resource_id = data.azurerm_subnet.pe.id
+      subresource_name = "file"
+      resource_group_name = local.resource_group_name_avd
+      private_dns_zone_group_name = local.dns_rg_name
+      private_dns_zone_resource_ids = [data.azurerm_private_dns_zone.example_file.id]
+      private_service_connection_name = "filesc"
+    }
+  }
+}
+
+# resource "azurerm_storage_share" "example" {
+#   name                 = local.filesharename
+#   storage_account_name = local.fsstoragename
+#   quota                = 50
+#   acl {
+#     id = "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI"
+#     access_policy {
+#       permissions = "rwdl"
+#       start       = "2019-07-02T09:38:21.0000000Z"
+#       expiry      = "2019-07-02T10:38:21.0000000Z"
+#     }
+#   }
+#   depends_on = [module.avm-res-storage-storageaccount]
+# }
+
+
+
+
+
+
+# // App Publishing
+# resource "azurerm_virtual_desktop_application" "this" {
+#   name                         = "test"
+#   application_group_id         = module.remoteapp1.resource_id
+#   friendly_name                = "test"
+#   description                  = "test"
+#   path                         = "C:\\Program Files\\MyApp\\myapp.exe"
+#   icon_path                    = "C:\\Program Files\\MyApp\\myapp.exe"
+#   command_line_argument_policy = "Allow"
+# }
+
+
+
+
+// Session Host VM
+locals {
+  vm_categories = [
+    { name=local.sessionHost1_name, type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool1_name, image_sku = "win11-24h2-avd", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool1_name].registrationinfo_token },
+    { name=local.sessionHost2_name, type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool2_name, image_sku = "win11-24h2-avd", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool2_name].registrationinfo_token },
+    { name=local.sessionHost3_name, type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool3_name, image_sku = "win11-24h2-ent", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool3_name].registrationinfo_token },
+    { name=local.sessionHost4_name, type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool4_name, image_sku = "win11-24h2-ent", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool4_name].registrationinfo_token },
+  ]
+
+  vm_instances = flatten([
+    for vm in local.vm_categories : [
+      for i in range(vm.count) : {
+        type              = vm.type
+        category          = vm.category
+        image_sku         = vm.image_sku
+        registration_info = vm.registration_info
+        instance_index    = i
+        subnet            = vm.subnet
+        name              = "${vm.name}${i + 1}"
+      }
+    ]
+  ])
+}
 
 data "azurerm_key_vault" "vault" {
-  name                = "avd-domainjoin-for-lumen" # Replace with your Key Vault name
-  resource_group_name = "AD"                       # Replace with the resource group name where the Key Vault is deployed
+  name                = local.keyvault_name_existing # Replace with your Key Vault name
+  resource_group_name = data.azurerm_resource_group.shared.name                       # Replace with the resource group name where the Key Vault is deployed
 }
  
 # Retrieve the domain join username from Azure Key Vault
 data "azurerm_key_vault_secret" "domain_username" {
-  name         = "domain-join-account-username"
+  name         = local.secretnamedjusername
   key_vault_id = data.azurerm_key_vault.vault.id
   #key_vault_id = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/AD/providers/Microsoft.KeyVault/vaults/avd-domainjoin-for-lumen"
 }
 # Retrieve the domain join password from Azure Key Vault
 data "azurerm_key_vault_secret" "domain_password" {
-  name         = "domain-join-account-password"
+  name         = local.secretnamedjpassword
   key_vault_id = data.azurerm_key_vault.vault.id
   #key_vault_id = "/subscriptions/8ac116fa-33ed-4b86-a94e-f39228fecb4a/resourceGroups/AD/providers/Microsoft.KeyVault/vaults/avd-domainjoin-for-lumen"
 }
- 
-resource "azurerm_virtual_machine_extension" "vm1ext_domain_join" {
-  name                       = "ExtensionName1GoesHere"
-  # for_each                   = azurerm_windows_virtual_machine.winvm // Your key logic here
-  virtual_machine_id         = module.avm-res-compute-virtualmachine.resource.id
-  publisher                  = "Microsoft.Compute"
-  type                       = "JsonADDomainExtension"
-  type_handler_version       = "1.3"
-  auto_upgrade_minor_version = true
- 
-  settings = <<-SETTINGS
-    {
-      "Name": "ditclouds.com",
-      "OUPath": "OU=AVD-Hosts,DC=ditclouds,DC=com",
-      "User": "${data.azurerm_key_vault_secret.domain_username.value}",
-      "Restart": "true",
-      "Options": "3"
-    }
-    SETTINGS
- 
-  protected_settings = <<-PSETTINGS
-    {
-      "Password": "${data.azurerm_key_vault_secret.domain_password.value}"
-    }
-    PSETTINGS
- 
-  lifecycle {
-    ignore_changes = [settings, protected_settings]
+
+resource "random_password" "admin_password" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
+  keepers = {
+    constant = "same_password"
   }
 }
 
-# vm1
-module "avm-res-compute-virtualmachine1" {
-  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version = "0.16.0"
+// check the count
+module "avm-res-compute-virtualmachine" {
+  for_each = { for vm in local.vm_instances : "${vm.category}-${vm.type}-${vm.instance_index}" => vm }
+  source   = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version  = "0.16.0"
 
   # Required variables
   network_interfaces = {
     example_nic = {
-      name = "example-nic1"
+      name = "${each.key}-nic"
       ip_configurations = {
         ipconfig1 = {
-          name     = "internal"
-          private_ip_subnet_resource_id = azurerm_subnet.example.id
-        }
-      }
-      network_security_groups = {
-        nsg = {
-          network_security_group_resource_id = module.avm-res-network-networksecuritygroup.resource.id
+          name                          = "internal"
+          private_ip_subnet_resource_id = each.value.subnet
         }
       }
     }
   }
-
-  zone = 1
-  name = "example-vm1"
+  zone = "1"
+  name                = each.value.name
   location            = var.location
-  resource_group_name = var.resource_group_name
-  admin_username      = "adminuser"
-  admin_password      = "Password1234!"
+  resource_group_name = data.azurerm_resource_group.avd.name
+  admin_username      = local.adminuser
+  admin_password      = random_password.admin_password.result
 
-  sku_size = "Standard_D8ls_v5"
   # Image configuration
-  source_image_reference = { 
-    "offer": "WindowsServer", 
-    "publisher": "MicrosoftWindowsServer", 
-    "sku": "2022-datacenter-g2", 
-    "version": "latest" 
+  source_image_reference = {
+    publisher = "MicrosoftWindowsDesktop"
+    offer     = "Windows-11"
+    sku       = each.value.image_sku
+    version   = "latest"
   }
-  # Optional variables (add as needed)
 
+  # Optional variables (add as needed)
   os_disk = {
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
+    storage_account_type = "Premium_LRS"
   }
-  tags = {
-    environment = "dev"
-  }
-}
 
-resource "azurerm_virtual_machine_extension" "vm1ext_domain_join1" {
-  name                       = "DJ"
-  # for_each                   = azurerm_windows_virtual_machine.winvm // Your key logic here
-  virtual_machine_id         = module.avm-res-compute-virtualmachine1.resource.id
-  publisher                  = "Microsoft.Compute"
-  type                       = "JsonADDomainExtension"
-  type_handler_version       = "1.3"
-  auto_upgrade_minor_version = true
- 
-  settings = <<-SETTINGS
-    {
-      "Name": "ditclouds.com",
-      "OUPath": "OU=AVD-Hosts,DC=ditclouds,DC=com",
-      "User": "${data.azurerm_key_vault_secret.domain_username.value}",
-      "Restart": "true",
-      "Options": "3"
+  # Add a data disk of size Premium SSD ZRS 256GB
+  data_disk_managed_disks = {
+    example_data_disk = {
+      create_option = "Empty"
+      disk_size_gb  = 256
+      managed_disk_type = "Premium_LRS"
+      storage_account_type = "Premium_LRS"
+      lun                     = 0
+      caching                = "ReadWrite"
+      name                    = "${each.value.name}-data-disk"
     }
-    SETTINGS
- 
-  protected_settings = <<-PSETTINGS
-    {
-      "Password": "${data.azurerm_key_vault_secret.domain_password.value}"
-    }
-    PSETTINGS
- 
-  lifecycle {
-    ignore_changes = [settings, protected_settings]
   }
-}
 
-resource "azurerm_virtual_machine_extension" "vmext_dsc1" {
-  count                      = 1
-  name                       = "avd_dsc"
-  virtual_machine_id         = module.avm-res-compute-virtualmachine1.resource.id
-  publisher                  = "Microsoft.Powershell"
-  type                       = "DSC"
-  type_handler_version       = "2.73"
-  auto_upgrade_minor_version = true
-
-  settings = <<-SETTINGS
-    {
-      "modulesUrl": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration.zip",
-      "configurationFunction": "Configuration.ps1\\AddSessionHost",
-      "properties": {
-        "HostPoolName":"${var.virtual_desktop_host_pool_name}"
+  extensions = {
+    "dsc" = {
+      name                       = "avd_dsc"
+      publisher                  = "Microsoft.Powershell"
+      type                       = "DSC"
+      type_handler_version       = "2.73"
+      auto_upgrade_minor_version = true
+      settings = <<-SETTINGS
+      {
+        "modulesUrl": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration.zip",
+        "configurationFunction": "Configuration.ps1\\AddSessionHost",
+        "properties": {
+          "HostPoolName":"${each.value.category}"
+        }
       }
-    }
-  SETTINGS
+      SETTINGS
 
-  protected_settings = <<PROTECTED_SETTINGS
-  {
-    "properties": {
-      "registrationInfoToken": "${module.avm-res-desktopvirtualization-hostpool.registrationinfo_token}"
+      protected_settings = <<-PROTECTED_SETTINGS
+      {
+        "properties": {
+          "registrationInfoToken": "${each.value.registration_info}"
+        }
+      }
+      PROTECTED_SETTINGS
+    },
+    "dj" = {
+      name                       = "domainjoin"
+      publisher                  = "Microsoft.Compute"
+      type                       = "JsonADDomainExtension"
+      type_handler_version       = "1.3"
+      auto_upgrade_minor_version = true
+    
+      settings = <<-SETTINGS
+        {
+          "Name": "${local.domainname}",
+          "OUPath": "${local.oupath}",
+          "User": "${local.domainusername}",
+          "Restart": "true",
+          "Options": "3"
+        }
+        SETTINGS
+    
+      protected_settings = <<-PSETTINGS
+        {
+          "Password": "${data.azurerm_key_vault_secret.domain_password.value}"
+        }
+        PSETTINGS
     }
   }
-  PROTECTED_SETTINGS
+}
 
 
-  depends_on = [
-    module.avm-res-compute-virtualmachine,
-    module.avm-res-desktopvirtualization-hostpool,
-    azurerm_private_dns_zone_virtual_network_link.example_blob_link
+
+# vm1 for AppV
+locals {
+  appv_vms = [
+    {
+      name = local.appv_vm1_name,
+      sku_size = local.appv_vm1_sku_size,
+      data_disks = local.appv_vm1_data_disk_size
+    },
+    {
+      name = local.appv_vm2_name,
+      sku_size = local.appv_vm2_sku_size,
+      data_disks = local.appv_vm2_data_disk_size
+    },
+    {
+      name = local.appv_vm3_name,
+      sku_size = local.appv_vm3_sku_size,
+      data_disks = local.appv_vm3_data_disk_size
+    }
   ]
 }
 
-module "avm-res-compute-virtualmachine2" {
-  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version = "0.16.0"
+module "appV" {
+  for_each = { for vm in local.appv_vms : vm.name => vm }
+  source   = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version  = "0.16.0"
 
   # Required variables
   network_interfaces = {
     example_nic = {
-      name = "example-nic2"
+      name = "${each.key}-nic"
       ip_configurations = {
         ipconfig1 = {
-          name     = "internal"
-          private_ip_subnet_resource_id = azurerm_subnet.example.id
-        }
-      }
-      network_security_groups = {
-        nsg = {
-          network_security_group_resource_id = module.avm-res-network-networksecuritygroup.resource.id
+          name                          = "internal"
+          private_ip_subnet_resource_id = data.azurerm_subnet.personal_hostpool.id
         }
       }
     }
   }
 
-  zone = 1
-  name = "example-vm2"
+  zone                = "1"
+  name                = each.value.name
   location            = var.location
-  resource_group_name = var.resource_group_name
-  admin_username      = "adminuser"
-  admin_password      = "Password1234!"
+  resource_group_name = local.resource_group_name_avd
+  admin_username      = local.appvserveradminusername
+  admin_password      = random_password.admin_password.result
 
-  sku_size = "Standard_D8ls_v5"
+  sku_size = each.value.sku_size
+
   # Image configuration
-  source_image_reference = { 
-    "offer": "WindowsServer", 
-    "publisher": "MicrosoftWindowsServer", 
-    "sku": "2022-datacenter-g2", 
-    "version": "latest" 
+  source_image_reference = {
+    offer     = local.appv_offer
+    publisher = local.appv_publisher
+    sku       = local.appv_sku
+    version   = local.appv_version
   }
-  # Optional variables (add as needed)
 
+  # Optional variables (add as needed)
   os_disk = {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
+
+  data_disk_managed_disks = { for disk in each.value.data_disks : disk.name => {
+    create_option        = "Empty"
+    disk_size_gb         = disk.size_gb
+    managed_disk_type    = disk.type
+    storage_account_type = disk.type
+    caching              = "ReadWrite"
+    lun                  = disk.lun
+    name                 = disk.name
+  }}
+
   tags = {
     environment = "dev"
   }
-}
 
-resource "azurerm_virtual_machine_extension" "vm1ext_domain_join2" {
-  name                       = "ExtensionName1GoesHere"
-  # for_each                   = azurerm_windows_virtual_machine.winvm // Your key logic here
-  virtual_machine_id         = module.avm-res-compute-virtualmachine2.resource.id
-  publisher                  = "Microsoft.Compute"
-  type                       = "JsonADDomainExtension"
-  type_handler_version       = "1.3"
-  auto_upgrade_minor_version = true
- 
-  settings = <<-SETTINGS
-    {
-      "Name": "ditclouds.com",
-      "OUPath": "OU=AVD-Hosts,DC=ditclouds,DC=com",
-      "User": "${data.azurerm_key_vault_secret.domain_username.value}",
-      "Restart": "true",
-      "Options": "3"
-    }
-    SETTINGS
- 
-  protected_settings = <<-PSETTINGS
-    {
-      "Password": "${data.azurerm_key_vault_secret.domain_password.value}"
-    }
-    PSETTINGS
- 
-  lifecycle {
-    ignore_changes = [settings, protected_settings]
-  }
-}
-
-resource "azurerm_virtual_machine_extension" "vmext_dsc2" {
-  count                      = 1
-  name                       = "avd_dsc"
-  virtual_machine_id         = module.avm-res-compute-virtualmachine2.resource.id
-  publisher                  = "Microsoft.Powershell"
-  type                       = "DSC"
-  type_handler_version       = "2.73"
-  auto_upgrade_minor_version = true
-
-  settings = <<-SETTINGS
-    {
-      "modulesUrl": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration.zip",
-      "configurationFunction": "Configuration.ps1\\AddSessionHost",
-      "properties": {
-        "HostPoolName":"${var.virtual_desktop_host_pool_name}"
-      }
-    }
-  SETTINGS
-
-  protected_settings = <<PROTECTED_SETTINGS
-  {
-    "properties": {
-      "registrationInfoToken": "${module.avm-res-desktopvirtualization-hostpool.registrationinfo_token}"
+  extensions = {
+    "dj" = {
+      name                       = "domainjoin"
+      publisher                  = "Microsoft.Compute"
+      type                       = "JsonADDomainExtension"
+      type_handler_version       = "1.3"
+      auto_upgrade_minor_version = true
+    
+      settings = <<-SETTINGS
+        {
+          "Name": "${local.domainname}",
+          "OUPath": "${local.oupath}",
+          "User": "${local.domainusername}",
+          "Restart": "true",
+          "Options": "3"
+        }
+        SETTINGS
+    
+      protected_settings = <<-PSETTINGS
+        {
+          "Password": "${data.azurerm_key_vault_secret.domain_password.value}"
+        }
+        PSETTINGS
     }
   }
-  PROTECTED_SETTINGS
-
-
-  depends_on = [
-    module.avm-res-compute-virtualmachine,
-    module.avm-res-desktopvirtualization-hostpool,
-    azurerm_private_dns_zone_virtual_network_link.example_blob_link
-  ]
 }
 
-resource "azurerm_public_ip" "bastion" {
-  name                = "example-bastion-pip"
-  location            = data.azurerm_resource_group.this.location
-  resource_group_name = data.azurerm_resource_group.this.name
+# Azure Bastion
+module "avm-res-network-publicipaddress" {
+  source  = "Azure/avm-res-network-publicipaddress/azurerm"
+  version = "0.1.2"
+  # insert the 3 required variables here
+  location            = var.location
+  resource_group_name = data.azurerm_resource_group.avd.name
+  name                = "avd-bastion-pip"
   allocation_method   = "Static"
   sku                 = "Standard"
 }
 
-module "azure_bastion" {
-  source = "Azure/avm-res-network-bastionhost/azurerm"
-  version = "0.3.0"
-  enable_telemetry    = true
-  resource_group_name = data.azurerm_resource_group.this.name
-  location = var.location
-  name = "avd-bastion"
-  copy_paste_enabled     = true
-  file_copy_enabled      = false
-  sku                 = "Standard"  # Change to Premium SKU
-  ip_configuration = {
-    name                 = "my-ipconfig"
-    subnet_id            = azurerm_subnet.AzureBastionSubnet.id
-    public_ip_address_id = azurerm_public_ip.bastion.id  # Set to null to use private IP
-  }
-  ip_connect_enabled     = true
-  scale_units            = 4
-  shareable_link_enabled = true
-  tunneling_enabled      = true
-  kerberos_enabled       = true
+# module "azure_bastion" {
+#   source = "Azure/avm-res-network-bastionhost/azurerm"
+#   version = "0.3.0"
+#   enable_telemetry    = true
+#   resource_group_name = data.azurerm_resource_group.avd.name
+#   location = var.location
+#   name = "avd-bastion"
+#   copy_paste_enabled     = true
+#   file_copy_enabled      = false
+#   sku                 = "Standard"  # Change to Premium SKU
+#   ip_configuration = {
+#     name                 = "my-ipconfig"
+#     subnet_id            = data.azurerm_subnet.bastion.id
+#     public_ip_address_id = module.avm-res-network-publicipaddress.public_ip_id  # Set to null to use private IP
+#   }
+#   ip_connect_enabled     = true
+#   scale_units            = 4
+#   shareable_link_enabled = true
+#   tunneling_enabled      = true
+#   kerberos_enabled       = true
  
-  tags = {
-    environment = "dev"
-  }
-}
-
-resource "azurerm_private_dns_zone" "example" {
-  name                = "privatelink.bastion.azure.com"
-  resource_group_name = data.azurerm_resource_group.this.name
-}
- 
-resource "azurerm_private_dns_zone_virtual_network_link" "example" {
-  name                  = "example-link"
-  resource_group_name   = data.azurerm_resource_group.this.name
-  private_dns_zone_name = azurerm_private_dns_zone.example.name
-  virtual_network_id    = data.azurerm_virtual_network.this.id
-}
-
-resource "azurerm_private_dns_zone" "example_blob" {
-  name                = "privatelink.blob.core.windows.net"
-  resource_group_name = data.azurerm_resource_group.this.name
-}
-
-resource "azurerm_private_dns_zone" "example_file" {
-  name                = "privatelink.file.core.windows.net"
-  resource_group_name = data.azurerm_resource_group.this.name
-}
-
-resource "azurerm_private_dns_zone" "example_keyvault" {
-  name                = "privatelink.vaultcore.azure.net"
-  resource_group_name = data.azurerm_resource_group.this.name
-}
-
-resource "azurerm_private_dns_zone_virtual_network_link" "example_keyvault_link" {
-  name                  = "example-link-keyvault"
-  resource_group_name   = data.azurerm_resource_group.this.name
-  private_dns_zone_name = azurerm_private_dns_zone.example_keyvault.name
-  virtual_network_id    = data.azurerm_virtual_network.this.id
-}
- 
-resource "azurerm_private_dns_zone_virtual_network_link" "example_blob_link" {
-  name                  = "example-link-blob"
-  resource_group_name   = data.azurerm_resource_group.this.name
-  private_dns_zone_name = azurerm_private_dns_zone.example_blob.name
-  virtual_network_id    = data.azurerm_virtual_network.this.id
-}
-
-resource "azurerm_private_dns_zone_virtual_network_link" "example_file_link" {
-  name                  = "example-link-file"
-  resource_group_name   = data.azurerm_resource_group.this.name
-  private_dns_zone_name = azurerm_private_dns_zone.example_file.name
-  virtual_network_id    = data.azurerm_virtual_network.this.id
-}
+#   tags = {
+#     environment = "dev"
+#   }
+# }
