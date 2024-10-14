@@ -35,7 +35,7 @@ locals {
     virtual_desktop_host_pool1_maximum_sessions_allowed = 3
     virtual_desktop_host_pool1_start_vm_on_connect = true
     virtual_desktop_host_pool1_preferred_app_group_type = "RailApplications"
-    sessionHost1_name = "v51dhp01sh"
+    sessionHost1_name = "v51php01sh"
 
     //Hostpool2
     virtual_desktop_host_pool2_load_balancer_type = "BreadthFirst"
@@ -44,7 +44,7 @@ locals {
     virtual_desktop_host_pool2_maximum_sessions_allowed = 3
     virtual_desktop_host_pool2_start_vm_on_connect = true
     virtual_desktop_host_pool2_preferred_app_group_type = "RailApplications"
-    sessionHost2_name = "v51dhp02sh"
+    sessionHost2_name = "v51php02sh"
 
     //Hostpool3
     virtual_desktop_host_pool3_load_balancer_type = "BreadthFirst"
@@ -53,7 +53,7 @@ locals {
     virtual_desktop_host_pool3_maximum_sessions_allowed = 1
     virtual_desktop_host_pool3_start_vm_on_connect = true
     virtual_desktop_host_pool3_preferred_app_group_type = "Desktop"
-    sessionHost3_name = "v51php01sh"
+    sessionHost3_name = "v51dhp01sh"
 
     //Hostpool4
     virtual_desktop_host_pool4_load_balancer_type = "BreadthFirst"
@@ -62,7 +62,7 @@ locals {
     virtual_desktop_host_pool4_maximum_sessions_allowed = 1
     virtual_desktop_host_pool4_start_vm_on_connect = true
     virtual_desktop_host_pool4_preferred_app_group_type = "Desktop"
-    sessionHost4_name = "v51php02sh"
+    sessionHost4_name = "v51dhp02sh"
 
 
     // ApplicationGroups - Pooled - HP1
