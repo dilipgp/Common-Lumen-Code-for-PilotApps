@@ -523,7 +523,7 @@ module "avm-res-compute-virtualmachine" {
       }
     }
   }
-  zone = ["1", "2", "3"]
+  zone = "1"
   name                = each.value.name
   location            = var.location
   resource_group_name = data.azurerm_resource_group.avd.name
