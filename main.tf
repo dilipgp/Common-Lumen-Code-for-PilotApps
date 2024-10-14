@@ -78,17 +78,7 @@ data "azurerm_private_dns_zone" "example_avd" {
 // NSG creation 5
 locals {
   nsg_names = [local.nsg_image_name, local.nsg_personal_hostpool_name, local.nsg_pooled_hostpool_name, local.nsg_pe_name, local.nsg_bastion_name]
-}
-
-module "avm-res-network-networksecuritygroup" {
-  for_each = toset(local.nsg_names)
-  source   = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version  = "0.2.0"
-
-  location            = var.location
-  name                = each.value
-  resource_group_name = data.azurerm_resource_group.avd.name
-  security_rules = {
+  security_rule = {
     example_rule = {
       name                       = "SSH"
       priority                   = 1001
@@ -132,30 +122,109 @@ module "avm-res-network-networksecuritygroup" {
       destination_port_range     = "443"
       source_address_prefix      = "*"
       destination_address_prefix = "*"
-    },
-    bastion_rule1 = {
-      name                       = "AzureBastionSubnetRule1"
+    }
+  }
+  security_rule_bastion = {
+    bastion_ingress_public = {
+      name                       = "BastionIngressPublic"
       priority                   = 1005
       direction                  = "Inbound"
       access                     = "Allow"
       protocol                   = "Tcp"
       source_port_range          = "*"
       destination_port_range     = "443"
-      source_address_prefix      = "*"
+      source_address_prefix      = "Internet"
       destination_address_prefix = "*"
     },
-    bastion_rule2 = {
-      name                       = "AzureBastionSubnetRule2"
+    bastion_ingress_control_plane = {
+      name                       = "BastionIngressControlPlane"
       priority                   = 1006
       direction                  = "Inbound"
       access                     = "Allow"
       protocol                   = "Tcp"
       source_port_range          = "*"
-      destination_port_range     = "4443"
-      source_address_prefix      = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "GatewayManager"
       destination_address_prefix = "*"
+    },
+    bastion_ingress_data_plane = {
+      name                       = "BastionIngressDataPlane"
+      priority                   = 1007
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "8080"
+      source_address_prefix      = "VirtualNetwork"
+      destination_address_prefix = "VirtualNetwork"
+    },
+    bastion_ingress_load_balancer = {
+      name                       = "BastionIngressLoadBalancer"
+      priority                   = 1008
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "AzureLoadBalancer"
+      destination_address_prefix = "*"
+    },
+    bastion_egress_to_vms = {
+      name                       = "BastionEgressToVMs"
+      priority                   = 1009
+      direction                  = "Outbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "3389"
+      source_address_prefix      = "*"
+      destination_address_prefix = "VirtualNetwork"
+    },
+    bastion_egress_data_plane = {
+      name                       = "BastionEgressDataPlane"
+      priority                   = 1010
+      direction                  = "Outbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "8080"
+      source_address_prefix      = "*"
+      destination_address_prefix = "VirtualNetwork"
+    },
+    bastion_egress_azure_endpoints = {
+      name                       = "BastionEgressAzureEndpoints"
+      priority                   = 1011
+      direction                  = "Outbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "*"
+      destination_address_prefix = "AzureCloud"
+    },
+    bastion_egress_internet = {
+      name                       = "BastionEgressInternet"
+      priority                   = 1012
+      direction                  = "Outbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "80"
+      source_address_prefix      = "*"
+      destination_address_prefix = "Internet"
     }
   }
+}
+
+module "avm-res-network-networksecuritygroup" {
+  for_each = toset(local.nsg_names)
+  source   = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  version  = "0.2.0"
+
+  location            = var.location
+  name                = each.value
+  resource_group_name = data.azurerm_resource_group.avd.name
+  security_rules      = each.value == local.nsg_bastion_name ? local.security_rule_bastion : local.security_rule
 }
 
 // NSG Subnet Association
@@ -421,10 +490,10 @@ module "avm-res-storage-storageaccount" {
 // Session Host VM
 locals {
   vm_categories = [
-    { name="v51dhp01sh", type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool1_name, image_sku = "win11-21h2-avd-multisession", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool1_name].registrationinfo_token },
-    { name="v51dhp02sh", type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool2_name, image_sku = "win11-21h2-avd-multisession", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool2_name].registrationinfo_token },
-    { name="v51php01sh", type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool3_name, image_sku = "win11-21h2-avd", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool3_name].registrationinfo_token },
-    { name="v51php02sh", type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool4_name, image_sku = "win11-21h2-avd", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool4_name].registrationinfo_token },
+    { name=local.sessionHost1_name, type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool1_name, image_sku = "win11-21h2-avd-multisession", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool1_name].registrationinfo_token },
+    { name=local.sessionHost2_name, type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool2_name, image_sku = "win11-21h2-avd-multisession", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool2_name].registrationinfo_token },
+    { name=local.sessionHost3_name, type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool3_name, image_sku = "win11-21h2-avd", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool3_name].registrationinfo_token },
+    { name=local.sessionHost4_name, type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool4_name, image_sku = "win11-21h2-avd", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool4_name].registrationinfo_token },
   ]
 
   vm_instances = flatten([
