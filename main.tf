@@ -147,17 +147,6 @@ locals {
       source_address_prefix      = "GatewayManager"
       destination_address_prefix = "*"
     },
-    bastion_ingress_data_plane = {
-      name                       = "BastionIngressDataPlane"
-      priority                   = 1007
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "8080"
-      source_address_prefix      = "VirtualNetwork"
-      destination_address_prefix = "VirtualNetwork"
-    },
     bastion_ingress_load_balancer = {
       name                       = "BastionIngressLoadBalancer"
       priority                   = 1008
@@ -180,17 +169,6 @@ locals {
       source_address_prefix      = "*"
       destination_address_prefix = "VirtualNetwork"
     },
-    bastion_egress_data_plane = {
-      name                       = "BastionEgressDataPlane"
-      priority                   = 1010
-      direction                  = "Outbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "8080"
-      source_address_prefix      = "*"
-      destination_address_prefix = "VirtualNetwork"
-    },
     bastion_egress_azure_endpoints = {
       name                       = "BastionEgressAzureEndpoints"
       priority                   = 1011
@@ -201,17 +179,6 @@ locals {
       destination_port_range     = "443"
       source_address_prefix      = "*"
       destination_address_prefix = "AzureCloud"
-    },
-    bastion_egress_internet = {
-      name                       = "BastionEgressInternet"
-      priority                   = 1012
-      direction                  = "Outbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "80"
-      source_address_prefix      = "*"
-      destination_address_prefix = "Internet"
     }
   }
 }
@@ -490,10 +457,10 @@ module "avm-res-storage-storageaccount" {
 // Session Host VM
 locals {
   vm_categories = [
-    { name=local.sessionHost1_name, type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool1_name, image_sku = "win11-21h2-avd-multisession", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool1_name].registrationinfo_token },
-    { name=local.sessionHost2_name, type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool2_name, image_sku = "win11-21h2-avd-multisession", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool2_name].registrationinfo_token },
-    { name=local.sessionHost3_name, type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool3_name, image_sku = "win11-21h2-avd", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool3_name].registrationinfo_token },
-    { name=local.sessionHost4_name, type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool4_name, image_sku = "win11-21h2-avd", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool4_name].registrationinfo_token },
+    { name=local.sessionHost1_name, type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool1_name, image_sku = "win11-24h2-avd-multisession", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool1_name].registrationinfo_token },
+    { name=local.sessionHost2_name, type="Pooled", subnet= data.azurerm_subnet.pooled_hostpool.id, category = local.virtual_desktop_host_pool2_name, image_sku = "win11-24h2-avd-multisession", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool2_name].registrationinfo_token },
+    { name=local.sessionHost3_name, type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool3_name, image_sku = "win11-24h2-avd", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool3_name].registrationinfo_token },
+    { name=local.sessionHost4_name, type="Personal", subnet= data.azurerm_subnet.personal_hostpool.id, category = local.virtual_desktop_host_pool4_name, image_sku = "win11-24h2-avd", count = 1, registration_info = module.HP[local.virtual_desktop_host_pool4_name].registrationinfo_token },
   ]
 
   vm_instances = flatten([
@@ -556,8 +523,7 @@ module "avm-res-compute-virtualmachine" {
       }
     }
   }
-
-  zone                = "1"
+  zone = ["1", "2", "3"]
   name                = each.value.name
   location            = var.location
   resource_group_name = data.azurerm_resource_group.avd.name
