@@ -143,7 +143,6 @@ locals {
     { subnet_id = data.azurerm_subnet.image.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_image_name].resource_id },
     { subnet_id = data.azurerm_subnet.personal_hostpool.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_personal_hostpool_name].resource_id },
     { subnet_id = data.azurerm_subnet.pooled_hostpool.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_pooled_hostpool_name].resource_id },
-    { subnet_id = data.azurerm_subnet.bastion.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_bastion_name].resource_id },
     { subnet_id = data.azurerm_subnet.pe.id, nsg_id = module.avm-res-network-networksecuritygroup[local.nsg_pe_name].resource_id }
   ]
 }
