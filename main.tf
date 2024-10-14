@@ -77,7 +77,7 @@ data "azurerm_private_dns_zone" "example_avd" {
 
 // NSG creation 5
 locals {
-  nsg_names = [local.nsg_image_name, local.nsg_personal_hostpool_name, local.nsg_pooled_hostpool_name, local.nsg_pe_name, local.nsg_bastion_name]
+  nsg_names = [local.nsg_image_name, local.nsg_personal_hostpool_name, local.nsg_pooled_hostpool_name, local.nsg_pe_name]
   security_rule = {
     example_rule = {
       name                       = "SSH"
@@ -124,63 +124,6 @@ locals {
       destination_address_prefix = "*"
     }
   }
-  security_rule_bastion = {
-    bastion_ingress_public = {
-      name                       = "BastionIngressPublic"
-      priority                   = 1005
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "443"
-      source_address_prefix      = "Internet"
-      destination_address_prefix = "*"
-    },
-    bastion_ingress_control_plane = {
-      name                       = "BastionIngressControlPlane"
-      priority                   = 1006
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "443"
-      source_address_prefix      = "GatewayManager"
-      destination_address_prefix = "*"
-    },
-    bastion_ingress_load_balancer = {
-      name                       = "BastionIngressLoadBalancer"
-      priority                   = 1008
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "443"
-      source_address_prefix      = "AzureLoadBalancer"
-      destination_address_prefix = "*"
-    },
-    bastion_egress_to_vms = {
-      name                       = "BastionEgressToVMs"
-      priority                   = 1009
-      direction                  = "Outbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "3389"
-      source_address_prefix      = "*"
-      destination_address_prefix = "VirtualNetwork"
-    },
-    bastion_egress_azure_endpoints = {
-      name                       = "BastionEgressAzureEndpoints"
-      priority                   = 1011
-      direction                  = "Outbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "443"
-      source_address_prefix      = "*"
-      destination_address_prefix = "AzureCloud"
-    }
-  }
 }
 
 module "avm-res-network-networksecuritygroup" {
@@ -191,7 +134,7 @@ module "avm-res-network-networksecuritygroup" {
   location            = var.location
   name                = each.value
   resource_group_name = data.azurerm_resource_group.avd.name
-  security_rules      = each.value == local.nsg_bastion_name ? local.security_rule_bastion : local.security_rule
+  security_rules      = local.security_rule
 }
 
 // NSG Subnet Association
